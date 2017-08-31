@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - CrosswordsUkr Admin Console</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -21,8 +21,10 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Words", "Words", "Admin")</li>
+                    <li>@Html.ActionLink("About", "#", "", null, new { id = "AboutBtn"})</li>
+                    <li>@Html.ActionLink("Contact", "Contact",null, new { id = "ContactBtn", onclick = "TstClick();" })</li>
+                    <li><a href="#" onclick="TstClick()">TST</a></li>
                 </ul>
             </div>
         </div>
@@ -31,12 +33,43 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - CrosswordsUkr Admin Console</p>
         </footer>
+
+        <div id="modal-container" class="modal fade in hidden-print" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                </div>
+            </div>
+        </div>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    <script language="text/javascript">
+        $(document).ready(function () {
+            $('#AboutBtn').click(function () {
+                $.ajax({
+                    url: '@Url.Action("About", "Home")',
+                    error: function (errorMsg) {
+                        alert(errorMsg);
+                    }
+                }).done(function (result) {
+                    $('#modal-container').html(result);
+                    $('#modal-container').modal('show');
+                });
+            });
+
+
+            function TstClick(e) {
+                alert('Clicked');
+                return false;
+            }
+        });
+        
+    </script>
 </body>
 </html>
