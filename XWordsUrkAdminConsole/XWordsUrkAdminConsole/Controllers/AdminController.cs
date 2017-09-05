@@ -16,7 +16,7 @@ namespace XWordsUrkAdminConsole.Controllers
         {
             using (var context = new CrosswordsUkrAdminDataContainer())
             {
-                return View(context.WordsSet.ToList());
+                return View(context.Words.ToList());
             }
         }
     }

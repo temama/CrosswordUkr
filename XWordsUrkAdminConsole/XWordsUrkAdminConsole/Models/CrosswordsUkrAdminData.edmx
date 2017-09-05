@@ -6,9 +6,9 @@
     <edmx:StorageModels>
     <Schema Namespace="CrosswordsUkrAdminData.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityContainer Name="CrosswordsUkrAdminDataStoreContainer">
-    <EntitySet Name="WordsSet" EntityType="CrosswordsUkrAdminData.Store.WordsSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Words" EntityType="CrosswordsUkrAdminData.Store.Words" store:Type="Tables" Schema="dbo" />
   </EntityContainer>
-  <EntityType Name="WordsSet">
+  <EntityType Name="Words">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
@@ -26,7 +26,7 @@
     <edmx:ConceptualModels>
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="CrosswordsUkrAdminData" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
         <EntityContainer Name="CrosswordsUkrAdminDataContainer" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="WordsSet" EntityType="CrosswordsUkrAdminData.Words" />
+          <EntitySet Name="Words" EntityType="CrosswordsUkrAdminData.Words" />
         </EntityContainer>
         <EntityType Name="Words">
           <Key>
@@ -47,9 +47,9 @@
     <edmx:Mappings>
     <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="CrosswordsUkrAdminDataStoreContainer" CdmEntityContainer="CrosswordsUkrAdminDataContainer">
-    <EntitySetMapping Name="WordsSet">
+    <EntitySetMapping Name="Words">
       <EntityTypeMapping TypeName="IsTypeOf(CrosswordsUkrAdminData.Words)">
-        <MappingFragment StoreEntitySet="WordsSet">
+        <MappingFragment StoreEntitySet="Words">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Word" ColumnName="Word" />
           <ScalarProperty Name="Definition" ColumnName="Definition" />

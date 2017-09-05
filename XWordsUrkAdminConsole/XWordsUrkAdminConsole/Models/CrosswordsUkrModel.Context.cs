@@ -25,6 +25,6 @@ namespace XWordsUrkAdminConsole.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Words> WordsSet { get; set; }
+        public virtual DbSet<Words> Words { get; set; }
     }
 }
