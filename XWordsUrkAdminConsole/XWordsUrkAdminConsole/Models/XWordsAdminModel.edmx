@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="XWordsAdminModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="XWordsAdminModelTargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="XWordsAdminModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="XWordsAdminModelContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Words" EntityType="XWordsAdminModel.Word" />
+          <EntitySet Name="Clues" EntityType="XWordsAdminModel.Clue" />
+          <AssociationSet Name="ClueWord" Association="XWordsAdminModel.ClueWord">
+            <End Role="Clue" EntitySet="Clues" />
+            <End Role="Word" EntitySet="Words" />
+          </AssociationSet>
+          <EntitySet Name="Medias" EntityType="XWordsAdminModel.Media" />
+          <EntitySet Name="Games" EntityType="XWordsAdminModel.Game" />
+          <EntitySet Name="Settings" EntityType="XWordsAdminModel.Setting" />
+          <EntitySet Name="Versions" EntityType="XWordsAdminModel.Version" />
+          <AssociationSet Name="MediaWord" Association="XWordsAdminModel.MediaWord">
+            <End Role="Media" EntitySet="Medias" />
+            <End Role="Word" EntitySet="Words" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Word">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TheWord" Type="String" Nullable="false" />
+          <Property Name="Definition" Type="String" Nullable="true" />
+          <Property Name="Area" Type="Int32" Nullable="false" />
+          <Property Name="Complexity" Type="Int32" Nullable="false" />
+          <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="LastModified" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Clues" Relationship="XWordsAdminModel.ClueWord" FromRole="Word" ToRole="Clue" />
+        </EntityType>
+        <EntityType Name="Clue">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TheClue" Type="String" Nullable="false" />
+          <Property Name="State" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Word" Relationship="XWordsAdminModel.ClueWord" FromRole="Clue" ToRole="Word" />
+          <Property Name="WordId" Type="Int32" Nullable="false" />
+          <Property Name="IncludedFromVer" Type="String" Nullable="true" />
+          <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
+          <Property Name="LastModified" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="ClueWord">
+          <End Type="XWordsAdminModel.Clue" Role="Clue" Multiplicity="*" />
+          <End Type="XWordsAdminModel.Word" Role="Word" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="Word">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Clue">
+              <PropertyRef Name="WordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Media">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" />
+          <NavigationProperty Name="Word" Relationship="XWordsAdminModel.MediaWord" FromRole="Media" ToRole="Word" />
+          <Property Name="WordId" Type="Int32" Nullable="true" />
+          <Property Name="Url" Type="String" Nullable="true" />
+          <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="LastModified" Type="DateTime" Nullable="false" />
+          <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
+          <Property Name="IncludedFromVer" Type="String" Nullable="true" />
+        </EntityType>
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="TheGame" Type="String" Nullable="false" />
+          <Property Name="Complexity" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="true" />
+          <Property Name="IncludedFromVer" Type="String" Nullable="false" />
+          <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="LastModified" Type="String" Nullable="false" />
+          <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Value" Type="String" Nullable="false" />
+          <Property Name="LastModified" Type="DateTime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Version">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" />
+          <Property Name="InternalNotes" Type="String" Nullable="true" />
+          <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="LastModified" Type="DateTime" Nullable="false" />
+        </EntityType>
+        <Association Name="MediaWord">
+          <End Type="XWordsAdminModel.Media" Role="Media" Multiplicity="*" />
+          <End Type="XWordsAdminModel.Word" Role="Word" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Word">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Media">
+              <PropertyRef Name="WordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="XWordsAdminModel" />
+        <Alias Key="Target" Value="XWordsAdminModel.Store" />
+        <EntityContainerMapping CdmEntityContainer="XWordsAdminModelContext" StorageEntityContainer="XWordsAdminModelTargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
