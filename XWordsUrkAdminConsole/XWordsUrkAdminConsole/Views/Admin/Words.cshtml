@@ -1,4 +1,4 @@
-﻿@model IEnumerable<XWordsUrkAdminConsole.Models.Words>
+﻿@model IEnumerable<XWordsUrkAdminConsole.Models.Word>
 
 @{
     ViewBag.Title = "Words";
@@ -13,25 +13,22 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Word)
+            @Html.DisplayNameFor(model => model.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TheWord)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Definition)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Clue)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastModified)
+            @Html.DisplayNameFor(model => model.State)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Complexity)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.IncludedFromVerion)
+            @Html.DisplayNameFor(model => model.LastModified)
         </th>
         <th></th>
     </tr>
@@ -39,25 +36,22 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Word)
+            @Html.DisplayFor(modelItem => item.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TheWord)
         </td>
         <td>
             @Html.Raw(item.Definition)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Clue)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastModified)
+            @Html.DisplayFor(modelItem => item.State)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Complexity)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IncludedFromVerion)
+            @Html.DisplayFor(modelItem => item.LastModified)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

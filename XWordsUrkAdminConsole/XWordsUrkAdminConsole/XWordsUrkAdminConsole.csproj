@@ -163,28 +163,33 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\CrosswordsUkrAdminData.cs">
+    <Compile Include="Models\Clue.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Game.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Media.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Setting.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Version.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Word.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\XWordsAdminModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>CrosswordsUkrAdminData.tt</DependentUpon>
+      <DependentUpon>XWordsAdminModel.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\CrosswordsUkrAdminData.Designer.cs">
+    <Compile Include="Models\XWordsAdminModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>CrosswordsUkrAdminData.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CrosswordsUkrModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CrosswordsUkrModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CrosswordsUkrModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CrosswordsUkrModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Words.cs">
-      <DependentUpon>CrosswordsUkrModel.tt</DependentUpon>
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\XWordsAdminModel.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -194,7 +199,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\CrosswordsUkrAdminData.sdf">
+    <Content Include="App_Data\CrosswordsUkrAdminDB.sdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\bootstrap-theme.css" />
@@ -207,6 +212,17 @@
     <Content Include="Content\Site.css" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Models\XWordsAdminModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XWordsAdminModel.Context.cs</LastGenOutput>
+      <DependentUpon>XWordsAdminModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\XWordsAdminModel.edmx.sql" />
+    <Content Include="Models\XWordsAdminModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XWordsAdminModel.cs</LastGenOutput>
+      <DependentUpon>XWordsAdminModel.edmx</DependentUpon>
     </Content>
     <Content Include="Views\Admin\Words.cshtml" />
     <EntityDeploy Include="Models\XWordsAdminModel.edmx">
@@ -232,13 +248,6 @@
     <None Include="_bin_deployableAssemblies\amd64\sqlceca40.dll" />
     <None Include="_bin_deployableAssemblies\amd64\Microsoft.VC90.CRT\README_ENU.txt" />
     <None Include="_bin_deployableAssemblies\amd64\Microsoft.VC90.CRT\msvcr90.dll" />
-    <EntityDeploy Include="Models\CrosswordsUkrAdminData.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>CrosswordsUkrAdminData.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\CrosswordsUkrAdminData.edmx.diagram">
-      <DependentUpon>CrosswordsUkrAdminData.edmx</DependentUpon>
-    </Content>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -248,22 +257,6 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
-    <Content Include="Models\CrosswordsUkrAdminData.edmx.sql" />
-    <Content Include="Models\CrosswordsUkrAdminData.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>CrosswordsUkrAdminData.cs</LastGenOutput>
-      <DependentUpon>CrosswordsUkrAdminData.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\CrosswordsUkrModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>CrosswordsUkrModel.Context.cs</LastGenOutput>
-      <DependentUpon>CrosswordsUkrAdminData.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\CrosswordsUkrModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>CrosswordsUkrModel.cs</LastGenOutput>
-      <DependentUpon>CrosswordsUkrAdminData.edmx</DependentUpon>
-    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />

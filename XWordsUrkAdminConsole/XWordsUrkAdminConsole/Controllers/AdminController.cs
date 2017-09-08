@@ -14,9 +14,9 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult Words()
         {
-            using (var context = new CrosswordsUkrAdminDataContainer())
+            using (var context = new XWordsAdminModelContext())
             {
-                return View(context.Words.ToList());
+                return View(context.Words.Select(w=>w.TheWord.StartsWith("Г")).ToList());
             }
         }
     }

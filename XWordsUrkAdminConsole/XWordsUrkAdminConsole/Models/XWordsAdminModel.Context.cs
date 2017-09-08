@@ -13,10 +13,10 @@ namespace XWordsUrkAdminConsole.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class CrosswordsUkrAdminDataContainer : DbContext
+    public partial class XWordsAdminModelContext : DbContext
     {
-        public CrosswordsUkrAdminDataContainer()
-            : base("name=CrosswordsUkrAdminDataContainer")
+        public XWordsAdminModelContext()
+            : base("name=XWordsAdminModelContext")
         {
         }
     
@@ -25,6 +25,11 @@ namespace XWordsUrkAdminConsole.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Words> Words { get; set; }
+        public virtual DbSet<Word> Words { get; set; }
+        public virtual DbSet<Clue> Clues { get; set; }
+        public virtual DbSet<Media> Medias { get; set; }
+        public virtual DbSet<Game> Games { get; set; }
+        public virtual DbSet<Setting> Settings { get; set; }
+        public virtual DbSet<Version> Versions { get; set; }
     }
 }

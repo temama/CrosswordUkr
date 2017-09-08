@@ -12,21 +12,13 @@ namespace XWordsUrkAdminConsole.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Words
+    public partial class Version
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Words()
-        {
-            this.Status = 0;
-        }
-    
         public int Id { get; set; }
-        public string Word { get; set; }
-        public string Definition { get; set; }
-        public string Clue { get; set; }
-        public int Status { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string InternalNotes { get; set; }
+        public int State { get; set; }
         public System.DateTime LastModified { get; set; }
-        public int Complexity { get; set; }
-        public string IncludedFromVerion { get; set; }
     }
 }
