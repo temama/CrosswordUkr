@@ -15,12 +15,12 @@ namespace XWordsUrkAdminConsole.Models
     public partial class Game
     {
         public int Id { get; set; }
-        public int Type { get; set; }
+        public GameType Type { get; set; }
         public string TheGame { get; set; }
-        public int Complexity { get; set; }
+        public GameComplexity Complexity { get; set; }
         public string Description { get; set; }
         public string IncludedFromVer { get; set; }
-        public int State { get; set; }
+        public GameState State { get; set; }
         public string LastModified { get; set; }
         public Nullable<System.DateTime> ExcludedFromVer { get; set; }
     }

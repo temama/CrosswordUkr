@@ -23,9 +23,9 @@ namespace XWordsUrkAdminConsole.Models
         public int Id { get; set; }
         public string TheWord { get; set; }
         public string Definition { get; set; }
-        public int Area { get; set; }
-        public int Complexity { get; set; }
-        public int State { get; set; }
+        public WordArea Area { get; set; }
+        public WordComplexity Complexity { get; set; }
+        public WordState State { get; set; }
         public System.DateTime LastModified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

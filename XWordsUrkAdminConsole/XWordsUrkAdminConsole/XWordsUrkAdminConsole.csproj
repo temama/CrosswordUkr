@@ -166,7 +166,19 @@
     <Compile Include="Models\Clue.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ClueState.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Game.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GameComplexity.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GameState.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GameType.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Media.cs">
@@ -178,7 +190,19 @@
     <Compile Include="Models\Version.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\VersionState.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Word.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WordArea.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WordComplexity.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WordState.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\XWordsAdminModel.Context.cs">

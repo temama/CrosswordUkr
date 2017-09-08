@@ -16,7 +16,7 @@ namespace XWordsUrkAdminConsole.Controllers
         {
             using (var context = new XWordsAdminModelContext())
             {
-                return View(context.Words.Select(w=>w.TheWord.StartsWith("Г")).ToList());
+                return View(context.Words.Where(w=>w.TheWord.StartsWith("Г")).ToList());
             }
         }
     }

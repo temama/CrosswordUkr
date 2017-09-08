@@ -10,18 +10,13 @@
 namespace XWordsUrkAdminConsole.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Clue
+    public enum WordState : int
     {
-        public int Id { get; set; }
-        public string TheClue { get; set; }
-        public ClueState State { get; set; }
-        public int WordId { get; set; }
-        public string IncludedFromVer { get; set; }
-        public Nullable<System.DateTime> ExcludedFromVer { get; set; }
-        public string LastModified { get; set; }
-    
-        public virtual Word Word { get; set; }
+        None = 0,
+        MarkForDelete = 1,
+        Deleted = 2,
+        ToVerify = 3,
+        Active = 4
     }
 }

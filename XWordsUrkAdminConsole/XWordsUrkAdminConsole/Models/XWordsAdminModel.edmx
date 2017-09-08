@@ -144,9 +144,9 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TheWord" Type="String" Nullable="false" />
           <Property Name="Definition" Type="String" Nullable="true" />
-          <Property Name="Area" Type="Int32" Nullable="false" />
-          <Property Name="Complexity" Type="Int32" Nullable="false" />
-          <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="Area" Type="XWordsAdminModel.WordArea" Nullable="false" />
+          <Property Name="Complexity" Type="XWordsAdminModel.WordComplexity" Nullable="false" />
+          <Property Name="State" Type="XWordsAdminModel.WordState" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="Clues" Relationship="XWordsAdminModel.ClueWord" FromRole="Word" ToRole="Clue" />
         </EntityType>
@@ -156,7 +156,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TheClue" Type="String" Nullable="false" />
-          <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="State" Type="XWordsAdminModel.ClueState" Nullable="false" />
           <NavigationProperty Name="Word" Relationship="XWordsAdminModel.ClueWord" FromRole="Clue" ToRole="Word" />
           <Property Name="WordId" Type="Int32" Nullable="false" />
           <Property Name="IncludedFromVer" Type="String" Nullable="true" />
@@ -195,12 +195,12 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="XWordsAdminModel.GameType" Nullable="false" />
           <Property Name="TheGame" Type="String" Nullable="false" />
-          <Property Name="Complexity" Type="Int32" Nullable="false" />
+          <Property Name="Complexity" Type="XWordsAdminModel.GameComplexity" Nullable="false" />
           <Property Name="Description" Type="String" Nullable="true" />
           <Property Name="IncludedFromVer" Type="String" Nullable="false" />
-          <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="State" Type="XWordsAdminModel.GameState" Nullable="false" />
           <Property Name="LastModified" Type="String" Nullable="false" />
           <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
         </EntityType>
@@ -221,7 +221,7 @@
           <Property Name="Name" Type="String" Nullable="false" />
           <Property Name="Description" Type="String" Nullable="false" />
           <Property Name="InternalNotes" Type="String" Nullable="true" />
-          <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="State" Type="XWordsAdminModel.VersionState" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" />
         </EntityType>
         <Association Name="MediaWord">
@@ -236,6 +236,53 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EnumType Name="WordArea">
+          <Member Name="Unclassified" />
+          <Member Name="General" />
+          <Member Name="Geography" />
+        </EnumType>
+        <EnumType Name="WordComplexity">
+          <Member Name="Easy" />
+          <Member Name="Medium" />
+          <Member Name="Hard" />
+          <Member Name="Hardcore" />
+        </EnumType>
+        <EnumType Name="WordState">
+          <Member Name="None" />
+          <Member Name="MarkForDelete" />
+          <Member Name="Deleted" />
+          <Member Name="ToVerify" />
+          <Member Name="Active" />
+        </EnumType>
+        <EnumType Name="ClueState">
+          <Member Name="New" />
+          <Member Name="Verifed" />
+          <Member Name="Rejected" />
+        </EnumType>
+        <EnumType Name="GameType">
+          <Member Name="Crossword" />
+          <Member Name="CrosswordPuzzle" />
+        </EnumType>
+        <EnumType Name="GameComplexity">
+          <Member Name="Easy" />
+          <Member Name="Medium" />
+          <Member Name="Hard" />
+          <Member Name="Hardcore" />
+        </EnumType>
+        <EnumType Name="GameState">
+          <Member Name="New" />
+          <Member Name="ToVerify" />
+          <Member Name="Testing" />
+          <Member Name="Live" />
+          <Member Name="Rejected" />
+        </EnumType>
+        <EnumType Name="VersionState">
+          <Member Name="Planned" />
+          <Member Name="Working" />
+          <Member Name="Testing" />
+          <Member Name="Current" />
+          <Member Name="InProd" />
+        </EnumType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->

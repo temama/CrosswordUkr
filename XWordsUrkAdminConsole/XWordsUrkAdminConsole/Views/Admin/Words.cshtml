@@ -22,10 +22,13 @@
             @Html.DisplayNameFor(model => model.Definition)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.State)
+            @Html.DisplayNameFor(model => model.Area)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Complexity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.State)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.LastModified)
@@ -45,10 +48,13 @@
             @Html.Raw(item.Definition)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.State)
+            @Html.Raw(Enum.GetName(typeof(XWordsUrkAdminConsole.Models.WordArea), item.Area))
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Complexity)
+            @Html.Raw(Enum.GetName(typeof(XWordsUrkAdminConsole.Models.WordComplexity), item.Complexity))
+        </td>
+        <td>
+            @Html.Raw(Enum.GetName(typeof(XWordsUrkAdminConsole.Models.WordArea), item.State))
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.LastModified)
