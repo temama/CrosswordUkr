@@ -240,6 +240,9 @@
           <Member Name="Unclassified" />
           <Member Name="General" />
           <Member Name="Geography" />
+          <Member Name="City" />
+          <Member Name="Country" />
+          <Member Name="Name" />
         </EnumType>
         <EnumType Name="WordComplexity">
           <Member Name="Easy" />

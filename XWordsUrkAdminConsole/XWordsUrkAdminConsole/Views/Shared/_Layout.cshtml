@@ -29,26 +29,25 @@
             </div>
         </div>
     </div>
-    <div class="container body-content">
+    <div class="container-fluid body-content">
         @RenderBody()
-        <hr />
+        @*<hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - CrosswordsUkr Admin Console</p>
-        </footer>
-
-        <div id="modal-container" class="modal fade in hidden-print" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                </div>
+        </footer>*@
+    </div>
+    <div id="modal-container" class="modal fade in hidden-print" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
             </div>
         </div>
     </div>
-
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/datatables")
+    @Scripts.Render("~/bundles/datatables")
+    @Scripts.Render("~/bundles/moment")
     @RenderSection("scripts", required: false)
-
     <script language="text/javascript">
         $(document).ready(function () {
             $('#AboutBtn').click(function () {

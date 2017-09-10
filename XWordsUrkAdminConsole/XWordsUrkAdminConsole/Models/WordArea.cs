@@ -15,6 +15,9 @@ namespace XWordsUrkAdminConsole.Models
     {
         Unclassified = 0,
         General = 1,
-        Geography = 2
+        Geography =2,
+        City = 3,
+        Country = 4,
+        Name = 5
     }
 }
