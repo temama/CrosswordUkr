@@ -22,7 +22,24 @@
 {
     <script type="text/javascript">
         var wordListVM;
+        var wordAreas;
+        var wordComplexities;
+        var wordStates;
+
         $(function () {
+
+            $.getJSON("@Url.Action("GetWordAreas", "Admin")", function (resp) {
+                wordAreas = resp;
+            })
+
+            $.getJSON("@Url.Action("GetWordComplexities", "Admin")", function (resp) {
+                wordComplexities = resp;
+            })
+
+            $.getJSON("@Url.Action("GetWordStates", "Admin")", function (resp) {
+                wordStates = resp;
+            })
+
             wordListVM = {
                 dt: null,
 
@@ -55,20 +72,29 @@
                             {
                                 "title": "Area",
                                 "data": "Area",
-                                "searchable": true
+                                "searchable": true,
+                                "render": function (data) {
+                                    return wordAreas[data];
+                                }
                             },
                             {
                                 "title": "Complexity",
                                 "data": "Complexity",
-                                "searchable": true
+                                "searchable": true,
+                                "render": function (data) {
+                                    return wordComplexities[data];
+                                }
                             },
                             {
                                 "title": "State",
                                 "data": "State",
-                                "searchable": true
+                                "searchable": true,
+                                "render": function (data) {
+                                    return wordStates[data];
+                                }
                             },
                             {
-                                "title": "LastModified",
+                                "title": "Last Modified",
                                 "data": "LastModified",
                                 "searchable": false,
                                 "type": "date",
@@ -81,7 +107,9 @@
                     });
                 }
             }
-            
+
+
+
             // initialize the datatables
             wordListVM.init();
         });

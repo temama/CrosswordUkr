@@ -4,18 +4,16 @@ using System.Linq;
 using DataTables.Mvc;
 using System.Linq.Dynamic;
 using System;
+using System.Collections.Generic;
 
 namespace XWordsUrkAdminConsole.Controllers
 {
     public class AdminController : Controller
     {
-        private static XWordsAdminModelContext _dbContext;
-        private object _lock = new object();
+        private XWordsAdminModelContext _dbContext = new XWordsAdminModelContext();
 
         public AdminController()
         {
-            if (_dbContext == null)
-                _dbContext = new XWordsAdminModelContext();
         }
 
         // GET: Admin
@@ -42,7 +40,7 @@ namespace XWordsUrkAdminConsole.Controllers
             // Sorting
             var sortedColumns = requestModel.Columns.GetSortedColumns();
             var orderByString = string.Empty;
-
+            
             foreach (var column in sortedColumns)
             {
                 orderByString += orderByString != string.Empty ? "," : "";
@@ -50,6 +48,8 @@ namespace XWordsUrkAdminConsole.Controllers
                   (column.SortDirection ==
                   Column.OrderDirection.Ascendant ? " asc" : " desc");
             }
+            orderByString.Replace("AreaView", "Area");
+
             query = query.OrderBy(orderByString == string.Empty ? "TheWord asc" : orderByString);
 
             // Paging
@@ -65,15 +65,39 @@ namespace XWordsUrkAdminConsole.Controllers
                 State = word.State,
                 LastModified = word.LastModified
             }).ToList();
-
-            return Json(new DataTablesResponse(requestModel.Draw, data, filteredCount, totalCount),
-                 JsonRequestBehavior.AllowGet);
             
+            return Json(new DataTablesResponse(requestModel.Draw, data, filteredCount, totalCount),
+                 JsonRequestBehavior.AllowGet);            
         }
 
-        private string DateRepresentation(DateTime date)
+        public ActionResult GetWordAreas()
         {
-            return date.ToString("YYYY/MM/dd HH:mm:SS");
+            var res = new Dictionary<string, string>();
+            foreach (var e in Enum.GetValues(typeof(WordArea)))
+            {
+                res.Add(((int)e).ToString(), e.ToString());
+            }
+            return Json(res, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetWordComplexities()
+        {
+            var res = new Dictionary<string, string>();
+            foreach (var e in Enum.GetValues(typeof(WordComplexity)))
+            {
+                res.Add(((int)e).ToString(), e.ToString());
+            }
+            return Json(res, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetWordStates()
+        {
+            var res = new Dictionary<string, string>();
+            foreach (var e in Enum.GetValues(typeof(WordState)))
+            {
+                res.Add(((int)e).ToString(), e.ToString());
+            }
+            return Json(res, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Words()
@@ -84,8 +108,8 @@ namespace XWordsUrkAdminConsole.Controllers
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            //if (_dbContext != null)
-            //    _dbContext.Dispose();
+            if (_dbContext != null)
+                _dbContext.Dispose();
         }
     }
 }
