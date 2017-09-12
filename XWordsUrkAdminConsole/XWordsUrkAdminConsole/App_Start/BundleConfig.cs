@@ -25,7 +25,8 @@ namespace XWordsUrkAdminConsole
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/AddedStyles.css"));
 
             // Grid works
             bundles.Add(new ScriptBundle("~/bundles/datatables").Include(

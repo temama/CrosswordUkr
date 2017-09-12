@@ -5,14 +5,83 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    #words-data-table_processing {
+        background-color: orange;
+        font-weight: 600
+    }
+
+    .highlightFilter {
+        background-color: lightyellow;
+    }
+
+    /*.dataTables_processing {
+        fill: orange
+    }*/
+</style>
+
+<h3>Words</h3>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-primary list-panel" id="list-panel">
-            <div class="panel-heading list-panel-heading">
+            @*<div class="panel-heading list-panel-heading">
                 <h2 class="panel-title list-panel-title">Words</h2>
-            </div>
+            </div>*@
             <div class="panel-body">
-                <table id="words-data-table" class="table table-striped table-bordered"
+                <div id="wordsTableTools">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-8 col-xs-12">
+                                <a id="filtersBtn" href="#quickFilters" class="btn btn-info" data-toggle="collapse">Filters</a>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-inline">
+                                    <div id="wordsTableToolsSearch" class="form-group pull-right"></div>
+                                </div>
+                            </div>
+                    </div>
+                    <div id="quickFilters" class="collapse">
+                        <div >
+                            <div class="col-md-2 col-xs-4 panel panel-default" id="showDeletedCheckPanel" style="margin-top:0px; padding:3px; padding-bottom:5px">
+                                Show deleted
+                                <div class="material-switch pull-right">
+                                    <input id="showDeletedCheck" name="showDeletedCheck" type="checkbox" />
+                                    <label for="showDeletedCheck" class="label-primary" title="Show deleted records"></label>
+                                </div>
+                            </div>
+                            <div class="btn-group col-md-2 col-xs-4">
+                                <button data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Areas <span class="caret"></span></button>
+                                <ul class="dropdown-menu noclose">
+                                    @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordArea)))
+                                    {
+                                        <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e).ToString()">@e.ToString()</label></li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="btn-group col-md-2 col-xs-4">
+                                <button data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Complexity <span class="caret"></span></button>
+                                <ul class="dropdown-menu noclose">
+                                    @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordComplexity)))
+                                    {
+                                        <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e).ToString()">@e.ToString()</label></li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="btn-group col-md-2 col-xs-4">
+                                <button data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">States <span class="caret"></span></button>
+                                <ul class="dropdown-menu noclose">
+                                    @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordState)))
+                                    {
+                                        <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e).ToString()">@e.ToString()</label></li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="btn-group col-md-4 col-xs-8 panel panel-default" style="margin-top:0px; padding:3px; padding-bottom:5px">
+                                Modified:
+                            </div>
+                    </div>
+                        </div>
+                <table id="words-data-table" class="table table-bordered table-hover table-striped"
                        style="width:100%;"></table>
             </div>
         </div>
@@ -22,9 +91,37 @@
 {
     <script type="text/javascript">
         var wordListVM;
-        var wordAreas;
-        var wordComplexities;
-        var wordStates;
+        var wordListVMInited = false;
+
+        var wordAreas = [];
+        var wordComplexities = [];
+        var wordStates = [];
+
+        function DecorateFilters() {
+            var fSet = false;
+
+            if ($("#showDeletedCheck").prop("checked")) {
+                fSet = true;                
+                $("#showDeletedCheckPanel").addClass("highlightFilter");
+            }
+            else
+            {
+                $("#showDeletedCheckPanel").removeClass("highlightFilter");
+            }
+
+            if (fSet) {
+                $("#filtersBtn").removeClass("btn-info");
+                $("#filtersBtn").addClass("btn-warning");
+            } else {
+                $("#filtersBtn").removeClass("btn-warning");
+                $("#filtersBtn").addClass("btn-info");
+            }
+        };
+
+        function OnFilterUpdate() {
+            DecorateFilters();
+            wordListVM.dt.ajax.reload();
+        };
 
         $(function () {
 
@@ -44,14 +141,19 @@
                 dt: null,
 
                 init: function () {
-                    dt = $('#words-data-table').DataTable({
+                    this.dt = $('#words-data-table').DataTable({
                         "serverSide": true,
                         "stateSave": true,
                         "processing": true,
                         "searching": true,
                         //"scrollY": "60vh",
                         "ajax": {
-                            "url": "@Url.Action("GetWords","Admin")"
+                            "url": "@Url.Action("GetWords","Admin")",
+                            "data": function (d) {
+                                d.myKey = "myValue";
+                                d.showDeleted = true;
+                                // etc
+                            }
                         },
                         "columns": [
                             {
@@ -94,7 +196,7 @@
                                 }
                             },
                             {
-                                "title": "Last Modified",
+                                "title": "Modified",
                                 "data": "LastModified",
                                 "searchable": false,
                                 "type": "date",
@@ -103,15 +205,33 @@
                                 }
                             }
                         ],
+                        "searchDelay": 700,
                         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                        //"dom": "Bfrtilp",
+                        "dom": "frtilp",
+                        "buttons": [
+                            {
+                                "text": "Refresh",
+                                "action": function (e, dt, node, config) {
+                                    alert("In Development");
+                                }
+                            }
+                        ],
+                        //"fnServerParams": function (aoData) {
+                        //    aoData.push({ "name": "more_data", "value": "my_value" });
+                        //}
                     });
                 }
             }
 
-
-
             // initialize the datatables
             wordListVM.init();
+            
+            $("#words-data-table_filter").appendTo("#wordsTableToolsSearch");
+
+            $("#showDeletedCheck").change(function () {
+                OnFilterUpdate();
+            });
         });
 
     </script>
