@@ -16,7 +16,7 @@ namespace XWordsUrkAdminConsole.Controllers
             return View();
         }
 
-        public ActionResult GetWords([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel)
+        public ActionResult GetWords([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, WordsAdvancedSearch advSearch)
         {
             using (var dbContext = new XWordsAdminModelContext())
             {
@@ -29,6 +29,33 @@ namespace XWordsUrkAdminConsole.Controllers
                     var value = requestModel.Search.Value.Trim();
                     query = query.Where(p => p.TheWord.Contains(value) ||
                                              p.Definition.Contains(value));
+                }
+                                
+                if (!string.IsNullOrEmpty(advSearch.AreasFilter))
+                {
+                    var opts = advSearch.AreasFilter.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    var optsEnum = opts.Select(o => (WordArea)Convert.ToUInt32(o)).ToList();
+                    query = query.Where(w => optsEnum.Contains(w.Area));
+                }
+
+                if (!string.IsNullOrEmpty(advSearch.ComplexityFilter))
+                {
+                    var opts = advSearch.ComplexityFilter.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    var optsEnum = opts.Select(o => (WordComplexity)Convert.ToUInt32(o)).ToList();
+                    query = query.Where(w => optsEnum.Contains(w.Complexity));
+                }
+
+                if (!string.IsNullOrEmpty(advSearch.StatesFilter))
+                {
+                    if (advSearch.ShowDeleted && !advSearch.StatesFilter.Contains(string.Format("{0},", (int)WordState.Deleted)))
+                        advSearch.StatesFilter += (int)WordState.Deleted;
+                    var opts = advSearch.StatesFilter.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    var optsEnum = opts.Select(o => (WordComplexity)Convert.ToUInt32(o)).ToList();
+                    query = query.Where(w => optsEnum.Contains(w.Complexity));
+                }
+                else if (!advSearch.ShowDeleted)
+                {
+                    query = query.Where(w => w.State != WordState.Deleted);
                 }
 
                 var filteredCount = query.Count();

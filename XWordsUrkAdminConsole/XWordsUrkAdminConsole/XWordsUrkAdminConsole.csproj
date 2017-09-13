@@ -208,6 +208,7 @@
     <Compile Include="Models\WordComplexity.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\WordsAdvancedSearch.cs" />
     <Compile Include="Models\WordState.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>

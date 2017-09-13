@@ -25,68 +25,79 @@
     <div class="col-md-12">
         <div class="panel panel-primary list-panel" id="list-panel">
             @*<div class="panel-heading list-panel-heading">
-                <h2 class="panel-title list-panel-title">Words</h2>
-            </div>*@
+                    <h2 class="panel-title list-panel-title">Words</h2>
+                </div>*@
             <div class="panel-body">
                 <div id="wordsTableTools">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-8 col-xs-12">
-                                <a id="filtersBtn" href="#quickFilters" class="btn btn-info" data-toggle="collapse">Filters</a>
+                                <a id="filtersBtn" href="#quickFilters" class="btn btn-default" data-toggle="collapse">Filters</a>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-inline">
                                     <div id="wordsTableToolsSearch" class="form-group pull-right"></div>
                                 </div>
                             </div>
-                    </div>
-                    <div id="quickFilters" class="collapse">
-                        <div >
-                            <div class="col-md-2 col-xs-4 panel panel-default" id="showDeletedCheckPanel" style="margin-top:0px; padding:3px; padding-bottom:5px">
-                                Show deleted
-                                <div class="material-switch pull-right">
-                                    <input id="showDeletedCheck" name="showDeletedCheck" type="checkbox" />
-                                    <label for="showDeletedCheck" class="label-primary" title="Show deleted records"></label>
-                                </div>
-                            </div>
-                            <div class="btn-group col-md-2 col-xs-4">
-                                <button data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Areas <span class="caret"></span></button>
-                                <ul class="dropdown-menu noclose">
-                                    @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordArea)))
-                                    {
-                                        <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e).ToString()">@e.ToString()</label></li>
-                                    }
-                                </ul>
-                            </div>
-                            <div class="btn-group col-md-2 col-xs-4">
-                                <button data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Complexity <span class="caret"></span></button>
-                                <ul class="dropdown-menu noclose">
-                                    @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordComplexity)))
-                                    {
-                                        <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e).ToString()">@e.ToString()</label></li>
-                                    }
-                                </ul>
-                            </div>
-                            <div class="btn-group col-md-2 col-xs-4">
-                                <button data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">States <span class="caret"></span></button>
-                                <ul class="dropdown-menu noclose">
-                                    @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordState)))
-                                    {
-                                        <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e).ToString()">@e.ToString()</label></li>
-                                    }
-                                </ul>
-                            </div>
-                            <div class="btn-group col-md-4 col-xs-8 panel panel-default" style="margin-top:0px; padding:3px; padding-bottom:5px">
-                                Modified:
-                            </div>
-                    </div>
                         </div>
-                <table id="words-data-table" class="table table-bordered table-hover table-striped"
-                       style="width:100%;"></table>
+                        <div id="quickFilters" class="collapse">
+                            <div>
+                                <div class="col-md-2 col-xs-4 panel panel-default" id="showDeletedCheckPanel" style="margin-top:0px; padding:3px; padding-bottom:5px">
+                                    Show deleted
+                                    <div class="material-switch pull-right">
+                                        <input id="showDeletedCheck" name="showDeletedCheck" type="checkbox" />
+                                        <label for="showDeletedCheck" class="label-primary" title="Show deleted records"></label>
+                                    </div>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfAreasBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Areas <span class="caret"></span></button>
+                                    <ul id="qfAreasList" class="dropdown-menu noclose">
+                                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordArea)))
+                                        {
+                                            <li><label><input type="checkbox" id="qfArea_@((int)e).ToString()" name="@e.ToString()" value="@((int)e)">@e.ToString()</label></li>
+                                        }
+                                        <li><a id="qfAreasClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfComplexBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Complexity <span class="caret"></span></button>
+                                    <ul id="qfComplexList" class="dropdown-menu noclose">
+                                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordComplexity)))
+                                        {
+                                            <li><label><input type="checkbox" id="qfComplex_@((int)e).ToString()" name="@e.ToString()" value="@((int)e)">@e.ToString()</label></li>
+                                        }
+                                        <li><a id="qfComplexClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfStatesBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">States <span class="caret"></span></button>
+                                    <ul id="qfStatesList" class="dropdown-menu noclose">
+                                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordState)))
+                                        {
+                                            <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e)">@e.ToString()</label></li>
+                                        }
+                                        <li><a id="qfStatesClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                                <!--div class="btn-group col-md-4 col-xs-8 panel panel-default" style="margin-top:0px; padding:3px; padding-bottom:5px">
+                                    Modified 
+                                    <div class="material-switch pull-right">
+                                        <input id="qfModifiedOn" name="qfModifiedOn" type="checkbox" />
+                                        <label for="qfModifiedOn" class="label-primary" title="Turn on/off filter by Last modified date"></label>
+                                    </div>
+                                    <input class="pull-right" type="datetime"/>
+                                </div-->
+                            </div>
+                        </div>
+                        <table id="words-data-table" class="table table-bordered table-hover table-striped"
+                               style="width:100%;"></table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts
 {
     <script type="text/javascript">
@@ -96,6 +107,8 @@
         var wordAreas = [];
         var wordComplexities = [];
         var wordStates = [];
+
+        var handleFilterChange = true;
 
         function DecorateFilters() {
             var fSet = false;
@@ -109,12 +122,69 @@
                 $("#showDeletedCheckPanel").removeClass("highlightFilter");
             }
 
+            // Areas
+            var fAreas = document.getElementById("qfAreasList").getElementsByTagName("input");
+            var fAreasSelected = false;
+            for (var i = 0; i < fAreas.length; i++) {
+                if (fAreas[i].checked)
+                {
+                    fAreasSelected = true;
+                    fSet = true;
+                }
+            }
+
+            if (fAreasSelected) {
+                fSet = true;
+                $("#qfAreasBtn").addClass("highlightFilter");
+            }
+            else {
+                $("#qfAreasBtn").removeClass("highlightFilter");
+            }
+
+            // Complexity
+            var fComplex = document.getElementById("qfComplexList").getElementsByTagName("input");
+            var fComplexSelected = false;
+            for (var i = 0; i < fComplex.length; i++) {
+                if (fComplex[i].checked) {
+                    fComplexSelected = true;
+                    fSet = true;
+                }
+            }
+
+            if (fComplexSelected) {
+                fSet = true;
+                $("#qfComplexBtn").addClass("highlightFilter");
+            }
+            else {
+                $("#qfComplexBtn").removeClass("highlightFilter");
+            }
+
+            // States
+            var fStates = document.getElementById("qfStatesList").getElementsByTagName("input");
+            var fStatesSelected = false;
+            for (var i = 0; i < fComplex.length; i++) {
+                if (fStates[i].checked) {
+                    fStatesSelected = true;
+                    fSet = true;
+                }
+            }
+
+            if (fStatesSelected) {
+                fSet = true;
+                $("#qfStatesBtn").addClass("highlightFilter");
+            }
+            else {
+                $("#qfStatesBtn").removeClass("highlightFilter");
+            }
+
+
+            // If at least one filter set
             if (fSet) {
-                $("#filtersBtn").removeClass("btn-info");
+                $("#filtersBtn").removeClass("btn-default");
                 $("#filtersBtn").addClass("btn-warning");
             } else {
                 $("#filtersBtn").removeClass("btn-warning");
-                $("#filtersBtn").addClass("btn-info");
+                $("#filtersBtn").addClass("btn-default");
             }
         };
 
@@ -150,9 +220,27 @@
                         "ajax": {
                             "url": "@Url.Action("GetWords","Admin")",
                             "data": function (d) {
-                                d.myKey = "myValue";
-                                d.showDeleted = true;
-                                // etc
+                                d.ShowDeleted = $("#showDeletedCheck").prop("checked");
+                                d.AreasFilter = "";
+                                var areas = document.getElementById("qfAreasList").getElementsByTagName("input");
+                                for (var i = 0; i < areas.length; i++) {
+                                    if (areas[i].checked)
+                                        d.AreasFilter = d.AreasFilter + areas[i].value + ",";
+                                }
+                                d.ComplexityFilter = "";
+                                var compls = document.getElementById("qfComplexList").getElementsByTagName("input");
+                                for (var i = 0; i < compls.length; i++) {
+                                    if (compls[i].checked)
+                                        d.ComplexityFilter = d.ComplexityFilter + compls[i].value + ",";
+                                }
+                                d.StatesFilter = "";
+                                var states = document.getElementById("qfStatesList").getElementsByTagName("input");
+                                for (var i = 0; i < states.length; i++) {
+                                    if (states[i].checked)
+                                        d.StatesFilter = d.StatesFilter + states[i].value + ",";
+                                }
+                                d.ModifiedFrom = "";
+                                d.ModifiedTo = "";
                             }
                         },
                         "columns": [
@@ -205,7 +293,7 @@
                                 }
                             }
                         ],
-                        "searchDelay": 700,
+                        "searchDelay": 500,
                         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
                         //"dom": "Bfrtilp",
                         "dom": "frtilp",
@@ -232,6 +320,52 @@
             $("#showDeletedCheck").change(function () {
                 OnFilterUpdate();
             });
+
+            $("#qfAreasClear").click(function () {
+                handleFilterChange = false;
+                var opts = document.getElementById("qfAreasList").getElementsByTagName("input");
+                for (var i = 0; i < opts.length; i++) {
+                    opts[i].checked = false;
+                }
+                handleFilterChange = true;
+                OnFilterUpdate();
+            });
+                        
+            $("#qfComplexClear").click(function () {
+                handleFilterChange = false;
+                var opts = document.getElementById("qfComplexList").getElementsByTagName("input");
+                for (var i = 0; i < opts.length; i++) {
+                    opts[i].checked = false;
+                }
+                handleFilterChange = true;
+                OnFilterUpdate();
+            });
+
+            $("#qfStatesClear").click(function () {
+                handleFilterChange = false;
+                var opts = document.getElementById("qfStatesList").getElementsByTagName("input");
+                for (var i = 0; i < opts.length; i++) {
+                    opts[i].checked = false;
+                }
+                handleFilterChange = true;
+                OnFilterUpdate();
+            });
+            
+            $("input[id^='qfArea_']").change(function () {
+                if (handleFilterChange)
+                    OnFilterUpdate();
+            });
+
+            $("input[id^='qfComplex_']").change(function () {
+                if (handleFilterChange)
+                    OnFilterUpdate();
+            });
+
+            $("input[id^='qfStates_']").change(function () {
+                if (handleFilterChange)
+                    OnFilterUpdate();
+            });
+
         });
 
     </script>
