@@ -129,6 +129,21 @@ namespace XWordsUrkAdminConsole.Controllers
             return View();
         }
 
+        public ActionResult WordDetails(int? id)
+        {
+            if (id == null || id < 0)
+            {
+                return View("WordDetails", new Word());
+            }
+
+            Word word = null;
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                word = dbContext.Words.FirstOrDefault(w => w.Id == id);
+            }
+            return PartialView("WordDetails", word);
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

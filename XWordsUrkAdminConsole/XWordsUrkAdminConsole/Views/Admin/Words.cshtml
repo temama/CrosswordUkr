@@ -98,6 +98,13 @@
     </div>
 </div>
 
+<div id="word-edit-modal" class="modal fade in hidden-print" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div id="word-edit-container" class="modal-content">
+        </div>
+    </div>
+</div>
+
 @section Scripts
 {
     <script type="text/javascript">
@@ -110,11 +117,13 @@
 
         var handleFilterChange = true;
 
+        var cluesList;
+
         function DecorateFilters() {
             var fSet = false;
 
             if ($("#showDeletedCheck").prop("checked")) {
-                fSet = true;                
+                fSet = true;
                 $("#showDeletedCheckPanel").addClass("highlightFilter");
             }
             else
@@ -192,6 +201,38 @@
             DecorateFilters();
             wordListVM.dt.ajax.reload();
         };
+
+        function InitWordDetails() {
+            cluesList = {
+                dt: null,
+
+                init: function () {
+                    this.dt = $('#clues-data-table').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "searching": true,
+                        "ajax": {
+                            "url": "@Url.Action("GetWords","Admin")"
+                        },
+                        "columns": [
+                            {
+                                "title": "Id",
+                                "data": "Id",
+                                "searchable": false
+                            },
+                            {
+                                "title": "Word",
+                                "data": "TheWord",
+                                "searchable": true
+                            }
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    });
+                }
+            }
+
+            cluesList.init();
+        }
 
         $(function () {
 
@@ -296,25 +337,14 @@
                         "searchDelay": 500,
                         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
                         //"dom": "Bfrtilp",
-                        "dom": "frtilp",
-                        "buttons": [
-                            {
-                                "text": "Refresh",
-                                "action": function (e, dt, node, config) {
-                                    alert("In Development");
-                                }
-                            }
-                        ],
-                        //"fnServerParams": function (aoData) {
-                        //    aoData.push({ "name": "more_data", "value": "my_value" });
-                        //}
+                        "dom": "frtilp"
                     });
                 }
             }
 
             // initialize the datatables
             wordListVM.init();
-            
+
             $("#words-data-table_filter").appendTo("#wordsTableToolsSearch");
 
             $("#showDeletedCheck").change(function () {
@@ -330,7 +360,7 @@
                 handleFilterChange = true;
                 OnFilterUpdate();
             });
-                        
+
             $("#qfComplexClear").click(function () {
                 handleFilterChange = false;
                 var opts = document.getElementById("qfComplexList").getElementsByTagName("input");
@@ -350,7 +380,7 @@
                 handleFilterChange = true;
                 OnFilterUpdate();
             });
-            
+
             $("input[id^='qfArea_']").change(function () {
                 if (handleFilterChange)
                     OnFilterUpdate();
@@ -366,6 +396,15 @@
                     OnFilterUpdate();
             });
 
+            $('#words-data-table tbody').on('dblclick', 'tr', function () {
+                var data = wordListVM.dt.row(this).data(); // use data.Id further
+                var url = "@Url.Action("WordDetails","Admin")" + "/" + data.Id;
+                $.get(url, function (data) {
+                    $("#word-edit-container").html(data);
+                    InitWordDetails();
+                    $("#word-edit-modal").modal("show");
+                })
+            });
         });
 
     </script>
