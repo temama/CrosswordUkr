@@ -45,3 +45,64 @@
     background: inherit;
     left: 20px;
 }
+
+
+
+/* ---------- Word States decorations --------------*/
+
+/*None*/
+.word-state-0 {
+    background-color: white;
+    color: black;
+}
+
+/*MarkForDelete*/
+.word-state-1 {
+    background-color: orange;
+    color: white;
+}
+
+/*Deleted*/
+.word-state-2 {
+    background-color: red;
+    color: white;
+}
+
+/*ToVerify*/
+.word-state-3 {
+    background-color: greenyellow;
+    color: black;
+}
+
+/*Active*/
+.word-state-4 {
+    background-color: green;
+    color: white;
+}
+
+
+/* ---------- Word Complexity decorations --------------*/
+
+/*Easy*/
+.word-complex-0 {
+    background-color: #5cb85c;
+    color: white;
+}
+
+/*Medium*/
+.word-complex-1 {
+    background-color: #ffff66;
+    color: black;
+}
+
+/*Hard*/
+.word-complex-2 {
+    background-color: #f0ad4e;
+    color: white;
+}
+
+/*Hardcore*/
+.word-complex-3 {
+    background-color: #d9534f;
+    color: white;
+}

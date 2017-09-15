@@ -169,10 +169,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Clue.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\CluesAdvancedSearch.cs" />
     <Compile Include="Models\ClueState.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Event.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Game.cs">
@@ -191,6 +196,9 @@
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Setting.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\User.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Version.cs">
@@ -557,6 +565,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Models\XWordsAminModelXInitDBScript.sql" />
     <Content Include="Models\XWordsAdminModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>XWordsAdminModel.Context.cs</LastGenOutput>

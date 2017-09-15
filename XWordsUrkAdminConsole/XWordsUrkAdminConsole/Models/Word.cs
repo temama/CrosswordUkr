@@ -27,8 +27,10 @@ namespace XWordsUrkAdminConsole.Models
         public WordComplexity Complexity { get; set; }
         public WordState State { get; set; }
         public System.DateTime LastModified { get; set; }
+        public int UserId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Clue> Clues { get; set; }
+        public virtual User ModifiedBy { get; set; }
     }
 }

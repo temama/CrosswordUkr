@@ -31,8 +31,16 @@
                 <div id="wordsTableTools">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-md-8 col-xs-12">
+                            <div class="col-md-1 col-xs-2">
                                 <a id="filtersBtn" href="#quickFilters" class="btn btn-default" data-toggle="collapse">Filters</a>
+                            </div>
+                            <div class="col-md-1 col-xs-2">
+                                <button class="btn btn-info btn-md" onclick="OnAddWordClick();">
+                                    <span class="glyphicon glyphicon-plus"></span> Add word
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+
                             </div>
                             <div class="col-md-4">
                                 <div class="form-inline">
@@ -119,6 +127,16 @@
 
         var cluesList;
 
+        function OnAddWordClick() {
+            var url = "@Url.Action("WordDetails","Admin")" + "/";
+            var data = { Id: -1};
+            $.get(url, function (htmlData) {
+                $("#word-edit-container").html(htmlData);
+                InitWordDetails(data);
+                $("#word-edit-modal").modal("show");
+            });
+        }
+
         function DecorateFilters() {
             var fSet = false;
 
@@ -202,7 +220,10 @@
             wordListVM.dt.ajax.reload();
         };
 
-        function InitWordDetails() {
+        function InitWordDetails(word) {
+            if (word.Id > 0)
+                $("#wordDetaisHasChanges").hide();
+
             cluesList = {
                 dt: null,
 
@@ -212,7 +233,10 @@
                         "processing": true,
                         "searching": true,
                         "ajax": {
-                            "url": "@Url.Action("GetWords","Admin")"
+                            "url": "@Url.Action("GetClues","Admin")",
+                            "data": function (d) {
+                                d.WordId = word.Id;
+                            }
                         },
                         "columns": [
                             {
@@ -222,16 +246,141 @@
                             },
                             {
                                 "title": "Word",
-                                "data": "TheWord",
+                                "data": "Word",
+                                "searchable": true
+                            },
+                            {
+                                "title": "Clue",
+                                "data": "TheClue",
+                                "searchable": false
+                            },
+                            {
+                                "title": "Complexity",
+                                "data": "Complexity",
+                                "searchable": true
+                            },
+                            {
+                                "title": "In",
+                                "data": "IncludedFromVer",
+                                "searchable": false
+                            },
+                            {
+                                "title": "Ex",
+                                "data": "ExcludedFromVer",
+                                "searchable": true
+                            },
+                            {
+                                "title": "Modified",
+                                "data": "LastModified",
+                                "searchable": false
+                            },
+                            {
+                                "title": "By",
+                                "data": "ModifiedBy",
                                 "searchable": true
                             }
                         ],
-                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                        //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                        //"dom": "frtip"
+                        "dom":"<'row'<'col-sm-12'frt>><'row'<'col-sm-5'i><'col-sm-7'p>>",
                     });
                 }
             }
 
             cluesList.init();
+
+            $("#clues-data-table_filter").appendTo("#cluesTableToolsSearch");
+        }
+
+        function OnWordDetailsChanged() {
+            $("#wordDetaisHasChanges").val("1");
+            $("#wordDetaisHasChanges").show();
+        }
+
+        function OnWordDetailsWordChanged(event) {
+            var regex = new RegExp("^[а-яА-ЯіІїЇєЄ]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+            OnWordDetailsChanged();
+        }
+
+        function OnWordDetailsStateItemClick(id, repr) {
+            var el = $("#word-details-state-btn");
+            el.html(repr + " <span class=\"caret\" />");
+            el.val(id);
+            el.attr("class", el.get(0).className.replace(/\bword-state-\S+/g, "word-state-" + id));
+            OnWordDetailsChanged();
+        }
+
+        function OnWordDetailsAreaItemClick(id, repr) {
+            var el = $("#word-details-area-btn");
+            el.html(repr + " <span class=\"caret\" />");
+            el.val(id);
+            OnWordDetailsChanged();
+        }
+
+        function OnWordDetailsComplexItemClick(id, repr) {
+            var el = $("#word-details-complex-btn");
+            el.html(repr + " <span class=\"caret\" />");
+            el.val(id);
+            el.attr("class", el.get(0).className.replace(/\bword-complex-\S+/g, "word-complex-" + id));
+            OnWordDetailsChanged();
+        }
+
+        function OnWordDefinitionInput() {
+            $("#wordDefView").html($("#wordDefEdit").val());
+            OnWordDetailsChanged();
+        }
+
+        function OnWordDetailsSaveClick() {
+            SaveWordDetails($("#word-details-id").val() <= 0, false);
+        }
+
+        function OnWordDetailsSaveExitClick() {
+            SaveWordDetails(false, true);
+        }
+
+        function SaveWordDetails(reload, close) {
+            var wordData = {
+                Id: $("#word-details-id").text(),
+                TheWord: $("#word-details-word").val(),
+                Definition: $("#wordDefEdit").val(),
+                Area: $("#word-details-area-btn").val(),
+                Complexity: $("#word-details-complex-btn").val(),
+                State: $("#word-details-state-btn").val()
+            };
+
+            $.ajax({
+                data: JSON.stringify(wordData),
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "@Url.Action("SaveWord", "Admin")",
+                dataType: "json",
+                success: function (sData) {
+                    $("#wordDetaisHasChanges").val("0");
+                    $("#wordDetaisHasChanges").hide();
+
+                    if (reload) {
+                        var url = "@Url.Action("WordDetails","Admin")" + "/" + sData.Id;
+                        $.get(url, function (htmlData) {
+                            $("#word-edit-container").html(htmlData);
+                            InitWordDetails(sData);
+                        });
+                    }
+
+                    if (close)
+                    {
+                        $("#word-edit-modal").modal("hide");
+                    }
+                },
+                error: function (fData) {
+                    alert("Save failed:\n" + fData);
+                }
+            });
+
         }
 
         $(function () {
@@ -321,7 +470,7 @@
                                 "data": "State",
                                 "searchable": true,
                                 "render": function (data) {
-                                    return wordStates[data];
+                                    return "<div class=\"panel panel-default word-state-" + data + "\">" + wordStates[data] + "</div>";
                                 }
                             },
                             {
@@ -399,11 +548,21 @@
             $('#words-data-table tbody').on('dblclick', 'tr', function () {
                 var data = wordListVM.dt.row(this).data(); // use data.Id further
                 var url = "@Url.Action("WordDetails","Admin")" + "/" + data.Id;
-                $.get(url, function (data) {
-                    $("#word-edit-container").html(data);
-                    InitWordDetails();
+                $.get(url, function (htmlData) {
+                    $("#word-edit-container").html(htmlData);
+                    InitWordDetails(data);
                     $("#word-edit-modal").modal("show");
-                })
+                });
+            });
+
+            $("#word-edit-modal").on("hide.bs.modal", function (e) {
+                if ($("#wordDetaisHasChanges").val() == "1") {
+                    if (!confirm("Changes are not saved.\nAre you sure you want to close dialog?")) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        return false;
+                    }
+                }
             });
         });
 

@@ -5,6 +5,8 @@ using DataTables.Mvc;
 using System.Linq.Dynamic;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Data.Entity;
 
 namespace XWordsUrkAdminConsole.Controllers
 {
@@ -71,7 +73,6 @@ namespace XWordsUrkAdminConsole.Controllers
                       (column.SortDirection ==
                       Column.OrderDirection.Ascendant ? " asc" : " desc");
                 }
-                orderByString.Replace("AreaView", "Area");
 
                 query = query.OrderBy(orderByString == string.Empty ? "TheWord asc" : orderByString);
 
@@ -131,17 +132,155 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult WordDetails(int? id)
         {
-            if (id == null || id < 0)
-            {
-                return View("WordDetails", new Word());
-            }
-
-            Word word = null;
             using (var dbContext = new XWordsAdminModelContext())
             {
-                word = dbContext.Words.FirstOrDefault(w => w.Id == id);
+                if (id == null || id < 0)
+                {
+                    var user = dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
+                    return PartialView("WordDetails", new Word()
+                    {
+                        Id = -1,
+                        LastModified = DateTime.Now,
+                        UserId = user.Id,
+                        ModifiedBy = user
+                    });
+                }
+
+                Word word = null;
+
+                word = dbContext.Words.Include(w => w.ModifiedBy).FirstOrDefault(w => w.Id == id);
+
+                return PartialView("WordDetails", word);
             }
-            return PartialView("WordDetails", word);
+        }
+
+        [HttpPost]
+        public JsonResult SaveWord(Word postWord)
+        {
+            // TODO: check permissions
+            // TODO: save under correct user (ModifiedBy)
+            try
+            {
+                Word word;
+
+                using (var dbContext = new XWordsAdminModelContext())
+                {
+                    var eventComment = new StringBuilder();
+                    var user = dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
+
+                    if (postWord.Id <= 0)
+                    {
+                        // TODO: Check if word exist
+                        word = new Word();
+                        dbContext.Words.Add(word);
+                        eventComment.Append("added new");
+                    }
+                    else
+                    {
+                        word = dbContext.Words.Include(w => w.ModifiedBy).First(w => w.Id == postWord.Id);
+                        eventComment.Append("updated");
+                    }
+
+                    var timestamp = DateTime.Now;
+
+                    word.TheWord = postWord.TheWord.ToUpper();
+                    word.Definition = postWord.Definition;
+                    word.Area = postWord.Area;
+                    word.Complexity = postWord.Complexity;
+                    word.State = postWord.State;
+                    word.LastModified = timestamp;
+                    word.UserId = user.Id; 
+                    word.ModifiedBy = user;
+
+                    dbContext.SaveChanges();
+
+                    var audit = new Event()
+                    {
+                        TimeStamp = timestamp,
+                        UserId = 2,
+                        Table = "Words",
+                        RecordId = word.Id,
+                        Comment = eventComment.ToString()
+                    };
+                    dbContext.Events.Add(audit);
+                    dbContext.SaveChanges();
+
+                    return Json(new
+                    {
+                        Id = word.Id,
+                        TheWord = word.TheWord,
+                        Definition = word.Definition,
+                        Area = word.Area,
+                        Complexity = word.Complexity,
+                        State = word.State,
+                        LastModified = word.LastModified,
+                        UserId = word.UserId
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult GetClues([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, CluesAdvancedSearch advSearch)
+        {
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                IQueryable<Clue> query = dbContext.Clues;
+                var totalCount = query.Count();
+
+                if (advSearch.WordId >= 0)
+                {
+                    query = query.Where(c => c.WordId == advSearch.WordId);
+                }
+
+                // Apply filters for searching
+                if (requestModel.Search.Value != string.Empty)
+                {
+                    var value = requestModel.Search.Value.Trim();
+                    query = query.Where(c => c.Word.TheWord.Contains(value) ||
+                                             c.TheClue.Contains(value));
+                }
+
+                var filteredCount = query.Count();
+
+                // Sorting
+                var sortedColumns = requestModel.Columns.GetSortedColumns();
+                var orderByString = string.Empty;
+
+                foreach (var column in sortedColumns)
+                {
+                    orderByString += orderByString != string.Empty ? "," : "";
+                    orderByString += (column.Data) +
+                      (column.SortDirection ==
+                      Column.OrderDirection.Ascendant ? " asc" : " desc");
+                }
+
+                query = query.OrderBy(orderByString == string.Empty ? "Word asc" : orderByString);
+
+                // Paging
+                query = query.Skip(requestModel.Start).Take(requestModel.Length);
+
+                // Fetching
+                var data = query.Select(clue => new
+                {
+                    Id = clue.Id,
+                    WordId = clue.WordId,
+                    Word = clue.Word,
+                    TheClue = clue.TheClue,
+                    Complexity = clue.Complexity,
+                    State = clue.State,
+                    IncludedFromVer = clue.IncludedFromVer,
+                    ExcludedFromVer = clue.ExcludedFromVer,
+                    LastModified = clue.LastModified,
+                    ModifiedBy = clue.ModifiedBy.Initials
+                }).ToList();
+
+                return Json(new DataTablesResponse(requestModel.Draw, data, filteredCount, totalCount),
+                     JsonRequestBehavior.AllowGet);
+            }
         }
 
         protected override void Dispose(bool disposing)

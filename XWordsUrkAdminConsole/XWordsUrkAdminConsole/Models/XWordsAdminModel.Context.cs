@@ -31,5 +31,7 @@ namespace XWordsUrkAdminConsole.Models
         public virtual DbSet<Game> Games { get; set; }
         public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<Version> Versions { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
     }
 }

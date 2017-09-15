@@ -12,6 +12,8 @@
     <EntitySet Name="Games" EntityType="XWordsAdminModel.Store.Games" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Settings" EntityType="XWordsAdminModel.Store.Settings" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Versions" EntityType="XWordsAdminModel.Store.Versions" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Users" EntityType="XWordsAdminModel.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Events" EntityType="XWordsAdminModel.Store.Events" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="ClueWord" Association="XWordsAdminModel.Store.ClueWord">
       <End Role="Clue" EntitySet="Clues" />
       <End Role="Word" EntitySet="Words" />
@@ -19,6 +21,34 @@
     <AssociationSet Name="MediaWord" Association="XWordsAdminModel.Store.MediaWord">
       <End Role="Media" EntitySet="Medias" />
       <End Role="Word" EntitySet="Words" />
+    </AssociationSet>
+    <AssociationSet Name="EventUser" Association="XWordsAdminModel.Store.EventUser">
+      <End Role="Event" EntitySet="Events" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="ClueUser" Association="XWordsAdminModel.Store.ClueUser">
+      <End Role="Clue" EntitySet="Clues" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="WordModifiedUser" Association="XWordsAdminModel.Store.WordUser">
+      <End Role="Word" EntitySet="Words" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="MediaModifiedUser" Association="XWordsAdminModel.Store.MediaModifiedUser">
+      <End Role="Media" EntitySet="Medias" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="SettingModifiedUser" Association="XWordsAdminModel.Store.SettingModifiedUser">
+      <End Role="Setting" EntitySet="Settings" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="GameModifiedUser" Association="XWordsAdminModel.Store.GameModifiedUser">
+      <End Role="Game" EntitySet="Games" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="VersionModifiedUser" Association="XWordsAdminModel.Store.VersionModifiedUser">
+      <End Role="Version" EntitySet="Versions" />
+      <End Role="User" EntitySet="Users" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="Words">
@@ -32,6 +62,7 @@
     <Property Name="Complexity" Type="int" Nullable="false" />
     <Property Name="State" Type="int" Nullable="false" />
     <Property Name="LastModified" Type="datetime" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Clues">
     <Key>
@@ -44,6 +75,8 @@
     <Property Name="IncludedFromVer" Type="nvarchar" Nullable="true" />
     <Property Name="ExcludedFromVer" Type="datetime" Nullable="true" />
     <Property Name="LastModified" Type="nvarchar" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="Complexity" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Medias">
     <Key>
@@ -58,6 +91,7 @@
     <Property Name="LastModified" Type="datetime" Nullable="false" />
     <Property Name="ExcludedFromVer" Type="datetime" Nullable="true" />
     <Property Name="IncludedFromVer" Type="nvarchar" Nullable="true" />
+    <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Games">
     <Key>
@@ -72,6 +106,7 @@
     <Property Name="State" Type="int" Nullable="false" />
     <Property Name="LastModified" Type="nvarchar" Nullable="false" />
     <Property Name="ExcludedFromVer" Type="datetime" Nullable="true" />
+    <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Settings">
     <Key>
@@ -81,6 +116,7 @@
     <Property Name="Name" Type="nvarchar" Nullable="false" />
     <Property Name="Value" Type="nvarchar" Nullable="false" />
     <Property Name="LastModified" Type="datetime" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Versions">
     <Key>
@@ -92,6 +128,28 @@
     <Property Name="InternalNotes" Type="nvarchar" Nullable="true" />
     <Property Name="State" Type="int" Nullable="false" />
     <Property Name="LastModified" Type="datetime" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" Nullable="false" />
+    <Property Name="Initials" Type="nvarchar" Nullable="false" />
+    <Property Name="Password" Type="nvarchar" Nullable="false" />
+    <Property Name="Role" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Events">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TimeStamp" Type="datetime" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="Table" Type="nvarchar" Nullable="false" />
+    <Property Name="RecordId" Type="int" Nullable="false" />
+    <Property Name="Comment" Type="nvarchar" Nullable="true" />
   </EntityType>
   <Association Name="ClueWord">
     <End Role="Clue" Type="XWordsAdminModel.Store.Clues" Multiplicity="*" />
@@ -117,6 +175,90 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="EventUser">
+    <End Role="Event" Type="XWordsAdminModel.Store.Events" Multiplicity="*" />
+    <End Role="User" Type="XWordsAdminModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Event">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ClueUser">
+    <End Role="Clue" Type="XWordsAdminModel.Store.Clues" Multiplicity="*" />
+    <End Role="User" Type="XWordsAdminModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Clue">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="WordUser">
+    <End Role="Word" Type="XWordsAdminModel.Store.Words" Multiplicity="*" />
+    <End Role="User" Type="XWordsAdminModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Word">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="MediaModifiedUser">
+    <End Role="Media" Type="XWordsAdminModel.Store.Medias" Multiplicity="*" />
+    <End Role="User" Type="XWordsAdminModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Media">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="SettingModifiedUser">
+    <End Role="Setting" Type="XWordsAdminModel.Store.Settings" Multiplicity="*" />
+    <End Role="User" Type="XWordsAdminModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Setting">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="GameModifiedUser">
+    <End Role="Game" Type="XWordsAdminModel.Store.Games" Multiplicity="*" />
+    <End Role="User" Type="XWordsAdminModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Game">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="VersionModifiedUser">
+    <End Role="Version" Type="XWordsAdminModel.Store.Versions" Multiplicity="*" />
+    <End Role="User" Type="XWordsAdminModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Version">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -136,6 +278,36 @@
             <End Role="Media" EntitySet="Medias" />
             <End Role="Word" EntitySet="Words" />
           </AssociationSet>
+          <EntitySet Name="Users" EntityType="XWordsAdminModel.User" />
+          <EntitySet Name="Events" EntityType="XWordsAdminModel.Event" />
+          <AssociationSet Name="EventUser" Association="XWordsAdminModel.EventUser">
+            <End Role="Event" EntitySet="Events" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="ClueUser" Association="XWordsAdminModel.ClueUser">
+            <End Role="Clue" EntitySet="Clues" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="WordModifiedUser" Association="XWordsAdminModel.WordUser">
+            <End Role="Word" EntitySet="Words" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="MediaModifiedUser" Association="XWordsAdminModel.MediaModifiedUser">
+            <End Role="Media" EntitySet="Medias" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="SettingModifiedUser" Association="XWordsAdminModel.SettingModifiedUser">
+            <End Role="Setting" EntitySet="Settings" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="GameModifiedUser" Association="XWordsAdminModel.GameModifiedUser">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="VersionModifiedUser" Association="XWordsAdminModel.VersionModifiedUser">
+            <End Role="Version" EntitySet="Versions" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Word">
           <Key>
@@ -149,19 +321,24 @@
           <Property Name="State" Type="XWordsAdminModel.WordState" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="Clues" Relationship="XWordsAdminModel.ClueWord" FromRole="Word" ToRole="Clue" />
+          <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.WordUser" FromRole="Word" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Clue">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WordId" Type="Int32" Nullable="false" />
           <Property Name="TheClue" Type="String" Nullable="false" />
+          <Property Name="Complexity" Type="XWordsAdminModel.WordComplexity" Nullable="false" />
           <Property Name="State" Type="XWordsAdminModel.ClueState" Nullable="false" />
           <NavigationProperty Name="Word" Relationship="XWordsAdminModel.ClueWord" FromRole="Clue" ToRole="Word" />
-          <Property Name="WordId" Type="Int32" Nullable="false" />
           <Property Name="IncludedFromVer" Type="String" Nullable="true" />
           <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
           <Property Name="LastModified" Type="String" Nullable="false" />
+          <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.ClueUser" FromRole="Clue" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="ClueWord">
           <End Type="XWordsAdminModel.Clue" Role="Clue" Multiplicity="*" />
@@ -189,6 +366,8 @@
           <Property Name="LastModified" Type="DateTime" Nullable="false" />
           <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
           <Property Name="IncludedFromVer" Type="String" Nullable="true" />
+          <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.MediaModifiedUser" FromRole="Media" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Game">
           <Key>
@@ -200,9 +379,11 @@
           <Property Name="Complexity" Type="XWordsAdminModel.GameComplexity" Nullable="false" />
           <Property Name="Description" Type="String" Nullable="true" />
           <Property Name="IncludedFromVer" Type="String" Nullable="false" />
+          <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
           <Property Name="State" Type="XWordsAdminModel.GameState" Nullable="false" />
           <Property Name="LastModified" Type="String" Nullable="false" />
-          <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
+          <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.GameModifiedUser" FromRole="Game" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Setting">
           <Key>
@@ -212,6 +393,8 @@
           <Property Name="Name" Type="String" Nullable="false" />
           <Property Name="Value" Type="String" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.SettingModifiedUser" FromRole="Setting" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Version">
           <Key>
@@ -223,6 +406,8 @@
           <Property Name="InternalNotes" Type="String" Nullable="true" />
           <Property Name="State" Type="XWordsAdminModel.VersionState" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.VersionModifiedUser" FromRole="Version" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="MediaWord">
           <End Type="XWordsAdminModel.Media" Role="Media" Multiplicity="*" />
@@ -286,6 +471,112 @@
           <Member Name="Current" />
           <Member Name="InProd" />
         </EnumType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Initials" Type="String" Nullable="false" />
+          <Property Name="Password" Type="String" Nullable="false" />
+          <Property Name="Role" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TimeStamp" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="XWordsAdminModel.EventUser" FromRole="Event" ToRole="User" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Table" Type="String" Nullable="false" />
+          <Property Name="RecordId" Type="Int32" Nullable="false" />
+          <Property Name="Comment" Type="String" Nullable="true" />
+        </EntityType>
+        <Association Name="EventUser">
+          <End Type="XWordsAdminModel.Event" Role="Event" Multiplicity="*" />
+          <End Type="XWordsAdminModel.User" Role="User" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ClueUser">
+          <End Type="XWordsAdminModel.Clue" Role="Clue" Multiplicity="*" />
+          <End Type="XWordsAdminModel.User" Role="User" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Clue">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WordUser">
+          <End Type="XWordsAdminModel.Word" Role="Word" Multiplicity="*" />
+          <End Type="XWordsAdminModel.User" Role="User" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Word">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="MediaModifiedUser">
+          <End Type="XWordsAdminModel.Media" Role="Media" Multiplicity="*" />
+          <End Type="XWordsAdminModel.User" Role="User" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Media">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SettingModifiedUser">
+          <End Type="XWordsAdminModel.Setting" Role="Setting" Multiplicity="*" />
+          <End Type="XWordsAdminModel.User" Role="User" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Setting">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GameModifiedUser">
+          <End Type="XWordsAdminModel.Game" Role="Game" Multiplicity="*" />
+          <End Type="XWordsAdminModel.User" Role="User" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="VersionModifiedUser">
+          <End Type="XWordsAdminModel.Version" Role="Version" Multiplicity="*" />
+          <End Type="XWordsAdminModel.User" Role="User" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Version">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -302,6 +593,7 @@
           <ScalarProperty Name="Complexity" ColumnName="Complexity" />
           <ScalarProperty Name="State" ColumnName="State" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -315,6 +607,8 @@
           <ScalarProperty Name="IncludedFromVer" ColumnName="IncludedFromVer" />
           <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Complexity" ColumnName="Complexity" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -330,6 +624,7 @@
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
           <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
           <ScalarProperty Name="IncludedFromVer" ColumnName="IncludedFromVer" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -345,6 +640,7 @@
           <ScalarProperty Name="State" ColumnName="State" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
           <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -355,6 +651,7 @@
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Value" ColumnName="Value" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -367,6 +664,30 @@
           <ScalarProperty Name="InternalNotes" ColumnName="InternalNotes" />
           <ScalarProperty Name="State" ColumnName="State" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="IsTypeOf(XWordsAdminModel.User)">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Initials" ColumnName="Initials" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="Role" ColumnName="Role" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Events">
+      <EntityTypeMapping TypeName="IsTypeOf(XWordsAdminModel.Event)">
+        <MappingFragment StoreEntitySet="Events">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Table" ColumnName="Table" />
+          <ScalarProperty Name="RecordId" ColumnName="RecordId" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

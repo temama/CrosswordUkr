@@ -12,14 +12,12 @@ namespace XWordsUrkAdminConsole.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Setting
+    public partial class User
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Value { get; set; }
-        public System.DateTime LastModified { get; set; }
-        public int UserId { get; set; }
-    
-        public virtual User ModifiedBy { get; set; }
+        public string Initials { get; set; }
+        public string Password { get; set; }
+        public int Role { get; set; }
     }
 }

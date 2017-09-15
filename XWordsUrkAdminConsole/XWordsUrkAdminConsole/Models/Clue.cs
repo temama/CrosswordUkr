@@ -15,13 +15,16 @@ namespace XWordsUrkAdminConsole.Models
     public partial class Clue
     {
         public int Id { get; set; }
-        public string TheClue { get; set; }
-        public ClueState State { get; set; }
         public int WordId { get; set; }
+        public string TheClue { get; set; }
+        public WordComplexity Complexity { get; set; }
+        public ClueState State { get; set; }
         public string IncludedFromVer { get; set; }
         public Nullable<System.DateTime> ExcludedFromVer { get; set; }
         public string LastModified { get; set; }
+        public int UserId { get; set; }
     
         public virtual Word Word { get; set; }
+        public virtual User ModifiedBy { get; set; }
     }
 }

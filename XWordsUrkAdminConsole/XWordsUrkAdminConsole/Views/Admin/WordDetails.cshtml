@@ -6,7 +6,15 @@
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-    <h3 class="modal-title">Word Details: </h3>
+    <h3 class="modal-title" style="display:inline-block">Word Details </h3>
+    @if (Model.Id > 0)
+    {
+        <label id="wordDetaisHasChanges" value="0" style="color:orange; font-weight:100">[edited]</label>
+    }
+    else
+    {
+        <label id="wordDetaisHasChanges" value="0" style="color:green; font-weight:100">[new]</label>
+    }
 </div>
 
 <div class="modal-body">
@@ -15,26 +23,30 @@
             <div class="col-md-1 col-xs-2">
                 <p align="right" style="vertical-align:central"><b>Word:</b></p>
             </div>
-            <div class="col-md-5 col-xs-10">
-                <input class="form-control input-sm" type="text" value="@Model.TheWord"  required />
+            <div class="col-md-4 col-xs-8">
+                <input id="word-details-word" class="form-control input-sm" style="text-transform:uppercase" 
+                       type="text" value="@Model.TheWord" required onkeypress="OnWordDetailsWordChanged(event);"/>
             </div>
             <div class="col-md-1 col-xs-2">
                 <p align="right" style="vertical-align:central"><b>State:</b></p>
             </div>
             <div class="col-md-2 col-xs-4">
-                <button id="stateBtn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%;">State <span class="caret"></span></button>
+                <button id="word-details-state-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle word-state-@((int)Model.State)" style="width:100%;">@Model.State.ToString() <span class="caret" /></button>
                 <ul id="statesList" class="dropdown-menu">
                     @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordState)))
                     {
-                        <li><a href="#">@e.ToString()</a></li>
+                        <li id="word-details-state-@((int)e)" value="@((int)e)" onclick="OnWordDetailsStateItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a href="#">@e.ToString()</a></li>
                     }
                 </ul>
             </div>
             <div class="col-md-1 col-xs-2">
                 <p align="right" style="vertical-align:central"><b>ID:</b></p>
             </div>
+            <div class="col-md-1 col-xs-2">
+                <label id="word-details-id" value="@Model.Id">@Model.Id</label>
+            </div>
             <div class="col-md-2 col-xs-4">
-                @Model.Id
+                <button class="btn btn-success pull-right" onclick="OnWordDetailsSaveClick();">Save</button>
             </div>
         </div>
         <hr />
@@ -43,11 +55,11 @@
                 <p align="right" style="vertical-align:central"><b>Area:</b></p>
             </div>
             <div class="col-md-2 col-xs-4">
-                <button id="areaBtn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%; height:100%">Area<span class="caret"></span></button>
-                <ul id="areaList" class="dropdown-menu">
+                <button id="word-details-area-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%;">@Model.Area.ToString() <span class="caret" /></button>
+                <ul id="areasList" class="dropdown-menu">
                     @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordArea)))
                     {
-                        <li><a href="#">@e.ToString()</a></li>
+                        <li id="word-details-area-@((int)e)" value="@((int)e)" onclick="OnWordDetailsAreaItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a href="#">@e.ToString()</a></li>
                     }
                 </ul>
             </div>
@@ -55,11 +67,11 @@
                 <p align="right" style="vertical-align:central"><b>Compl:</b></p>
             </div>
             <div class="col-md-2 col-xs-4">
-                <button id="areaBtn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%; height:100%">Area<span class="caret"></span></button>
-                <ul id="areaList" class="dropdown-menu">
+                <button id="word-details-complex-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle word-complex-@((int)Model.Complexity)" style="width:100%;">@Model.Complexity.ToString() <span class="caret" /></button>
+                <ul id="complexList" class="dropdown-menu">
                     @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordComplexity)))
                     {
-                        <li><a href="#">@e.ToString()</a></li>
+                        <li id="word-details-complex-@((int)e)" value="@((int)e)" onclick="OnWordDetailsComplexItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a href="#">@e.ToString()</a></li>
                     }
                 </ul>
             </div>
@@ -67,35 +79,59 @@
                 <p align="right" style="vertical-align:central"><b>Modified:</b></p>
             </div>
             <div class="col-md-5 col-xs-10">
-                <input class="form-control input-sm" type="text" readonly value="@Model.LastModified.ToString("yyyy/MM/dd hh:mm:ss")" />
+                <input class="form-control input-sm" type="text" readonly value="@(Model.LastModified.ToString("yyyy/MM/dd hh:mm:ss") + " By: " + Model.ModifiedBy.Name)" />
             </div>
         </div>
         <hr />
         <div>
-            <h4>Clues:</h4>
+            <div class="row">
+                <div class="col-md-1 col-xs-2">
+                    <h4>Clues:</h4>
+                </div>
+                <div class="col-md-7 col-xs-12">
+                    @if (Model.Id > 0)
+                    {
+                        <button class="btn btn-info btn-md">
+                            <span class="glyphicon glyphicon-plus"></span> Add clue
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning" style="margin-bottom:1px; height:100%; line-height:100%; padding:0px 15px;">
+                            Please save the record to edit <strong>clues</strong>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-4">
+                    <div class="form-inline">
+                        <div id="cluesTableToolsSearch" class="form-group pull-right"></div>
+                    </div>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table id="clues-data-table" class="table table-bordered table-hover table-striped responsive" style="width:100%;"></table>
             </div>
             <hr />
-        <div>
-            <h4>Definition: </h4>
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#previewDescTab" data-toggle="tab">Preview</a></li>
-                <li><a href="#editDescTab" data-toggle="tab">Edit</a></li>                
-            </ul>
-            <div class="tab-content" style="width:100%; padding:5px">
-                <div class="tab-pane active" id="previewDescTab">
-                    <div id="wordDefView">@Html.Raw(Model.Definition)</div>
+            <div>
+                <h4>Definition: </h4>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#previewDescTab" data-toggle="tab">Preview</a></li>
+                    <li><a href="#editDescTab" data-toggle="tab">Edit</a></li>
+                </ul>
+                <div class="tab-content" style="width:100%; padding:5px">
+                    <div class="tab-pane active" id="previewDescTab">
+                        <div id="wordDefView">@Html.Raw(Model.Definition)</div>
                 </div>
                 <div class="tab-pane" id="editDescTab" style="width:100%">
-                    <textarea id="wordDefEdit"  class="form-control" rows="3" placeholder="Type definitio here">@Model.Definition</textarea>
+                    <textarea id="wordDefEdit" class="form-control" rows="3" style="min-width:100%" oninput="OnWordDefinitionInput();" placeholder="Type definition here">@Model.Definition</textarea>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
 
 <div class="modal-footer">
     <button class="btn btn-warning" data-dismiss="modal">Close</button>
-    <button class="btn btn-success" data-dismiss="modal">Save &amp; Close</button>
+    <button class="btn btn-success" onclick="OnWordDetailsSaveExitClick();">Save &amp; Close</button>
 </div>

@@ -23,7 +23,9 @@ namespace XWordsUrkAdminConsole.Models
         public System.DateTime LastModified { get; set; }
         public Nullable<System.DateTime> ExcludedFromVer { get; set; }
         public string IncludedFromVer { get; set; }
+        public int UserId { get; set; }
     
         public virtual Word Word { get; set; }
+        public virtual User ModifiedBy { get; set; }
     }
 }

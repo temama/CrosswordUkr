@@ -20,5 +20,8 @@ namespace XWordsUrkAdminConsole.Models
         public string InternalNotes { get; set; }
         public VersionState State { get; set; }
         public System.DateTime LastModified { get; set; }
+        public int UserId { get; set; }
+    
+        public virtual User ModifiedBy { get; set; }
     }
 }
