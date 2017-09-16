@@ -336,7 +336,7 @@
         }
 
         function OnWordDetailsSaveClick() {
-            SaveWordDetails($("#word-details-id").val() <= 0, false);
+            SaveWordDetails($("#word-details-id").text() <= 0, false);
         }
 
         function OnWordDetailsSaveExitClick() {
@@ -344,6 +344,13 @@
         }
 
         function SaveWordDetails(reload, close) {
+            if ($("#wordDetaisHasChanges").val() == "0") {
+                if (close) {
+                    $("#word-edit-modal").modal("hide");
+                }
+                return false;
+            }
+
             var wordData = {
                 Id: $("#word-details-id").text(),
                 TheWord: $("#word-details-word").val(),
@@ -360,6 +367,12 @@
                 url: "@Url.Action("SaveWord", "Admin")",
                 dataType: "json",
                 success: function (sData) {
+                    if (typeof sData === "string" && sData.startsWith("ERROR: "))
+                    {
+                        alert("Save failed:\n" + sData);
+                        return false;
+                    }
+
                     $("#wordDetaisHasChanges").val("0");
                     $("#wordDetaisHasChanges").hide();
 
@@ -375,6 +388,8 @@
                     {
                         $("#word-edit-modal").modal("hide");
                     }
+
+                    wordListVM.dt.ajax.reload();
                 },
                 error: function (fData) {
                     alert("Save failed:\n" + fData);

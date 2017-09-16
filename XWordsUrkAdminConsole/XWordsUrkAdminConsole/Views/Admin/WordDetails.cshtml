@@ -31,7 +31,8 @@
                 <p align="right" style="vertical-align:central"><b>State:</b></p>
             </div>
             <div class="col-md-2 col-xs-4">
-                <button id="word-details-state-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle word-state-@((int)Model.State)" style="width:100%;">@Model.State.ToString() <span class="caret" /></button>
+                <button id="word-details-state-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle word-state-@((int)Model.State)" 
+                        style="width:100%;" value="@((int)Model.State)">@Model.State.ToString() <span class="caret" /></button>
                 <ul id="statesList" class="dropdown-menu">
                     @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordState)))
                     {
@@ -55,7 +56,8 @@
                 <p align="right" style="vertical-align:central"><b>Area:</b></p>
             </div>
             <div class="col-md-2 col-xs-4">
-                <button id="word-details-area-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" style="width:100%;">@Model.Area.ToString() <span class="caret" /></button>
+                <button id="word-details-area-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" 
+                        style="width:100%;" value="@((int)Model.Area)">@Model.Area.ToString() <span class="caret" /></button>
                 <ul id="areasList" class="dropdown-menu">
                     @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordArea)))
                     {
@@ -67,7 +69,8 @@
                 <p align="right" style="vertical-align:central"><b>Compl:</b></p>
             </div>
             <div class="col-md-2 col-xs-4">
-                <button id="word-details-complex-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle word-complex-@((int)Model.Complexity)" style="width:100%;">@Model.Complexity.ToString() <span class="caret" /></button>
+                <button id="word-details-complex-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle word-complex-@((int)Model.Complexity)" 
+                        style="width:100%;" value="@((int)Model.Complexity)">@Model.Complexity.ToString() <span class="caret" /></button>
                 <ul id="complexList" class="dropdown-menu">
                     @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordComplexity)))
                     {

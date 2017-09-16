@@ -52,8 +52,8 @@ namespace XWordsUrkAdminConsole.Controllers
                     if (advSearch.ShowDeleted && !advSearch.StatesFilter.Contains(string.Format("{0},", (int)WordState.Deleted)))
                         advSearch.StatesFilter += (int)WordState.Deleted;
                     var opts = advSearch.StatesFilter.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    var optsEnum = opts.Select(o => (WordComplexity)Convert.ToUInt32(o)).ToList();
-                    query = query.Where(w => optsEnum.Contains(w.Complexity));
+                    var optsEnum = opts.Select(o => (WordState)Convert.ToUInt32(o)).ToList();
+                    query = query.Where(w => optsEnum.Contains(w.State));
                 }
                 else if (!advSearch.ShowDeleted)
                 {
@@ -162,15 +162,17 @@ namespace XWordsUrkAdminConsole.Controllers
             try
             {
                 Word word;
+                string theWord = postWord.TheWord.ToUpper().Trim();
 
                 using (var dbContext = new XWordsAdminModelContext())
                 {
                     var eventComment = new StringBuilder();
-                    var user = dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
 
                     if (postWord.Id <= 0)
                     {
-                        // TODO: Check if word exist
+                        if (dbContext.Words.Any(w => w.TheWord == theWord))
+                            throw new Exception(string.Format("Word '{0}' is already exists", theWord));
+
                         word = new Word();
                         dbContext.Words.Add(word);
                         eventComment.Append("added new");
@@ -181,9 +183,10 @@ namespace XWordsUrkAdminConsole.Controllers
                         eventComment.Append("updated");
                     }
 
+                    var user = dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
                     var timestamp = DateTime.Now;
 
-                    word.TheWord = postWord.TheWord.ToUpper();
+                    word.TheWord = theWord;
                     word.Definition = postWord.Definition;
                     word.Area = postWord.Area;
                     word.Complexity = postWord.Complexity;
@@ -220,7 +223,7 @@ namespace XWordsUrkAdminConsole.Controllers
             }
             catch (Exception ex)
             {
-                return Json(ex.Message, JsonRequestBehavior.AllowGet);
+                return Json("ERROR: " + ex.Message, JsonRequestBehavior.AllowGet);
             }
         }
 
