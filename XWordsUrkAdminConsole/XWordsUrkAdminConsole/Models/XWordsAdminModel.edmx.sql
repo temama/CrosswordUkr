@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server Compact Edition
 -- --------------------------------------------------
--- Date Created: 09/15/2017 16:09:19
+-- Date Created: 09/19/2017 01:26:00
 -- Generated from EDMX file: D:\Work\CrosswordUkr\XWordsUrkAdminConsole\XWordsUrkAdminConsole\Models\XWordsAdminModel.edmx
 -- --------------------------------------------------
 
@@ -26,9 +26,9 @@ GO
 GO
     ALTER TABLE [Settings] DROP CONSTRAINT [FK_SettingModifiedUser];
 GO
-    ALTER TABLE [Users] DROP CONSTRAINT [FK_VersionModifiedUser];
-GO
     ALTER TABLE [Games] DROP CONSTRAINT [FK_GameModifiedUser];
+GO
+    ALTER TABLE [Versions] DROP CONSTRAINT [FK_VersionModifiedUser];
 GO
 
 -- --------------------------------------------------
@@ -73,14 +73,15 @@ GO
 -- Creating table 'Clues'
 CREATE TABLE [Clues] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [TheClue] nvarchar(4000)  NOT NULL,
-    [State] int  NOT NULL,
     [WordId] int  NOT NULL,
+    [GameType] int  NOT NULL,
+    [TheClue] nvarchar(4000)  NOT NULL,
+    [Complexity] int  NOT NULL,
+    [State] int  NOT NULL,
     [IncludedFromVer] nvarchar(4000)  NULL,
-    [ExcludedFromVer] datetime  NULL,
-    [LastModified] nvarchar(4000)  NOT NULL,
-    [UserId] int  NOT NULL,
-    [Complexity] int  NOT NULL
+    [ExcludedFromVer] nvarchar(4000)  NULL,
+    [LastModified] datetime  NOT NULL,
+    [UserId] int  NOT NULL
 );
 GO
 
@@ -107,9 +108,9 @@ CREATE TABLE [Games] (
     [Complexity] int  NOT NULL,
     [Description] nvarchar(4000)  NULL,
     [IncludedFromVer] nvarchar(4000)  NOT NULL,
+    [ExcludedFromVer] datetime  NULL,
     [State] int  NOT NULL,
     [LastModified] nvarchar(4000)  NOT NULL,
-    [ExcludedFromVer] datetime  NULL,
     [UserId] int  NOT NULL
 );
 GO

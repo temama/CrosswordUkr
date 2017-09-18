@@ -69,14 +69,15 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="TheClue" Type="nvarchar" Nullable="false" />
-    <Property Name="State" Type="int" Nullable="false" />
     <Property Name="WordId" Type="int" Nullable="false" />
-    <Property Name="IncludedFromVer" Type="nvarchar" Nullable="true" />
-    <Property Name="ExcludedFromVer" Type="datetime" Nullable="true" />
-    <Property Name="LastModified" Type="nvarchar" Nullable="false" />
-    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="GameType" Type="int" Nullable="false" />
+    <Property Name="TheClue" Type="nvarchar" Nullable="false" />
     <Property Name="Complexity" Type="int" Nullable="false" />
+    <Property Name="State" Type="int" Nullable="false" />
+    <Property Name="IncludedFromVer" Type="nvarchar" Nullable="true" />
+    <Property Name="ExcludedFromVer" Type="nvarchar" Nullable="true" />
+    <Property Name="LastModified" Type="datetime" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Medias">
     <Key>
@@ -103,9 +104,9 @@
     <Property Name="Complexity" Type="int" Nullable="false" />
     <Property Name="Description" Type="nvarchar" Nullable="true" />
     <Property Name="IncludedFromVer" Type="nvarchar" Nullable="false" />
+    <Property Name="ExcludedFromVer" Type="datetime" Nullable="true" />
     <Property Name="State" Type="int" Nullable="false" />
     <Property Name="LastModified" Type="nvarchar" Nullable="false" />
-    <Property Name="ExcludedFromVer" Type="datetime" Nullable="true" />
     <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Settings">
@@ -330,13 +331,14 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="WordId" Type="Int32" Nullable="false" />
+          <Property Name="GameType" Type="XWordsAdminModel.ClueGameType" Nullable="false" />
           <Property Name="TheClue" Type="String" Nullable="false" />
           <Property Name="Complexity" Type="XWordsAdminModel.WordComplexity" Nullable="false" />
           <Property Name="State" Type="XWordsAdminModel.ClueState" Nullable="false" />
           <NavigationProperty Name="Word" Relationship="XWordsAdminModel.ClueWord" FromRole="Clue" ToRole="Word" />
           <Property Name="IncludedFromVer" Type="String" Nullable="true" />
-          <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
-          <Property Name="LastModified" Type="String" Nullable="false" />
+          <Property Name="ExcludedFromVer" Type="String" Nullable="true" />
+          <Property Name="LastModified" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.ClueUser" FromRole="Clue" ToRole="User" />
           <Property Name="UserId" Type="Int32" Nullable="false" />
         </EntityType>
@@ -577,6 +579,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EnumType Name="ClueGameType" IsFlags="true">
+          <Member Name="Crossword" />
+          <Member Name="CrosswordPuzzle" />
+        </EnumType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -601,14 +607,15 @@
       <EntityTypeMapping TypeName="IsTypeOf(XWordsAdminModel.Clue)">
         <MappingFragment StoreEntitySet="Clues">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="TheClue" ColumnName="TheClue" />
-          <ScalarProperty Name="State" ColumnName="State" />
           <ScalarProperty Name="WordId" ColumnName="WordId" />
+          <ScalarProperty Name="GameType" ColumnName="GameType" />
+          <ScalarProperty Name="TheClue" ColumnName="TheClue" />
+          <ScalarProperty Name="Complexity" ColumnName="Complexity" />
+          <ScalarProperty Name="State" ColumnName="State" />
           <ScalarProperty Name="IncludedFromVer" ColumnName="IncludedFromVer" />
           <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
-          <ScalarProperty Name="Complexity" ColumnName="Complexity" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -637,9 +644,9 @@
           <ScalarProperty Name="Complexity" ColumnName="Complexity" />
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="IncludedFromVer" ColumnName="IncludedFromVer" />
+          <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
           <ScalarProperty Name="State" ColumnName="State" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
-          <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>

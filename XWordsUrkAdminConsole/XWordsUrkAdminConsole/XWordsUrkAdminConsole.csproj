@@ -173,6 +173,9 @@
     <Compile Include="Models\Clue.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ClueGameType.cs">
+      <DependentUpon>XWordsAdminModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\CluesAdvancedSearch.cs" />
     <Compile Include="Models\ClueState.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
