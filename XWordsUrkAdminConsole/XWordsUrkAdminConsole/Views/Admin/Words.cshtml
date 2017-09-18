@@ -20,7 +20,7 @@
     }*/
 </style>
 
-<h3>Words</h3>
+<h3 style="display:inline-block">Words</h3>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-primary list-panel" id="list-panel">
@@ -126,6 +126,14 @@
         var handleFilterChange = true;
 
         var cluesList;
+
+        function ShowProgress() {
+            $("#global-progress-bar").show();
+        }
+
+        function HideProgress() {
+            $("#global-progress-bar").hide();
+        }
 
         function OnAddWordClick() {
             var url = "@Url.Action("WordDetails","Admin")" + "/";
@@ -360,6 +368,8 @@
                 State: $("#word-details-state-btn").val()
             };
 
+            ShowProgress();
+
             $.ajax({
                 data: JSON.stringify(wordData),
                 type: "POST",
@@ -390,9 +400,11 @@
                     }
 
                     wordListVM.dt.ajax.reload();
+                    HideProgress();
                 },
                 error: function (fData) {
                     alert("Save failed:\n" + fData);
+                    HideProgress();
                 }
             });
 
@@ -416,7 +428,12 @@
                 dt: null,
 
                 init: function () {
-                    this.dt = $('#words-data-table').DataTable({
+                    this.dt = $('#words-data-table').on('processing.dt', function (e, settings, processing) {
+                        if (processing)
+                            ShowProgress();
+                        else
+                            HideProgress();
+                    }).DataTable({
                         "serverSide": true,
                         "stateSave": true,
                         "processing": true,
@@ -501,7 +518,7 @@
                         "searchDelay": 500,
                         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
                         //"dom": "Bfrtilp",
-                        "dom": "frtilp"
+                        "dom": "ftilp"
                     });
                 }
             }
@@ -563,10 +580,12 @@
             $('#words-data-table tbody').on('dblclick', 'tr', function () {
                 var data = wordListVM.dt.row(this).data(); // use data.Id further
                 var url = "@Url.Action("WordDetails","Admin")" + "/" + data.Id;
+                ShowProgress();
                 $.get(url, function (htmlData) {
                     $("#word-edit-container").html(htmlData);
                     InitWordDetails(data);
                     $("#word-edit-modal").modal("show");
+                    HideProgress();
                 });
             });
 

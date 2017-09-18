@@ -286,6 +286,30 @@ namespace XWordsUrkAdminConsole.Controllers
             }
         }
 
+        public ActionResult ClueDetails(int? id)
+        {
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                if (id == null || id < 0)
+                {
+                    var user = dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
+                    return PartialView("ClueDetails", new Clue()
+                    {
+                        Id = -1,
+                        //LastModified = DateTime.Now,
+                        UserId = user.Id,
+                        ModifiedBy = user
+                    });
+                }
+
+                Clue clue = null;
+
+                clue = dbContext.Clues.Include(c => c.ModifiedBy).FirstOrDefault(c => c.Id == id);
+
+                return PartialView("ClueDetails", clue);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
