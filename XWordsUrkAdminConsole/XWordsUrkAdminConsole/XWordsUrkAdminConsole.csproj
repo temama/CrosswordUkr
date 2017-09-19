@@ -161,6 +161,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\AppSettings.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="Models\GameType.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\Media.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
@@ -204,6 +206,7 @@
     <Compile Include="Models\User.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\Version.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
@@ -765,6 +768,7 @@
     <Content Include="Content\DataTables\css\mixins.scss" />
     <Content Include="Content\DataTables\css\common.scss" />
     <Content Include="Views\Admin\WordDetails.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceme40.dll" />

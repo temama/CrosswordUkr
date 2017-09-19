@@ -15,9 +15,14 @@ namespace XWordsUrkAdminConsole.Models
     public partial class User
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Login { get; set; }
         public string Initials { get; set; }
-        public string Password { get; set; }
-        public int Role { get; set; }
+        public string Email { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public string PasswordHash { get; set; }
+        public string Roles { get; set; }
+        public bool Valid { get; set; }
+        public string SecurityStamp { get; set; }
+        public string Settings { get; set; }
     }
 }

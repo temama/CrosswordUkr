@@ -136,7 +136,7 @@ namespace XWordsUrkAdminConsole.Controllers
             {
                 if (id == null || id < 0)
                 {
-                    var user = dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
+                    var user = AppSettings.SystemUser; //dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
                     return PartialView("WordDetails", new Word()
                     {
                         Id = -1,
@@ -183,7 +183,7 @@ namespace XWordsUrkAdminConsole.Controllers
                         eventComment.Append("updated");
                     }
 
-                    var user = dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
+                    var user = AppSettings.SystemUser; //dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
                     var timestamp = DateTime.Now;
 
                     word.TheWord = theWord;
@@ -292,7 +292,7 @@ namespace XWordsUrkAdminConsole.Controllers
             {
                 if (id == null || id < 0)
                 {
-                    var user = dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
+                    var user = AppSettings.SystemUser; //dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
                     return PartialView("ClueDetails", new Clue()
                     {
                         Id = -1,

@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server Compact Edition
 -- --------------------------------------------------
--- Date Created: 09/19/2017 01:26:00
+-- Date Created: 09/19/2017 19:46:28
 -- Generated from EDMX file: D:\Work\CrosswordUkr\XWordsUrkAdminConsole\XWordsUrkAdminConsole\Models\XWordsAdminModel.edmx
 -- --------------------------------------------------
 
@@ -140,10 +140,15 @@ GO
 -- Creating table 'Users'
 CREATE TABLE [Users] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Name] nvarchar(4000)  NOT NULL,
+    [Login] nvarchar(4000)  NOT NULL,
     [Initials] nvarchar(4000)  NOT NULL,
-    [Password] nvarchar(4000)  NOT NULL,
-    [Role] int  NOT NULL
+    [Email] nvarchar(4000)  NULL,
+    [EmailConfirmed] bit  NOT NULL,
+    [PasswordHash] nvarchar(4000)  NOT NULL,
+    [Roles] nvarchar(4000)  NOT NULL,
+    [Valid] bit  NOT NULL,
+    [SecurityStamp] nvarchar(4000)  NULL,
+    [Settings] nvarchar(4000)  NOT NULL
 );
 GO
 

@@ -136,10 +136,15 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Name" Type="nvarchar" Nullable="false" />
+    <Property Name="Login" Type="nvarchar" Nullable="false" />
     <Property Name="Initials" Type="nvarchar" Nullable="false" />
-    <Property Name="Password" Type="nvarchar" Nullable="false" />
-    <Property Name="Role" Type="int" Nullable="false" />
+    <Property Name="Email" Type="nvarchar" Nullable="true" />
+    <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
+    <Property Name="PasswordHash" Type="nvarchar" Nullable="false" />
+    <Property Name="Roles" Type="nvarchar" Nullable="false" />
+    <Property Name="Valid" Type="bit" Nullable="false" />
+    <Property Name="SecurityStamp" Type="nvarchar" Nullable="true" />
+    <Property Name="Settings" Type="nvarchar" Nullable="false" />
   </EntityType>
   <EntityType Name="Events">
     <Key>
@@ -478,10 +483,15 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Login" Type="String" Nullable="false" />
           <Property Name="Initials" Type="String" Nullable="false" />
-          <Property Name="Password" Type="String" Nullable="false" />
-          <Property Name="Role" Type="Int32" Nullable="false" />
+          <Property Name="Email" Type="String" Nullable="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" Nullable="false" />
+          <Property Name="Roles" Type="String" Nullable="false" />
+          <Property Name="Valid" Type="Boolean" Nullable="false" />
+          <Property Name="SecurityStamp" Type="String" Nullable="true" />
+          <Property Name="Settings" Type="String" Nullable="false" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -679,10 +689,15 @@
       <EntityTypeMapping TypeName="IsTypeOf(XWordsAdminModel.User)">
         <MappingFragment StoreEntitySet="Users">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Login" ColumnName="Login" />
           <ScalarProperty Name="Initials" ColumnName="Initials" />
-          <ScalarProperty Name="Password" ColumnName="Password" />
-          <ScalarProperty Name="Role" ColumnName="Role" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+          <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+          <ScalarProperty Name="Roles" ColumnName="Roles" />
+          <ScalarProperty Name="Valid" ColumnName="Valid" />
+          <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+          <ScalarProperty Name="Settings" ColumnName="Settings" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

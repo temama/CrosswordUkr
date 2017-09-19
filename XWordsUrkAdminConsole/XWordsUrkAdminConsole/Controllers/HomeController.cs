@@ -22,5 +22,10 @@ namespace XWordsUrkAdminConsole.Controllers
         {
             return PartialView();
         }
+
+        public ActionResult Login()
+        {
+            return View();
+        }
     }
 }
