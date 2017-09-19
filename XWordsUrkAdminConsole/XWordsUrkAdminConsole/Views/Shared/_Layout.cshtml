@@ -29,8 +29,7 @@
                     <li><a href="#" onclick="TstClick()">TST</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#" onclick="TstClick()"><b>Username</b></a></li>
-                    <li style="border-left:solid;"><a href="#" onclick="TstClick()">Log Out</a></li>
+                    @{Html.RenderAction("UserMenu", "Home");}
                 </ul>
             </div>
         </div>

@@ -1,0 +1,12 @@
+﻿@model bool
+@*True if user logged in*@
+
+@if (Model)
+{
+    <li><a href="#" onclick="TstClick()"><b>Username</b></a></li>
+    <li style="border-left:solid;"><a href="#" onclick="TstClick()">Log Out</a></li>
+}
+else
+{
+    <li>@Html.ActionLink("Login", "Login", "Home")</li>
+}

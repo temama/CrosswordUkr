@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data.Entity;
+using XWordsUrkAdminConsole.Helpers;
 
 namespace XWordsUrkAdminConsole.Controllers
 {
@@ -15,11 +16,17 @@ namespace XWordsUrkAdminConsole.Controllers
         // GET: Admin
         public ActionResult Index()
         {
+            if (!LoginHelper.IsLoggedIn())
+                return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+
             return View();
         }
 
         public ActionResult GetWords([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, WordsAdvancedSearch advSearch)
         {
+            if (!LoginHelper.IsLoggedIn())
+                return Json("Please login to proceed");
+
             using (var dbContext = new XWordsAdminModelContext())
             {
                 IQueryable<Word> query = dbContext.Words;
@@ -127,11 +134,17 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult Words()
         {
+            if (!LoginHelper.IsLoggedIn())
+                return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+
             return View();
         }
 
         public ActionResult WordDetails(int? id)
         {
+            if (!LoginHelper.IsLoggedIn())
+                return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+
             using (var dbContext = new XWordsAdminModelContext())
             {
                 if (id == null || id < 0)
@@ -288,6 +301,9 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult ClueDetails(int? id)
         {
+            if (!LoginHelper.IsLoggedIn())
+                return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+
             using (var dbContext = new XWordsAdminModelContext())
             {
                 if (id == null || id < 0)

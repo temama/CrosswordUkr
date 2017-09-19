@@ -15,5 +15,7 @@ namespace XWordsUrkAdminConsole.Models
         [Required(ErrorMessage = "*")]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }
