@@ -162,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Accounting\AuthModule.cs" />
+    <Compile Include="Accounting\UserRoles.cs" />
     <Compile Include="App_Start\AppSettings.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -208,7 +209,7 @@
     <Compile Include="Models\User.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\UserRole.cs" />
+    <Compile Include="Models\UserExt.cs" />
     <Compile Include="Models\Version.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
@@ -585,6 +586,7 @@
       <LastGenOutput>XWordsAdminModel.cs</LastGenOutput>
       <DependentUpon>XWordsAdminModel.edmx</DependentUpon>
     </Content>
+    <Content Include="Scripts\App\CommonActions.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.min.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap4.js" />

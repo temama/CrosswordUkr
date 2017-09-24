@@ -1,12 +1,30 @@
-﻿@model bool
-@*True if user logged in*@
+﻿@model XWordsUrkAdminConsole.Models.User
 
-@if (Model)
+
+@if (Model != null && !string.IsNullOrEmpty(Model.Login))
 {
-    <li><a href="#" onclick="TstClick()"><b>Username</b></a></li>
-    <li style="border-left:solid;"><a href="#" onclick="TstClick()">Log Out</a></li>
+    if (!string.IsNullOrEmpty(Model.Roles) && Model.Roles.ToLower().Contains("usersadmin"))
+    {
+        <li><a href="#" onclick="TheTest();"><span class="glyphicon glyphicon-plus"></span></a></li>
+    }
+    <li><a id="my-user-details-btn" href="#" value="@Model.Id" onclick="OnMyUserDetailsClick();"><b>@Model.Login</b></a></li>
+    <li style="border-left:solid;">@Html.ActionLink("Log out", "Logout", "Home")</li>
 }
 else
 {
     <li>@Html.ActionLink("Login", "Login", "Home")</li>
 }
+
+@Scripts.Render("~/scripts/app/CommonActions.js")
+
+<script type="text/javascript">
+    function OnMyUserDetailsClick() {
+        ShowProgress();
+        var url = "@Url.Action("MyUserDetails","Home")" + "/" + $("#my-user-details-btn").val();
+        $.get(url, function (htmlData) {
+            $("#layout-modal-dialog").html(htmlData);
+            $("#layout-modal-dialog").modal("show");
+            HideProgress();
+        });
+    }
+</script>

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data.Entity;
 using XWordsUrkAdminConsole.Helpers;
+using XWordsUrkAdminConsole.Accounting;
 
 namespace XWordsUrkAdminConsole.Controllers
 {
@@ -16,15 +17,17 @@ namespace XWordsUrkAdminConsole.Controllers
         // GET: Admin
         public ActionResult Index()
         {
-            if (!LoginHelper.IsLoggedIn())
-                return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+            var reqUser = AuthModule.GetCurrentUser(Request);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
 
             return View();
         }
 
         public ActionResult GetWords([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, WordsAdvancedSearch advSearch)
         {
-            if (!LoginHelper.IsLoggedIn())
+            var reqUser = AuthModule.GetCurrentUser(Request);
+            if (reqUser == null)
                 return Json("Please login to proceed");
 
             using (var dbContext = new XWordsAdminModelContext())
@@ -134,34 +137,34 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult Words()
         {
-            if (!LoginHelper.IsLoggedIn())
-                return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+            var reqUser = AuthModule.GetCurrentUser(Request);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
 
             return View();
         }
 
         public ActionResult WordDetails(int? id)
         {
-            if (!LoginHelper.IsLoggedIn())
-                return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+            var reqUser = AuthModule.GetCurrentUser(Request);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
+            //return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+
+            if (id == null || id < 0)
+            {
+                return PartialView("WordDetails", new Word()
+                {
+                    Id = -1,
+                    LastModified = DateTime.Now,
+                    UserId = reqUser.Id,
+                    ModifiedBy = reqUser
+                });
+            }
 
             using (var dbContext = new XWordsAdminModelContext())
             {
-                if (id == null || id < 0)
-                {
-                    var user = AppSettings.SystemUser; //dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
-                    return PartialView("WordDetails", new Word()
-                    {
-                        Id = -1,
-                        LastModified = DateTime.Now,
-                        UserId = user.Id,
-                        ModifiedBy = user
-                    });
-                }
-
-                Word word = null;
-
-                word = dbContext.Words.Include(w => w.ModifiedBy).FirstOrDefault(w => w.Id == id);
+                Word word = dbContext.Words.Include(w => w.ModifiedBy).FirstOrDefault(w => w.Id == id);
 
                 return PartialView("WordDetails", word);
             }
@@ -170,8 +173,10 @@ namespace XWordsUrkAdminConsole.Controllers
         [HttpPost]
         public JsonResult SaveWord(Word postWord)
         {
-            // TODO: check permissions
-            // TODO: save under correct user (ModifiedBy)
+            var reqUser = AuthModule.GetCurrentUser(Request);
+            if (reqUser == null)
+                return Json("ERROR: Please login to proceed");
+            // TODO: check permissions??
             try
             {
                 Word word;
@@ -196,7 +201,6 @@ namespace XWordsUrkAdminConsole.Controllers
                         eventComment.Append("updated");
                     }
 
-                    var user = AppSettings.SystemUser; //dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
                     var timestamp = DateTime.Now;
 
                     word.TheWord = theWord;
@@ -205,15 +209,15 @@ namespace XWordsUrkAdminConsole.Controllers
                     word.Complexity = postWord.Complexity;
                     word.State = postWord.State;
                     word.LastModified = timestamp;
-                    word.UserId = user.Id; 
-                    word.ModifiedBy = user;
-
+                    word.UserId = reqUser.Id; 
+                    word.ModifiedBy = AuthModule.GetUserById(reqUser.Id, dbContext);
+                    
                     dbContext.SaveChanges();
 
                     var audit = new Event()
                     {
                         TimeStamp = timestamp,
-                        UserId = 2,
+                        UserId = reqUser.Id,
                         Table = "Words",
                         RecordId = word.Id,
                         Comment = eventComment.ToString()
@@ -242,6 +246,10 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult GetClues([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, CluesAdvancedSearch advSearch)
         {
+            var reqUser = AuthModule.GetCurrentUser(Request);
+            if (reqUser == null)
+                return Json("Please login to work with Clues");
+
             using (var dbContext = new XWordsAdminModelContext())
             {
                 IQueryable<Clue> query = dbContext.Clues;
@@ -301,26 +309,24 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult ClueDetails(int? id)
         {
-            if (!LoginHelper.IsLoggedIn())
-                return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
+            var reqUser = AuthModule.GetCurrentUser(Request);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
+            
+            if (id == null || id < 0)
+            {
+                return PartialView("ClueDetails", new Clue()
+                {
+                    Id = -1,
+                    LastModified = DateTime.Now,
+                    UserId = reqUser.Id,
+                    ModifiedBy = reqUser
+                });
+            }
 
             using (var dbContext = new XWordsAdminModelContext())
             {
-                if (id == null || id < 0)
-                {
-                    var user = AppSettings.SystemUser; //dbContext.Users.First(u => u.Id == 2); //HARDCOOOODE
-                    return PartialView("ClueDetails", new Clue()
-                    {
-                        Id = -1,
-                        //LastModified = DateTime.Now,
-                        UserId = user.Id,
-                        ModifiedBy = user
-                    });
-                }
-
-                Clue clue = null;
-
-                clue = dbContext.Clues.Include(c => c.ModifiedBy).FirstOrDefault(c => c.Id == id);
+                Clue clue = dbContext.Clues.Include(c => c.ModifiedBy).FirstOrDefault(c => c.Id == id);
 
                 return PartialView("ClueDetails", clue);
             }

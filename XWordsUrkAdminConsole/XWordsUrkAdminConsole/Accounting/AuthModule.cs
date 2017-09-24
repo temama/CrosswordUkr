@@ -11,7 +11,7 @@ namespace XWordsUrkAdminConsole.Accounting
 {
     public static class AuthModule
     {
-        private const string cookieName = "__AUTH_COOKIE";
+        private const string cookieName = "_XWordsAdm_Auth";
 
         public static User Login(string login, string password, bool isPersistent = false, HttpResponseBase response = null)
         {
@@ -25,6 +25,9 @@ namespace XWordsUrkAdminConsole.Accounting
             if (user == null)
                 throw new AccessViolationException("Incorrect username or password");
 
+            if (!user.Valid)
+                throw new AccessViolationException("User is disable at system. Please contact support");
+
             if (user != null && response != null)
             {
                 CreateCookie(response, login, isPersistent);
@@ -32,11 +35,73 @@ namespace XWordsUrkAdminConsole.Accounting
             return user;
         }
 
-        private static void CreateCookie(HttpResponseBase response, string userName, bool isPersistent = false)
+        public static User GetUserById(int id, XWordsAdminModelContext dbContext)
+        {
+            return dbContext.Users.FirstOrDefault(u => u.Id == id);
+        }
+
+        public static void UpdatePassword(string login, string oldPassword, string newPassword)
+        {
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                var user = string.IsNullOrEmpty(oldPassword) ? dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == login.ToLower() && u.PasswordHash == string.Empty) :
+                    dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == login.ToLower() && u.PasswordHash == GetPasswordHash(oldPassword));
+
+                if (user == null)
+                    throw new Exception("Incorrect old password");
+
+                user.PasswordHash = string.IsNullOrEmpty(newPassword) ? string.Empty : GetPasswordHash(newPassword);
+                dbContext.SaveChanges();
+            }
+        }
+
+        public static void LogOut(HttpResponseBase response)
+        {
+            var httpCookie = response.Cookies[cookieName];
+            if (httpCookie != null)
+            {
+                httpCookie.Value = string.Empty;
+            }
+        }
+
+        public static User GetCurrentUser(HttpRequestBase request)
+        {
+            var authCookie = request.Cookies.Get(cookieName);
+            if (authCookie != null && !string.IsNullOrEmpty(authCookie.Value))
+            {
+                var ticket = FormsAuthentication.Decrypt(authCookie.Value);
+                using (var dbContext = new XWordsAdminModelContext())
+                {
+                    return dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == ticket.Name.ToLower());
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static bool IsUserLoggedIn(HttpRequestBase request)
+        {
+            return GetCurrentUser(request) != null;
+        }
+
+        public static string GetPasswordHash(string password)
+        {
+            var bytes = new UTF8Encoding().GetBytes(password);
+            byte[] hashBytes;
+            using (var algorithm = new System.Security.Cryptography.SHA512Managed())
+            {
+                hashBytes = algorithm.ComputeHash(bytes);
+            }
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        private static void CreateCookie(HttpResponseBase response, string login, bool isPersistent = false)
         {
             var ticket = new FormsAuthenticationTicket(
                   1,
-                  userName,
+                  login,
                   DateTime.Now,
                   DateTime.Now.Add(FormsAuthentication.Timeout),
                   isPersistent,
@@ -51,48 +116,6 @@ namespace XWordsUrkAdminConsole.Accounting
                 Expires = DateTime.Now.Add(FormsAuthentication.Timeout)
             };
             response.Cookies.Set(AuthCookie);
-        }
-
-        public static void LogOut(HttpResponseBase response)
-        {
-            var httpCookie = response.Cookies[cookieName];
-            if (httpCookie != null)
-            {
-                httpCookie.Value = string.Empty;
-            }
-        }
-
-        public static User GetCurrentUser(HttpRequest request)
-        {
-            var authCookie = request.Cookies.Get(cookieName);
-            if (authCookie != null && !string.IsNullOrEmpty(authCookie.Value))
-            {
-                var ticket = FormsAuthentication.Decrypt(authCookie.Value);
-                using (var dbContext = new XWordsAdminModelContext())
-                {
-                    return dbContext.Users.FirstOrDefault(u => u.Login == ticket.Name);
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public static bool IsUserLoggedIn(HttpRequest request)
-        {
-            return GetCurrentUser(request) != null;
-        }
-
-        public static string GetPasswordHash(string password)
-        {
-            var bytes = new UTF8Encoding().GetBytes(password);
-            byte[] hashBytes;
-            using (var algorithm = new System.Security.Cryptography.SHA512Managed())
-            {
-                hashBytes = algorithm.ComputeHash(bytes);
-            }
-            return Convert.ToBase64String(hashBytes);
         }
     }
 }

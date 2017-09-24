@@ -8,13 +8,15 @@ namespace XWordsUrkAdminConsole.Models
 {
     public class LoginViewModel
     {
-        [Required(ErrorMessage = "*")]
+        [Required(ErrorMessage = "Login can't be empty")]
         [Display(Name = "Login")]
         public string LoginName { get; set; }
 
-        [Required(ErrorMessage = "*")]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
+        [Display(Name = "Remember me")]
+        public bool RememberMe { get; set; }
 
         public string ReturnUrl { get; set; }
     }

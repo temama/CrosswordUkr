@@ -34,48 +34,60 @@
             </div>
         </div>
     </div>
+
     <div class="container-fluid body-content">
         @RenderBody()
         @*<hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - CrosswordsUkr Admin Console</p>
-        </footer>*@
-    </div>
-    <div id="modal-container" class="modal fade in hidden-print" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
+            <footer>
+                <p>&copy; @DateTime.Now.Year - CrosswordsUkr Admin Console</p>
+            </footer>*@
+        <div class="modal fade in hidden-print" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div id="layout-modal-dialog" class="modal-content">
+                </div>
             </div>
         </div>
     </div>
+
+    
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Styles.Render("~/Content/datatables")
     @Scripts.Render("~/bundles/datatables")
     @Scripts.Render("~/bundles/moment")
-    @RenderSection("scripts", required: false)
 
     <script language="text/javascript">
-        
-        $(document).ready(function () {
+        @*function ShowProgress() {
+            $("#global-progress-bar").show();
+        }
+
+        function HideProgress() {
+            $("#global-progress-bar").hide();
+        }
+
+        $(function () {
             $('#AboutBtn').click(function () {
-                $.ajax({
-                    url: '@Url.Action("About", "Home")',
-                    error: function (errorMsg) {
-                        alert(errorMsg);
-                    }
-                }).done(function (result) {
-                    $('#modal-container').html(result);
-                    $('#modal-container').modal('show');
+                var url = "@Url.Action("About", "Home")";
+                $.get(url, function (htmlData) {
+                    $("#layout-modal-dialog").html(htmlData);
+                    $("#layout-modal-dialog").modal("show");
                 });
             });
 
+            $("body").on("click", "#my-user-details-btn", function () {
+                ShowProgress();
+                var url = "@Url.Action("MyUserDetails","Home")" + "/" + $("#my-user-details-btn").val();
+                $.get(url, function (htmlData) {
+                    $("#layout-modal-dialog").html(htmlData);
+                    $("#layout-modal-dialog").modal("show");
+                    HideProgress();
+                });
+            });
+        });*@
 
-            function TstClick(e) {
-                alert('Clicked');
-                return false;
-            }
-        });
-        
     </script>
+
+    @RenderSection("scripts", required: false)
 </body>
 </html>
