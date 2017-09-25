@@ -23,7 +23,7 @@ else
         var url = "@Url.Action("MyUserDetails","Home")" + "/" + $("#my-user-details-btn").val();
         $.get(url, function (htmlData) {
             $("#layout-modal-dialog").html(htmlData);
-            $("#layout-modal-dialog").modal("show");
+            $("#layout-modal").modal("show");
             HideProgress();
         });
     }

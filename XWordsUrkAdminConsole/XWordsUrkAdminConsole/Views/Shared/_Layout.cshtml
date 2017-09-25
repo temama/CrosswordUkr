@@ -41,14 +41,7 @@
             <footer>
                 <p>&copy; @DateTime.Now.Year - CrosswordsUkr Admin Console</p>
             </footer>*@
-        <div class="modal fade in hidden-print" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div id="layout-modal-dialog" class="modal-content">
-                </div>
-            </div>
-        </div>
     </div>
-
     
 
     @Scripts.Render("~/bundles/jquery")
@@ -56,6 +49,13 @@
     @Styles.Render("~/Content/datatables")
     @Scripts.Render("~/bundles/datatables")
     @Scripts.Render("~/bundles/moment")
+
+    <div id="layout-modal" class="modal fade in hidden-print" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div id="layout-modal-dialog" class="modal-content">
+            </div>
+        </div>
+    </div>
 
     <script language="text/javascript">
         @*function ShowProgress() {
