@@ -1,4 +1,8 @@
-﻿.material-switch > input[type="checkbox"] {
+﻿.marg-top-s {
+    margin-top:3px;
+}
+
+.material-switch > input[type="checkbox"] {
     display: none;
 }
 
@@ -106,3 +110,4 @@
     background-color: #d9534f;
     color: white;
 }
+
