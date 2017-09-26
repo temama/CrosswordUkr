@@ -3,6 +3,7 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
     <h3 class="modal-title" style="display:inline-block">User settings</h3>
+    <input id="user-details-is-user-admin" type="hidden" value="@(Model.HasRole(XWordsUrkAdminConsole.Accounting.UserRoles.UsersAdmin.ToString()) ? 1 : 0)" />
 </div>
 
 
@@ -42,10 +43,10 @@
 
 
         <div class="col-md-3 col-xs-6" style="height:100%">
-            @Html.LabelFor(model => model.EmailConfirmed, htmlAttributes: new { @class = "control-label pull-right" })
+            @Html.LabelFor(model => model.Valid, htmlAttributes: new { @class = "control-label pull-right" })
         </div>
         <div class="col-md-2 col-xs-4">
-            @Html.EditorFor(model => model.EmailConfirmed, new { htmlAttributes = new { disabled = "disabled" } })
+            @Html.EditorFor(model => model.Valid, new { htmlAttributes = new { disabled = "disabled" } })
         </div>
     </div>
 
@@ -54,26 +55,18 @@
             @Html.LabelFor(model => model.Roles, htmlAttributes: new { @class = "control-label pull-right" })
         </div>
         <div class="col-md-8 col-xs-12">
-            @Html.EditorFor(model => model.Roles, new
-       {
-           htmlAttributes = new
-           {
-               @class = "form-control",
-               style = "width:100%; max-width:100%",
-               disabled = Model.HasRole(XWordsUrkAdminConsole.Accounting.UserRoles.UsersAdmin.ToString()) ? "false" : "true"
-           }
-       })
+            @Html.EditorFor(model => model.Roles, new { htmlAttributes = new { @class = "form-control", style = "width:100%; max-width:100%", disabled = "disabled" } })
         </div>
         <div class="col-md-2 col-xs-4" style="height:100%">
             <button class="btn btn-primary">Settings</button>
         </div>
     </div>
 
-    <div class="row marg-top-s">
+    @*<div class="row marg-top-s">
         <div class="col-md-offset-2 col-md-2">
-            <input type="submit" value="Save" class="btn btn-success" />
+            
         </div>
-    </div>
+    </div>*@
 
     <hr />
 
@@ -115,4 +108,5 @@
 
 <div class="modal-footer">
     <button class="btn btn-warning" data-dismiss="modal">Close</button>
+    <input type="submit" value="Save" class="btn btn-success" />
 </div>
