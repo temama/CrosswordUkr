@@ -54,7 +54,9 @@
     left: 20px;
 }
 
-
+.modal-dialog-clue {
+    margin-top: 15vh;
+}
 
 /* ---------- Word States decorations --------------*/
 
@@ -84,7 +86,7 @@
 
 /*Active*/
 .word-state-4 {
-    background-color: green;
+    background-color: forestgreen;
     color: white;
 }
 
@@ -114,6 +116,27 @@
     background-color: #d9534f;
     color: white;
 }
+
+/* ---------- Clue States decorations --------------*/
+
+/*New*/
+.clue-state-0 {
+    background-color: white;
+    color: black;
+}
+
+/*Verifed*/
+.clue-state-1 {
+    background-color: forestgreen;
+    color: white;
+}
+
+/*Rejected*/
+.clue-state-2 {
+    background-color: red;
+    color: white;
+}
+
 
 /*------------------ Avatars --------------------------*/
 .avatar {

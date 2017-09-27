@@ -3,6 +3,14 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
     <h3 class="modal-title" style="display:inline-block">Clue details</h3>
+    @if (Model.Id > 0)
+    {
+        <label id="clue-details-changed" value="0" style="color:orange; font-weight:100">[edited]</label>
+    }
+    else
+    {
+        <label id="clue-details-changed" value="0" style="color:green; font-weight:100">[new]</label>
+    }
     <input id="clue-details-id" type="hidden" value="@Model.Id" />
 </div>
 
@@ -10,80 +18,157 @@
     @Html.AntiForgeryToken()
 
 <div class="modal-body">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-md-1 col-xs-2" style="height:100%">
+            <p class="pull-right" style="vertical-align:central"><b>Word:</b></p>
+        </div>
+        <div class="col-md-4 col-xs-8">
+            @if (Model.Word == null)
+            {
+                //TODO: Add autocomplete
+                <input id="clue-details-word" class="form-control input-sm" style="text-transform:uppercase"
+                       type="text" value="@Model.Word.TheWord" required onkeypress="OnClueDetailsWordChanged(event);" />
+            }
+            else
+            {
+                <input id="clue-details-word" class="form-control input-sm" style="text-transform:uppercase"
+                       type="text" value="@Model.Word.TheWord" required onkeypress="OnClueDetailsWordChanged(event);" disabled />
+            }
+        </div>
 
-    <div class="form-horizontal">
-        <h4>Clue</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.WordId, "WordId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @if (Model.Word == null)
+        <div class="col-md-1 col-xs-2">
+            <p class="pull-right" style="vertical-align:central"><b>State:</b></p>
+        </div>
+        <div class="col-md-2 col-xs-4">
+            <button id="clue-details-state-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle clue-state-@((int)Model.State)"
+                    style="width:100%;" value="@((int)Model.State)">
+                @Model.State.ToString() <span class="caret" />
+            </button>
+            <ul id="clue-details-states-list" class="dropdown-menu">
+                @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.ClueState)))
                 {
-                    //TODO: Add autocomplete
-                    @*@Html.DropDownList("Word", null, htmlAttributes: new { @class = "form-control" })*@
-                    @Html.EditorFor(model => model.Word.TheWord, new { htmlAttributes = new { @class = "form-control", style = "width:100%; max-width:100%", disabled = "disabled", id = "clue-details-word" } })
-                    @Html.ValidationMessageFor(model => model.WordId, "", new { @class = "text-danger" })
+                    <li id="clue-details-state-@((int)e)" value="@((int)e)" onclick="OnClueDetailsStateItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a href="#">@e.ToString()</a></li>
                 }
-                else
-                {
-                    @Html.EditorFor(model => model.Word.TheWord, new { htmlAttributes = new { @class = "form-control", style = "width:100%; max-width:100%", disabled = "disabled", id = "clue-details-word" } })
-                }
-            </div>
+            </ul>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.GameType, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.GameType, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.GameType, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-1 col-xs-2">
+            <p class="pull-right" style="vertical-align:central"><b>ID:</b></p>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.TheClue, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.TheClue, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TheClue, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-1 col-xs-2">
+            <label id="word-details-id" value="@Model.Id">@Model.Id</label>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Complexity, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Complexity, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Complexity, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.State, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.IncludedFromVer, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.IncludedFromVer, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.IncludedFromVer, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ExcludedFromVer, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ExcludedFromVer, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ExcludedFromVer, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
     </div>
+
+    <div class="row">
+        <div class="col-md-1 col-xs-2" style="height:100%">
+            <p class="pull-right" style="vertical-align:central"><b>Clue:</b></p>
+        </div>
+        <div class="col-md-7 col-xs-12">
+            <input id="clue-details-clue" class="form-control input-sm" style = "width:100%; max-width:100%" type="text" value="@Model.TheClue" required onkeypress="OnClueDetailsChanged();"/>
+        </div>
+
+        <div class="col-md-1 col-xs-2">
+            <p class="pull-right" style="vertical-align:central"><b>Compl:</b></p>
+        </div>
+        <div class="col-md-2 col-xs-4">
+            <button id="clue-details-complex-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle word-complex-@((int)Model.Complexity)"
+                    style="width:100%;" value="@((int)Model.Complexity)">
+                @Model.Complexity.ToString() <span class="caret" />
+            </button>
+            <ul id="clue-details-complex-list" class="dropdown-menu">
+                @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordComplexity)))
+                {
+                    <li id="clue-details-complex-@((int)e)" value="@((int)e)" onclick="OnClueDetailsComplexItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a href="#">@e.ToString()</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <div class="row">
+                <div class="col-md-2 col-xs-4">
+                    <p class="pull-right" style="vertical-align:central"><b>Games:</b></p>
+                </div>
+                <div class="col-md-8 col-xs-12">
+                    <ul class="list-group">
+                        <li class="list-group-item">Val1</li>
+                        <li class="list-group-item">Val2</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <div class="row">
+                <div class="col-md-4 col-xs-8">
+                    <p class="pull-right" style="vertical-align:central"><b>Modif:</b></p>
+                </div>
+                <div class="col-md-8 col-xs-12">
+                    <input id="clue-details-modified" class="form-control input-sm" style = "width:100%; max-width:100%"
+                           value="@(Model.LastModified.ToString("yyyy/MM/dd hh:mm:ss") + " By: " + Model.ModifiedBy.Login)" disabled/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-xs-8">
+                    <p class="pull-right" style="vertical-align:central"><b>Include from Ver:</b></p>
+                </div>
+                <div class="col-md-8 col-xs-12">
+                    <input id="clue-details-modified" class="form-control input-sm" style = "width:100%; max-width:100%"
+                           value="Version/TBA" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-xs-8">
+                    <p class="pull-right" style="vertical-align:central"><b>Exclude from Ver:</b></p>
+                </div>
+                <div class="col-md-8 col-xs-12">
+                    <input id="clue-details-modified" class="form-control input-sm" style = "width:100%; max-width:100%"
+                           value="Version/TBA" />
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="modal-footer">
     <button class="btn btn-warning" data-dismiss="modal">Close</button>
     <button id="clue-details-save-btn" type="submit" class="btn btn-success" onclick="OnClueDetailsSaveClick();">Save</button>
 </div>
+
+
+<script type="text/javascript">
+
+    function OnClueDetailsChanged() {
+        $("#clue-details-changed").val("1");
+        $("#clue-details-changed").show();
+    }
+
+    function OnClueDetailsWordChanged(event) {
+        var regex = new RegExp("^[а-яА-ЯіІїЇєЄ]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+            event.preventDefault();
+            return false;
+        }
+        OnClueDetailsChanged();
+    }
+    
+    function OnClueDetailsStateItemClick(id, repr) {
+        var el = $("#clue-details-state-btn");
+        el.html(repr + " <span class=\"caret\" />");
+        el.val(id);
+        el.attr("class", el.get(0).className.replace(/\bclue-state-\S+/g, "clue-state-" + id));
+        OnClueDetailsChanged();
+    }
+
+    function OnClueDetailsComplexItemClick(id, repr) {
+        var el = $("#clue-details-complex-btn");
+        el.html(repr + " <span class=\"caret\" />");
+        el.val(id);
+        el.attr("class", el.get(0).className.replace(/\bword-complex-\S+/g, "word-complex-" + id));
+        OnWordDetailsChanged();
+    }
+</script>
