@@ -94,7 +94,7 @@
                 <div class="col-md-7 col-xs-12">
                     @if (Model.Id > 0)
                     {
-                        <button class="btn btn-info btn-md">
+                        <button class="btn btn-info btn-md" onclick="OnAddClueClick();">
                             <span class="glyphicon glyphicon-plus"></span> Add clue
                         </button>
                     }
@@ -138,3 +138,33 @@
     <button class="btn btn-warning" data-dismiss="modal">Close</button>
     <button class="btn btn-success" onclick="OnWordDetailsSaveExitClick();">Save &amp; Close</button>
 </div>
+
+@Scripts.Render("~/scripts/app/CommonActions.js")
+
+<script type="text/javascript">
+    function OnAddClueClick() {
+
+        ShowProgress();
+
+        var sendData = {
+            wordId: @Model.Id,
+        };
+
+        $.ajax({
+            data: JSON.stringify(sendData),
+            dataType: "html",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "@Url.Action("NewClueForWord", "Admin")",
+            success: function (htmlData) {
+                $("#clue-edit-container").html(htmlData);
+                $("#clue-edit-modal").modal("show");
+                HideProgress();
+            },
+            error: function (fData) {
+                alert("Operation failed:\n" + fData.statusText);
+                HideProgress();
+            }
+        });
+    }
+</script>

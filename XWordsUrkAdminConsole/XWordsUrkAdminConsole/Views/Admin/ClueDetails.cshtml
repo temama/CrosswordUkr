@@ -1,0 +1,89 @@
+﻿@model XWordsUrkAdminConsole.Models.Clue
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h3 class="modal-title" style="display:inline-block">Clue details</h3>
+    <input id="clue-details-id" type="hidden" value="@Model.Id" />
+</div>
+
+
+    @Html.AntiForgeryToken()
+
+<div class="modal-body">
+
+    <div class="form-horizontal">
+        <h4>Clue</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.WordId, "WordId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.Word == null)
+                {
+                    //TODO: Add autocomplete
+                    @*@Html.DropDownList("Word", null, htmlAttributes: new { @class = "form-control" })*@
+                    @Html.EditorFor(model => model.Word.TheWord, new { htmlAttributes = new { @class = "form-control", style = "width:100%; max-width:100%", disabled = "disabled", id = "clue-details-word" } })
+                    @Html.ValidationMessageFor(model => model.WordId, "", new { @class = "text-danger" })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Word.TheWord, new { htmlAttributes = new { @class = "form-control", style = "width:100%; max-width:100%", disabled = "disabled", id = "clue-details-word" } })
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.GameType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.GameType, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.GameType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TheClue, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TheClue, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TheClue, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Complexity, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.Complexity, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Complexity, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.State, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IncludedFromVer, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.IncludedFromVer, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IncludedFromVer, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ExcludedFromVer, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ExcludedFromVer, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ExcludedFromVer, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-warning" data-dismiss="modal">Close</button>
+    <button id="clue-details-save-btn" type="submit" class="btn btn-success" onclick="OnClueDetailsSaveClick();">Save</button>
+</div>

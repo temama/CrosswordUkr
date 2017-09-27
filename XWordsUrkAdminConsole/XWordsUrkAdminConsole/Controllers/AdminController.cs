@@ -261,7 +261,7 @@ namespace XWordsUrkAdminConsole.Controllers
                 return Json(new
                 {
                     IsRedirect = true,
-                    Message = " Please login to proceed",
+                    Message = ex.Message,
                     RedirectUrl = Url.Action("Login", "Home")
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -355,6 +355,34 @@ namespace XWordsUrkAdminConsole.Controllers
             using (var dbContext = new XWordsAdminModelContext())
             {
                 Clue clue = dbContext.Clues.Include(c => c.ModifiedBy).FirstOrDefault(c => c.Id == id);
+
+                return PartialView("ClueDetails", clue);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult NewClueForWord(int wordId)
+        {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
+
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                var word = dbContext.Words.FirstOrDefault(w => w.Id == wordId);
+                var clue = new Clue()
+                {
+                    Id = -1,
+                    WordId = word.Id,
+                    Word = word,
+                    GameType = ClueGameType.Crossword,
+                    Complexity = word.Complexity,
+                    State = ClueState.New,
+                    // TODO: IncludedFromVer = <Populate by current UAT version>
+                    LastModified = DateTime.Now,
+                    UserId = reqUser.Id,
+                    ModifiedBy = reqUser
+                };
 
                 return PartialView("ClueDetails", clue);
             }
