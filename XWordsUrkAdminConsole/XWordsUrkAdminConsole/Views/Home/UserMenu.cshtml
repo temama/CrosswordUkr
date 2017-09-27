@@ -7,19 +7,13 @@
     {
         <li><a href="#" onclick="TheTest();"><span class="glyphicon glyphicon-plus"></span></a></li>
     }
-    <li>
-        <div class="avatar-shape marg-top-s">
-            <span class="avatar-initials">@Model.Initials</span>
-        </div>
-    </li>
-    <li>
-        <a id="my-user-details-btn" href="#" value="@Model.Id" onclick="OnMyUserDetailsClick();"><b>@Model.Login</b></a>
-    </li>
+    <li><a id="my-user-details-btn" href="#" value="@Model.Id" onclick="OnMyUserDetailsClick();" style="padding:10px">
+        <span class="avatar" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(Model.Initials)">@Model.Initials</span><b> @Model.Login</b></a></li>
     <li style="border-left:solid;">@Html.ActionLink("Log out", "Logout", "Home")</li>
 }
 else
 {
-    < li > @Html.ActionLink("Login", "Login", "Home") </ li >
+    <li> @Html.ActionLink("Login", "Login", "Home") </li>
 }
 
 @Scripts.Render("~/scripts/app/CommonActions.js")

@@ -11,6 +11,8 @@ namespace XWordsUrkAdminConsole.Accounting
 {
     public static class AuthModule
     {
+        public static List<string> AvatarColors = new List<string> { "#FFB900", "#D83B01", "#B50E0E", "#E81123", "#B4009E", "#5C2D91", "#0078D7", "#00B4FF", "#008272", "#107C10" };
+
         private const string cookieName = "_XWordsAdm_Auth";
 
         public static User Login(string login, string password, bool isPersistent = false, HttpResponseBase response = null)
@@ -18,8 +20,8 @@ namespace XWordsUrkAdminConsole.Accounting
             User user = null;
             using (var dbContext = new XWordsAdminModelContext())
             {
-                user = string.IsNullOrEmpty(password) ? dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == login.ToLower() && u.PasswordHash == string.Empty) :
-                    dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == login.ToLower() && u.PasswordHash == GetPasswordHash(password));
+                var hash = !string.IsNullOrEmpty(password) ? GetPasswordHash(password) : string.Empty;
+                user = dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == login.ToLower() && u.PasswordHash == hash);
             }
 
             if (user == null)
@@ -40,12 +42,12 @@ namespace XWordsUrkAdminConsole.Accounting
             return dbContext.Users.FirstOrDefault(u => u.Id == id);
         }
 
-        public static void UpdatePassword(string login, string oldPassword, string newPassword)
+        public static void UpdatePassword(int userId, string oldPassword, string newPassword)
         {
             using (var dbContext = new XWordsAdminModelContext())
             {
-                var user = string.IsNullOrEmpty(oldPassword) ? dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == login.ToLower() && u.PasswordHash == string.Empty) :
-                    dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == login.ToLower() && u.PasswordHash == GetPasswordHash(oldPassword));
+                var hash = !string.IsNullOrEmpty(oldPassword) ? GetPasswordHash(oldPassword) : string.Empty;
+                var user = dbContext.Users.FirstOrDefault(u => u.Id == userId && u.PasswordHash == hash);
 
                 if (user == null)
                     throw new Exception("Incorrect old password");
@@ -95,6 +97,14 @@ namespace XWordsUrkAdminConsole.Accounting
                 hashBytes = algorithm.ComputeHash(bytes);
             }
             return Convert.ToBase64String(hashBytes);
+        }
+
+        public static string GetAvatarColor(string initials)
+        {
+            var sum = 0;
+            foreach (var c in initials)
+                sum += (int)c;
+            return AvatarColors[sum % AvatarColors.Count];
         }
 
         private static void CreateCookie(HttpResponseBase response, string login, bool isPersistent = false)
