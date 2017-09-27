@@ -17,7 +17,7 @@ namespace XWordsUrkAdminConsole.Controllers
         // GET: Admin
         public ActionResult Index()
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
 
@@ -26,9 +26,14 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult GetWords([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, WordsAdvancedSearch advSearch)
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
-                return Json("Please login to proceed");
+                return Json(new
+                {
+                    IsRedirect = true,
+                    Message = " Please login to proceed",
+                    RedirectUrl = Url.Action("Login", "Home")
+                }, JsonRequestBehavior.AllowGet);
 
             using (var dbContext = new XWordsAdminModelContext())
             {
@@ -70,6 +75,13 @@ namespace XWordsUrkAdminConsole.Controllers
                     query = query.Where(w => w.State != WordState.Deleted);
                 }
 
+                if (!string.IsNullOrEmpty(advSearch.ModifiedByFilter))
+                {
+                    var opts = advSearch.ModifiedByFilter.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => Convert.ToInt32(s)).ToList();
+                    query = query.Where(w => opts.Contains(w.UserId));
+                }
+
                 var filteredCount = query.Count();
 
                 // Sorting
@@ -79,7 +91,7 @@ namespace XWordsUrkAdminConsole.Controllers
                 foreach (var column in sortedColumns)
                 {
                     orderByString += orderByString != string.Empty ? "," : "";
-                    orderByString += (column.Data) +
+                    orderByString += GetWordSortColumnName(column.Data) +
                       (column.SortDirection ==
                       Column.OrderDirection.Ascendant ? " asc" : " desc");
                 }
@@ -89,7 +101,7 @@ namespace XWordsUrkAdminConsole.Controllers
                 // Paging
                 query = query.Skip(requestModel.Start).Take(requestModel.Length);
 
-                var data = query.Select(word => new
+                var data = query.Include("Users").Select(word => new
                 {
                     Id = word.Id,
                     TheWord = word.TheWord,
@@ -97,7 +109,8 @@ namespace XWordsUrkAdminConsole.Controllers
                     Area = word.Area,
                     Complexity = word.Complexity,
                     State = word.State,
-                    LastModified = word.LastModified
+                    LastModified = word.LastModified,
+                    ModifiedBy = word.ModifiedBy.Initials
                 }).ToList();
 
                 return Json(new DataTablesResponse(requestModel.Draw, data, filteredCount, totalCount),
@@ -137,7 +150,7 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult Words()
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
 
@@ -146,7 +159,7 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult WordDetails(int? id)
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
             //return View("../Home/Login", new LoginViewModel() { ReturnUrl = Request.RawUrl });
@@ -173,9 +186,14 @@ namespace XWordsUrkAdminConsole.Controllers
         [HttpPost]
         public JsonResult SaveWord(Word postWord)
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
-                return Json("ERROR: Please login to proceed");
+                return Json(new
+                {
+                    IsRedirect = true,
+                    Message = " Please login to proceed",
+                    RedirectUrl = Url.Action("Login", "Home")
+                }, JsonRequestBehavior.AllowGet);
             // TODO: check permissions??
             try
             {
@@ -240,15 +258,25 @@ namespace XWordsUrkAdminConsole.Controllers
             }
             catch (Exception ex)
             {
-                return Json("ERROR: " + ex.Message, JsonRequestBehavior.AllowGet);
+                return Json(new
+                {
+                    IsRedirect = true,
+                    Message = " Please login to proceed",
+                    RedirectUrl = Url.Action("Login", "Home")
+                }, JsonRequestBehavior.AllowGet);
             }
         }
 
         public ActionResult GetClues([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, CluesAdvancedSearch advSearch)
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
-                return Json("Please login to work with Clues");
+                return Json(new
+                {
+                    IsRedirect = true,
+                    Message = " Please login to proceed",
+                    RedirectUrl = Url.Action("Login", "Home")
+                }, JsonRequestBehavior.AllowGet);
 
             using (var dbContext = new XWordsAdminModelContext())
             {
@@ -309,7 +337,7 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult ClueDetails(int? id)
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
             
@@ -335,6 +363,14 @@ namespace XWordsUrkAdminConsole.Controllers
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+        }
+
+        private string GetWordSortColumnName(string dataName)
+        {
+            if (dataName == "ModifiedBy")
+                return "ModifiedBy.Initials";
+
+            return dataName;
         }
     }
 }

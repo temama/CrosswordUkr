@@ -13,7 +13,7 @@ namespace XWordsUrkAdminConsole.Controllers
     {
         public ActionResult Index()
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return RedirectToAction("Login", "Home", new {ReturnUrl = Request.RawUrl });
 
@@ -32,7 +32,7 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult Login(string returnUrl = null)
         {
-            return View(new LoginViewModel() { ReturnUrl = returnUrl });
+            return View(new LoginViewModel() { ReturnUrl = returnUrl, RememberMe = true });
         }
 
         [HttpPost]
@@ -60,7 +60,7 @@ namespace XWordsUrkAdminConsole.Controllers
         [HttpPost]
         public JsonResult UpdatePassword(string oldPassword, string newPassword)
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return Json("Error: Please login to proceed"); //RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
 
@@ -78,12 +78,12 @@ namespace XWordsUrkAdminConsole.Controllers
         [ChildActionOnly]
         public ActionResult UserMenu()
         {
-            return PartialView(AuthModule.GetCurrentUser(Request));
+            return PartialView(AuthModule.GetCurrentUser(Request, true, Response));
         }
 
         public ActionResult MyUserDetails()
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return RedirectToAction("Login", "Home");
 
@@ -93,7 +93,7 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult UserDetails(User model)
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return RedirectToAction("Login", "Home");
 
@@ -135,7 +135,7 @@ namespace XWordsUrkAdminConsole.Controllers
         [HttpPost]
         public JsonResult SaveUserDetails(User model)
         {
-            var reqUser = AuthModule.GetCurrentUser(Request);
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
                 return Json("Error: Please login to proceed");
 

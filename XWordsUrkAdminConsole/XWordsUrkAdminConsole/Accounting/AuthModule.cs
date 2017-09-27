@@ -66,7 +66,7 @@ namespace XWordsUrkAdminConsole.Accounting
             }
         }
 
-        public static User GetCurrentUser(HttpRequestBase request)
+        public static User GetCurrentUser(HttpRequestBase request, bool prolongLogin = false, HttpResponseBase response = null)
         {
             var authCookie = request.Cookies.Get(cookieName);
             if (authCookie != null && !string.IsNullOrEmpty(authCookie.Value))
@@ -74,7 +74,12 @@ namespace XWordsUrkAdminConsole.Accounting
                 var ticket = FormsAuthentication.Decrypt(authCookie.Value);
                 using (var dbContext = new XWordsAdminModelContext())
                 {
-                    return dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == ticket.Name.ToLower());
+                    var user = dbContext.Users.FirstOrDefault(u => u.Login.ToLower() == ticket.Name.ToLower());
+                    if (user!=null && prolongLogin && response!=null)
+                    {
+                        CreateCookie(response, user.Login);
+                    }
+                    return user;
                 }
             }
             else
@@ -107,7 +112,15 @@ namespace XWordsUrkAdminConsole.Accounting
             return AvatarColors[sum % AvatarColors.Count];
         }
 
-        private static void CreateCookie(HttpResponseBase response, string login, bool isPersistent = false)
+        public static List<User> GetAllUsers()
+        {
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                return dbContext.Users.ToList();
+            }
+        }
+
+        private static void CreateCookie(HttpResponseBase response, string login, bool isPersistent = true)
         {
             var ticket = new FormsAuthenticationTicket(
                   1,

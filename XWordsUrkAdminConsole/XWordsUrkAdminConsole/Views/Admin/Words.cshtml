@@ -88,14 +88,21 @@
                                         <li><a id="qfStatesClear" href="#">Uncheck all</a></li>
                                     </ul>
                                 </div>
-                                <!--div class="btn-group col-md-4 col-xs-8 panel panel-default" style="margin-top:0px; padding:3px; padding-bottom:5px">
-                                    Modified 
-                                    <div class="material-switch pull-right">
-                                        <input id="qfModifiedOn" name="qfModifiedOn" type="checkbox" />
-                                        <label for="qfModifiedOn" class="label-primary" title="Turn on/off filter by Last modified date"></label>
-                                    </div>
-                                    <input class="pull-right" type="datetime"/>
-                                </div-->
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfModifiedByBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">ModifiedBy <span class="caret"></span></button>
+                                    <ul id="qfModifiedByList" class="dropdown-menu noclose">
+                                        @foreach (var u in XWordsUrkAdminConsole.Accounting.AuthModule.GetAllUsers())
+                                        {
+                                            <li>
+                                                <label><input type="checkbox" id="qfModifiedBy_@u.Id"
+                                                           name="@u.Login" value="@u.Id">@u.Login
+                                                    </label>
+                                                    <span class="avatar-sm" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(u.Initials)">@u.Initials</span>
+                                                </li>
+                                        }
+                                        <li><a id="qfModifiedByClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <table id="words-data-table" class="table table-bordered table-hover table-striped"
@@ -211,6 +218,24 @@
             }
             else {
                 $("#qfStatesBtn").removeClass("highlightFilter");
+            }
+
+            // ModifiedBy
+            var fModifiedBy = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+            var fModifiedBySelected = false;
+            for (var i = 0; i < fModifiedBy.length; i++) {
+                if (fModifiedBy[i].checked) {
+                    fModifiedBySelected = true;
+                    fSet = true;
+                }
+            }
+
+            if (fModifiedBySelected) {
+                fSet = true;
+                $("#qfModifiedByBtn").addClass("highlightFilter");
+            }
+            else {
+                $("#qfModifiedByBtn").removeClass("highlightFilter");
             }
 
 
@@ -340,7 +365,7 @@
         }
 
         function OnWordDetailsSaveClick() {
-            SaveWordDetails($("#word-details-id").text() <= 0, false);
+            SaveWordDetails(/*$("#word-details-id").text() <= 0*/ true, false);
         }
 
         function OnWordDetailsSaveExitClick() {
@@ -457,8 +482,22 @@
                                     if (states[i].checked)
                                         d.StatesFilter = d.StatesFilter + states[i].value + ",";
                                 }
+                                d.ModifiedByFilter = "";
+                                var modifiedBy = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+                                for (var i = 0; i < modifiedBy.length; i++) {
+                                    if (modifiedBy[i].checked)
+                                        d.ModifiedByFilter = d.ModifiedByFilter + modifiedBy[i].value + ",";
+                                }
                                 d.ModifiedFrom = "";
                                 d.ModifiedTo = "";
+                            },
+                            "dataSrc": function (json) {
+                                if (json.IsRedirect) {
+                                    alert(json.Message);
+                                    window.location.href = json.RedirectUrl;
+                                    return "";
+                                }
+                                return json.data;
                             }
                         },
                         "columns": [
@@ -486,7 +525,7 @@
                                 }
                             },
                             {
-                                "title": "Complexity",
+                                "title": "Compl",
                                 "data": "Complexity",
                                 "searchable": true,
                                 "render": function (data) {
@@ -498,7 +537,7 @@
                                 "data": "State",
                                 "searchable": true,
                                 "render": function (data) {
-                                    return "<div class=\"panel panel-default word-state-" + data + "\">" + wordStates[data] + "</div>";
+                                    return "<div class=\"panel panel-default word-state-" + data + "\" style=\"text-align:center\">" + wordStates[data] + "</div>";
                                 }
                             },
                             {
@@ -508,6 +547,15 @@
                                 "type": "date",
                                 "render": function (data) {
                                     return moment(data).format("YYYY/MM/DD HH:mm:ss")
+                                }
+                            },
+                            {
+                                "title": "By",
+                                "data": "ModifiedBy",
+                                "searchable": true,
+                                "render": function (data) {
+                                    return "<span class=\"avatar-sm\" style=\"background-color:" +
+                                        GetAvatarColor(data) + "\">" + data + "</span>";
                                 }
                             }
                         ],
@@ -558,6 +606,16 @@
                 OnFilterUpdate();
             });
 
+            $("#qfModifiedByClear").click(function () {
+                handleFilterChange = false;
+                var opts = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+                for (var i = 0; i < opts.length; i++) {
+                    opts[i].checked = false;
+                }
+                handleFilterChange = true;
+                OnFilterUpdate();
+            });
+
             $("input[id^='qfArea_']").change(function () {
                 if (handleFilterChange)
                     OnFilterUpdate();
@@ -569,6 +627,11 @@
             });
 
             $("input[id^='qfStates_']").change(function () {
+                if (handleFilterChange)
+                    OnFilterUpdate();
+            });
+
+            $("input[id^='qfModifiedBy_']").change(function () {
                 if (handleFilterChange)
                     OnFilterUpdate();
             });

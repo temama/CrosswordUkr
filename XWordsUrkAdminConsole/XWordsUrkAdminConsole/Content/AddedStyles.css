@@ -129,3 +129,18 @@
     color: #fff;
     background-color: green;
 }
+
+.avatar-sm {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 10%;
+    text-align: center;
+    line-height: 21px;
+    background: green;
+    font-family: Arial;
+    font-weight: 500;
+    font-size: x-small;
+    color: #fff;
+    background-color: green;
+}
