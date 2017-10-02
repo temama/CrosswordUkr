@@ -1,22 +1,81 @@
-﻿@{
+﻿@model XWordsUrkAdminConsole.Models.DashboardData
+
+@{
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>CrosswordsUkr Admin Console</h1>
-    
+<div class="row">
+    <div class="col-md-9">
+        <div class="row">
+            <h1>CrosswordsUkr Admin Console</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Words: @Model.TotalWords</h4>
+                    </div>
+                    <div class="card-block">
+                        <canvas id="dash-words-states"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Clues: @Model.TotalClues</h4>
+                    </div>
+                    <div class="card-block">
+                        <canvas id="dash-clues-states"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Games: @Model.TotalGames</h4>
+                    </div>
+                    <div class="card-block">
+                        <canvas id="dash-games-states"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <h3>Recent events:</h3>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        @Html.ActionLink("Words", "Words", "Admin")
-    
-    </div>
-    <div class="col-md-4">
-    
-    </div>
-    <div class="col-md-4">
-    
-    </div>
-</div>
+@section scripts{
+    @Scripts.Render("~/scripts/chart.js")
+
+    <script type="text/javascript">
+        @*$(function () {
+            //doughnut
+            var ctxD = document.getElementById("dash-words-states").getContext('2d');
+            var myLineChart = new Chart(ctxD, {
+                type: 'doughnut',
+                data: {
+                    labels: ["None", "Mark for delete", "Deleted", "To Verify", "Active"],
+                    datasets: [
+                        {
+                            data: [
+                                @Model.WordsStates[XWordsUrkAdminConsole.Models.WordState.None],
+                                @Model.WordsStates[XWordsUrkAdminConsole.Models.WordState.MarkForDelete],
+                                @Model.WordsStates[XWordsUrkAdminConsole.Models.WordState.Deleted],
+                                @Model.WordsStates[XWordsUrkAdminConsole.Models.WordState.ToVerify],
+                                @Model.WordsStates[XWordsUrkAdminConsole.Models.WordState.Active]],
+                            backgroundColor: ["#949FB1", "#FDB45C", "#F7464A", "#46BFBD", "#00EE76"],
+                            hoverBackgroundColor: ["#A8B3C5", "#FFC870", "#FF5A5E", "#5AD3D1", "#00CD66"]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        });*@
+    </script>
+    }

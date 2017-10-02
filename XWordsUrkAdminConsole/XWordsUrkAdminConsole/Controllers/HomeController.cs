@@ -15,9 +15,26 @@ namespace XWordsUrkAdminConsole.Controllers
         {
             var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
             if (reqUser == null)
-                return RedirectToAction("Login", "Home", new {ReturnUrl = Request.RawUrl });
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
 
-            return View();
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                var model = new DashboardData
+                {
+                    TotalWords = dbContext.Words.Count(),
+                    TotalClues = dbContext.Clues.Count(),
+                    TotalGames = dbContext.Games.Count(),
+                    WordsProcessed = dbContext.Words.Count(w => w.State != WordState.None)
+                };
+
+                model.WordsStates = new Dictionary<WordState, int>();
+                foreach (WordState e in Enum.GetValues(typeof(WordState)))
+                {
+                    model.WordsStates[e] = dbContext.Words.Count(w => w.State == e);
+                }
+
+                return View(model);
+            }
         }
 
         public ActionResult About()
@@ -177,6 +194,12 @@ namespace XWordsUrkAdminConsole.Controllers
         {
             AuthModule.LogOut(Response);
             return RedirectToAction("Login", "Home");
+        }
+
+        [HttpPost]
+        public JsonResult GetWordsStates()
+        {
+
         }
     }
 }

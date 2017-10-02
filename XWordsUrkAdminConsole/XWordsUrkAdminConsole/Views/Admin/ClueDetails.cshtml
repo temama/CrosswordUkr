@@ -93,10 +93,12 @@
                     <p class="pull-right" style="vertical-align:central"><b>Games:</b></p>
                 </div>
                 <div class="col-md-8 col-xs-12">
-                    <ul class="list-group">
-                        <li class="list-group-item">Val1</li>
-                        <li class="list-group-item">Val2</li>
-                    </ul>
+                    <ul class="list-group panel panel-default" style="max-height: 250px; overflow:auto;">
+                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.GameType)))
+                        {
+                            <li><label><input type="checkbox" id="clue-details-gametype-@((int)e)" value="@((int)e)"/>@e.ToString()</label></li>
+                        }
+                </ul>
                 </div>
             </div>
         </div>
@@ -116,7 +118,7 @@
                 </div>
                 <div class="col-md-8 col-xs-12">
                     <input id="clue-details-modified" class="form-control input-sm" style = "width:100%; max-width:100%"
-                           value="Version/TBA" />
+                           value="Version/TBA" disabled />
                 </div>
             </div>
             <div class="row">
@@ -125,7 +127,7 @@
                 </div>
                 <div class="col-md-8 col-xs-12">
                     <input id="clue-details-modified" class="form-control input-sm" style = "width:100%; max-width:100%"
-                           value="Version/TBA" />
+                           value="Version/TBA" disabled/>
                 </div>
             </div>
         </div>
@@ -155,7 +157,7 @@
         }
         OnClueDetailsChanged();
     }
-    
+
     function OnClueDetailsStateItemClick(id, repr) {
         var el = $("#clue-details-state-btn");
         el.html(repr + " <span class=\"caret\" />");
@@ -170,5 +172,56 @@
         el.val(id);
         el.attr("class", el.get(0).className.replace(/\bword-complex-\S+/g, "word-complex-" + id));
         OnWordDetailsChanged();
+    }
+
+    function OnClueDetailsSaveClick() {
+         var clueData = {
+                Id: $("#word-details-id").text(),
+                TheCkue: $("#clue-details-clue").val(),
+                Definition: $("#wordDefEdit").val(),
+                Area: $("#word-details-area-btn").val(),
+                Complexity: $("#word-details-complex-btn").val(),
+                State: $("#word-details-state-btn").val()
+            };
+
+            ShowProgress();
+
+            $.ajax({
+                data: JSON.stringify(wordData),
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "@Url.Action("SaveWord", "Admin")",
+                dataType: "json",
+                success: function (sData) {
+                    if (typeof sData === "string" && sData.startsWith("ERROR: "))
+                    {
+                        alert("Save failed:\n" + sData);
+                        return false;
+                    }
+
+                    $("#wordDetaisHasChanges").val("0");
+                    $("#wordDetaisHasChanges").hide();
+
+                    if (reload) {
+                        var url = "@Url.Action("WordDetails","Admin")" + "/" + sData.Id;
+                        $.get(url, function (htmlData) {
+                            $("#word-edit-container").html(htmlData);
+                            InitWordDetails(sData);
+                        });
+                    }
+
+                    if (close)
+                    {
+                        $("#word-edit-modal").modal("hide");
+                    }
+
+                    wordListVM.dt.ajax.reload();
+                    HideProgress();
+                },
+                error: function (fData) {
+                    alert("Save failed:\n" + fData);
+                    HideProgress();
+                }
+            });
     }
 </script>
