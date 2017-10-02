@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using XWordsUrkAdminConsole.Accounting;
 using XWordsUrkAdminConsole.Helpers;
@@ -196,10 +197,10 @@ namespace XWordsUrkAdminConsole.Controllers
             return RedirectToAction("Login", "Home");
         }
 
-        [HttpPost]
-        public JsonResult GetWordsStates()
-        {
-
-        }
+        //[HttpPost]
+        //public JsonResult GetWordsStates()
+        //{
+        //    var res = new Chart();
+        //}
     }
 }
