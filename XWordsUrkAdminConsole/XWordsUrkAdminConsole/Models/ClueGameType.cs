@@ -14,7 +14,7 @@ namespace XWordsUrkAdminConsole.Models
     [Flags]
     public enum ClueGameType : int
     {
-        Crossword = 0,
-        CrosswordPuzzle = 1
+        Crossword = 1,
+        CrosswordPuzzle = 2
     }
 }

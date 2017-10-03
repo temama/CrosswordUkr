@@ -590,8 +590,8 @@
           </ReferentialConstraint>
         </Association>
         <EnumType Name="ClueGameType" IsFlags="true">
-          <Member Name="Crossword" />
-          <Member Name="CrosswordPuzzle" />
+          <Member Name="Crossword" Value="1" />
+          <Member Name="CrosswordPuzzle" Value="2" />
         </EnumType>
       </Schema>
     </edmx:ConceptualModels>

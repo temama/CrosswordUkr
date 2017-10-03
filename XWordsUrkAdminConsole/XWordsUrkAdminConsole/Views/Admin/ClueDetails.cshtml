@@ -29,11 +29,13 @@
                 //TODO: Add autocomplete
                 <input id="clue-details-word" class="form-control input-sm" style="text-transform:uppercase"
                        type="text" value="@Model.Word.TheWord" required onkeypress="OnClueDetailsWordChanged(event);" />
+                <input id="clue-details-wordId" type="hidden" value="-1" />
             }
             else
             {
                 <input id="clue-details-word" class="form-control input-sm" style="text-transform:uppercase"
                        type="text" value="@Model.Word.TheWord" required onkeypress="OnClueDetailsWordChanged(event);" disabled />
+                <input id="clue-details-wordId" type="hidden" value="@Model.Word.Id" />
             }
         </div>
 
@@ -93,10 +95,19 @@
                     <p class="pull-right" style="vertical-align:central"><b>Games:</b></p>
                 </div>
                 <div class="col-md-8 col-xs-12">
-                    <ul class="list-group panel panel-default" style="max-height: 250px; overflow:auto;">
-                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.GameType)))
+                    <ul class="list-group panel panel-default" id="clue-details-gametypes-list" style="max-height: 250px; overflow:auto;">
+                        @foreach (XWordsUrkAdminConsole.Models.ClueGameType e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.ClueGameType)))
                         {
-                            <li><label><input type="checkbox" id="clue-details-gametype-@((int)e)" value="@((int)e)"/>@e.ToString()</label></li>
+                            @*<li><label><input type="checkbox" id="clue-details-gametype-@((int)e)" value="@((int)e)"/>@e.ToString()</label></li>*@
+                            <li>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" id="clue-details-gametype-@((int)e)" 
+                                        @( Model.GameType.HasFlag(e) ?   "checked='checked'" : string.Empty) value="@((int)e)"/>
+                                        @e.ToString()
+                                    </label>
+                                </div>
+                            </li>
                         }
                 </ul>
                 </div>
@@ -117,8 +128,8 @@
                     <p class="pull-right" style="vertical-align:central"><b>Include from Ver:</b></p>
                 </div>
                 <div class="col-md-8 col-xs-12">
-                    <input id="clue-details-modified" class="form-control input-sm" style = "width:100%; max-width:100%"
-                           value="Version/TBA" disabled />
+                    <input id="clue-details-includeFrom" class="form-control input-sm" style = "width:100%; max-width:100%"
+                           value="" disabled />
                 </div>
             </div>
             <div class="row">
@@ -126,8 +137,8 @@
                     <p class="pull-right" style="vertical-align:central"><b>Exclude from Ver:</b></p>
                 </div>
                 <div class="col-md-8 col-xs-12">
-                    <input id="clue-details-modified" class="form-control input-sm" style = "width:100%; max-width:100%"
-                           value="Version/TBA" disabled/>
+                    <input id="clue-details-excludeFrom" class="form-control input-sm" style = "width:100%; max-width:100%"
+                           value="" disabled/>
                 </div>
             </div>
         </div>
@@ -175,13 +186,22 @@
     }
 
     function OnClueDetailsSaveClick() {
+        var gameTypes = 0;
+        var gTypes = document.getElementById("clue-details-gametypes-list").getElementsByTagName("input");
+        for (var i = 0; i < gTypes.length; i++) {
+            if (gTypes[i].checked)
+                gameTypes |= parseInt(gTypes[i].value);
+        }
+
          var clueData = {
-                Id: $("#word-details-id").text(),
-                TheCkue: $("#clue-details-clue").val(),
-                Definition: $("#wordDefEdit").val(),
-                Area: $("#word-details-area-btn").val(),
-                Complexity: $("#word-details-complex-btn").val(),
-                State: $("#word-details-state-btn").val()
+                Id: $("#clue-details-id").text(),
+                WordId: $("#clue-details-wordId").text(),
+                GameType: gameTypes,
+                TheClue: $("#clue-details-clue").val(),,
+                State: $("#clue-details-state-btn").val(),
+                Complexity: $("#clue-details-complex-btn").val(),
+                IncludedFromVer: $("#clue-details-includeFrom").val(),
+                ExcludedFromVer: $("#clue-details-excludeFrom").val()
             };
 
             ShowProgress();
@@ -190,7 +210,7 @@
                 data: JSON.stringify(wordData),
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
-                url: "@Url.Action("SaveWord", "Admin")",
+                url: "@Url.Action("SaveClue", "Admin")",
                 dataType: "json",
                 success: function (sData) {
                     if (typeof sData === "string" && sData.startsWith("ERROR: "))
@@ -199,24 +219,14 @@
                         return false;
                     }
 
-                    $("#wordDetaisHasChanges").val("0");
-                    $("#wordDetaisHasChanges").hide();
-
-                    if (reload) {
-                        var url = "@Url.Action("WordDetails","Admin")" + "/" + sData.Id;
-                        $.get(url, function (htmlData) {
-                            $("#word-edit-container").html(htmlData);
-                            InitWordDetails(sData);
-                        });
-                    }
-
-                    if (close)
-                    {
-                        $("#word-edit-modal").modal("hide");
-                    }
-
-                    wordListVM.dt.ajax.reload();
+                    $("#clue-details-changed").val("0");
+                    $("#clue-details-changed").hide();
+                    
+                    
+                    $("#clue-edit-modal").modal("hide");
                     HideProgress();
+
+                    cluesList.dt.ajax.reload();                    
                 },
                 error: function (fData) {
                     alert("Save failed:\n" + fData);

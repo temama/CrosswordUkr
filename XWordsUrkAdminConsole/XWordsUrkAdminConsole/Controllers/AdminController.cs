@@ -388,6 +388,87 @@ namespace XWordsUrkAdminConsole.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult SaveClue(Clue postClue)
+        {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return Json(new
+                {
+                    IsRedirect = true,
+                    Message = " Please login to proceed",
+                    RedirectUrl = Url.Action("Login", "Home")
+                }, JsonRequestBehavior.AllowGet);
+            // TODO: check permissions??
+            try
+            {
+                Clue clue;
+                using (var dbContext = new XWordsAdminModelContext())
+                {
+                    var eventComment = new StringBuilder();
+
+                    if (postClue.Id <= 0)
+                    {
+                        clue = new Clue();
+                        dbContext.Clues.Add(clue);
+                        eventComment.Append("added new");
+                    }
+                    else
+                    {
+                        clue = dbContext.Clues.Include(w => w.ModifiedBy).First(c => c.Id == postClue.Id);
+                        eventComment.Append("updated");
+                    }
+
+                    var timestamp = DateTime.Now;
+
+                    clue.WordId = postClue.WordId;
+                    clue.GameType = postClue.GameType;
+                    clue.TheClue = postClue.TheClue;
+                    clue.State = postClue.State;
+                    clue.Complexity = postClue.Complexity;
+                    clue.IncludedFromVer = postClue.IncludedFromVer;
+                    clue.ExcludedFromVer = postClue.ExcludedFromVer;
+                    clue.UserId = reqUser.Id;
+                    clue.ModifiedBy = AuthModule.GetUserById(reqUser.Id, dbContext);
+
+                    dbContext.SaveChanges();
+
+                    var audit = new Event()
+                    {
+                        TimeStamp = timestamp,
+                        UserId = reqUser.Id,
+                        Table = "Clues",
+                        RecordId = clue.Id,
+                        Comment = eventComment.ToString()
+                    };
+                    dbContext.Events.Add(audit);
+                    dbContext.SaveChanges();
+
+                    return Json(new
+                    {
+                        Id = clue.Id,
+                        WordId = clue.WordId,
+                        GameType = clue.GameType,
+                        TheClue = clue.TheClue,
+                        State = clue.State,
+                        Complexity = clue.Complexity,
+                        IncludedFromVer = clue.IncludedFromVer,
+                        ExcludedFromVer = clue.ExcludedFromVer,
+                        UserId = clue.UserId
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    IsRedirect = true,
+                    Message = ex.Message,
+                    RedirectUrl = Url.Action("Login", "Home")
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
