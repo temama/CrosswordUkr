@@ -1,0 +1,12 @@
+﻿@model IEnumerable<XWordsUrkAdminConsole.Models.EventsFeedModel>
+
+@foreach (var e in Model)
+{
+    <li>
+        <span class="avatar" style="display:inline-block; background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(e.User.Initials)">@e.User.Initials</span>
+        <div>
+            <label style="color:gray">@e.User.Login - @e.TimeAgoRepresentation</label>
+            @e.EventRepresentation
+        </div>
+    </li>
+}

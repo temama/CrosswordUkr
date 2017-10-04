@@ -5,7 +5,7 @@
 }
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-9" style="height:100%; overflow-y:scroll">
         <div class="row">
             <h1>CrosswordsUkr Admin Console</h1>
         </div>
@@ -43,8 +43,12 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-3" style="height:90vh; position:fixed; overflow-y:scroll">
         <h3>Recent events:</h3>
+        <ul id="recent-events-list">
+
+        </ul>
+        <button>Load more...</button>
     </div>
 </div>
 
@@ -52,8 +56,21 @@
     @Scripts.Render("~/scripts/chart.js")
 
     <script type="text/javascript">
-        @*$(function () {
-            //doughnut
+        $(function () {
+            $.ajax({
+            dataType: "html",
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "@Url.Action("GetEventsFeed", "Home")" + "/20",
+            success: function (htmlData) {
+                $("#recent-events-list").append(htmlData);
+            },
+            error: function (fData) {
+                $("#recent-events-list").append("<li><b>Failed to load feed</b></li>")
+            }
+        });
+
+            @*//doughnut
             var ctxD = document.getElementById("dash-words-states").getContext('2d');
             var myLineChart = new Chart(ctxD, {
                 type: 'doughnut',
@@ -75,7 +92,7 @@
                 options: {
                     responsive: true
                 }
-            });
-        });*@
+            });*@
+    });
     </script>
     }

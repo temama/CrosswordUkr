@@ -202,5 +202,10 @@ namespace XWordsUrkAdminConsole.Controllers
         //{
         //    var res = new Chart();
         //}
+
+        public ActionResult GetEventsFeed(int count, int? skipFirstN)
+        {
+            return PartialView("EventsFeed", DashboardHelper.GetEventsFeed(count, skipFirstN));
+        }
     }
 }

@@ -172,6 +172,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DashboardHelper.cs" />
     <Compile Include="Helpers\LoginHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Clue.cs">
@@ -188,6 +189,7 @@
     <Compile Include="Models\Event.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\EventsFeedModel.cs" />
     <Compile Include="Models\Game.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
@@ -786,6 +788,7 @@
     <Content Include="Views\Admin\ClueDetails.cshtml" />
     <Content Include="Scripts\jquery-3.2.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.2.1.min.map" />
+    <Content Include="Views\Home\EventsFeed.cshtml" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceme40.dll" />
