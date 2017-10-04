@@ -6,6 +6,8 @@
     <title>@ViewBag.Title - CrosswordsUkr Admin Console</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/scripts/app/CommonActions.js")
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -22,11 +24,12 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li style="border-left:solid;">@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("Words", "Words", "Admin")</li>
-                    <li>@Html.ActionLink("About", "#", "", null, new { id = "AboutBtn" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", null, new { id = "ContactBtn", onclick = "TstClick();" })</li>
-                    <li><a href="#" onclick="TstClick()">TST</a></li>
+                    <li>@Html.ActionLink("Clues", "Clues", "Admin")</li>
+                    <li>@Html.ActionLink("Games", "Games", "Admin")</li>
+                    <li onclick="OpenActionInLayoutModal(&quot;@Url.Action("About", "Home")&quot;);" style="border-left:solid;"><a href="#">About</a></li>
+                    <li onclick="OpenActionInLayoutModal(&quot;@Url.Action("Contact", "Home")&quot;);"><a href="#">Contact</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @{Html.RenderAction("UserMenu", "Home");}
@@ -37,10 +40,6 @@
 
     <div class="container-fluid body-content">
         @RenderBody()
-        @*<hr />
-            <footer>
-                <p>&copy; @DateTime.Now.Year - CrosswordsUkr Admin Console</p>
-            </footer>*@
     </div>
     
 
@@ -56,38 +55,7 @@
             </div>
         </div>
     </div>
-
-    <script language="text/javascript">
-        @*function ShowProgress() {
-            $("#global-progress-bar").show();
-        }
-
-        function HideProgress() {
-            $("#global-progress-bar").hide();
-        }
-
-        $(function () {
-            $('#AboutBtn').click(function () {
-                var url = "@Url.Action("About", "Home")";
-                $.get(url, function (htmlData) {
-                    $("#layout-modal-dialog").html(htmlData);
-                    $("#layout-modal-dialog").modal("show");
-                });
-            });
-
-            $("body").on("click", "#my-user-details-btn", function () {
-                ShowProgress();
-                var url = "@Url.Action("MyUserDetails","Home")" + "/" + $("#my-user-details-btn").val();
-                $.get(url, function (htmlData) {
-                    $("#layout-modal-dialog").html(htmlData);
-                    $("#layout-modal-dialog").modal("show");
-                    HideProgress();
-                });
-            });
-        });*@
-
-    </script>
-
+    
     @RenderSection("scripts", required: false)
 </body>
 </html>

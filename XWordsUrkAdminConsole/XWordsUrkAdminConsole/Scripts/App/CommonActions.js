@@ -26,3 +26,34 @@ function GetAvatarColor(initials) {
     }
     return avatarColors[sum % avatarColors.length];
 }
+
+// Bootstrap modals works not quite fine when open few at time. This should fix that
+function SortOutModals(modalName) {
+    $(modalName).on("hidden.bs.modal", function (e) {
+        if ($('.modal:visible').length) {
+            $('.modal-backdrop').first().css('z-index', parseInt($('.modal:visible').last().css('z-index')) - 10);
+            $('body').addClass('modal-open');
+        }
+    }).on("show.bs.modal", function (e) {
+        if ($('.modal:visible').length) {
+            $('.modal-backdrop.in').first().css('z-index', parseInt($('.modal:visible').last().css('z-index')) + 10);
+            $(this).css('z-index', parseInt($('.modal-backdrop.in').first().css('z-index')) + 10);
+        }
+    });
+}
+
+function ShowModalWithScrolling(modalName) {
+    $(modalName).modal("show");
+    SortOutModals(modalName);
+}
+
+
+
+/*  Layout   */
+function OpenActionInLayoutModal(action) {
+    var url = action;
+    $.get(url, function (htmlData) {
+        $("#layout-modal-dialog").html(htmlData);
+        $("#layout-modal").modal("show");
+    });
+}

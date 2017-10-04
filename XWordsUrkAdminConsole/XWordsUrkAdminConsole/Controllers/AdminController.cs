@@ -148,6 +148,16 @@ namespace XWordsUrkAdminConsole.Controllers
             return Json(res, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetClueStates()
+        {
+            var res = new Dictionary<string, string>();
+            foreach (var e in Enum.GetValues(typeof(ClueState)))
+            {
+                res.Add(((int)e).ToString(), e.ToString());
+            }
+            return Json(res, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult Words()
         {
             var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
@@ -258,12 +268,7 @@ namespace XWordsUrkAdminConsole.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    IsRedirect = true,
-                    Message = ex.Message,
-                    RedirectUrl = Url.Action("Login", "Home")
-                }, JsonRequestBehavior.AllowGet);
+                return Json("ERROR: " + ex.Message, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -286,6 +291,11 @@ namespace XWordsUrkAdminConsole.Controllers
                 if (advSearch.WordId >= 0)
                 {
                     query = query.Where(c => c.WordId == advSearch.WordId);
+                }
+
+                if (!advSearch.ShowRejected)
+                {
+                    query = query.Where(c => c.State != ClueState.Rejected);
                 }
 
                 // Apply filters for searching
@@ -320,7 +330,7 @@ namespace XWordsUrkAdminConsole.Controllers
                 {
                     Id = clue.Id,
                     WordId = clue.WordId,
-                    Word = clue.Word,
+                    Word = clue.Word.TheWord,
                     TheClue = clue.TheClue,
                     Complexity = clue.Complexity,
                     State = clue.State,
@@ -354,7 +364,8 @@ namespace XWordsUrkAdminConsole.Controllers
 
             using (var dbContext = new XWordsAdminModelContext())
             {
-                Clue clue = dbContext.Clues.Include(c => c.ModifiedBy).FirstOrDefault(c => c.Id == id);
+                Clue clue = dbContext.Clues.Include(c => c.ModifiedBy).Include(c => c.Word)
+                    .FirstOrDefault(c => c.Id == id);
 
                 return PartialView("ClueDetails", clue);
             }
@@ -428,6 +439,7 @@ namespace XWordsUrkAdminConsole.Controllers
                     clue.Complexity = postClue.Complexity;
                     clue.IncludedFromVer = postClue.IncludedFromVer;
                     clue.ExcludedFromVer = postClue.ExcludedFromVer;
+                    clue.LastModified = timestamp;
                     clue.UserId = reqUser.Id;
                     clue.ModifiedBy = AuthModule.GetUserById(reqUser.Id, dbContext);
 
@@ -460,12 +472,7 @@ namespace XWordsUrkAdminConsole.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    IsRedirect = true,
-                    Message = ex.Message,
-                    RedirectUrl = Url.Action("Login", "Home")
-                }, JsonRequestBehavior.AllowGet);
+                return Json("ERROR: " + ex.Message, JsonRequestBehavior.AllowGet);
             }
         }
 

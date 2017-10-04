@@ -8,5 +8,6 @@ namespace XWordsUrkAdminConsole.Models
     public class CluesAdvancedSearch
     {
         public int WordId { get; set; }
+        public bool ShowRejected { get; set; }
     }
 }

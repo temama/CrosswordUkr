@@ -137,6 +137,7 @@
         var wordAreas = [];
         var wordComplexities = [];
         var wordStates = [];
+        var clueStates = [];
 
         var handleFilterChange = true;
 
@@ -156,7 +157,7 @@
             $.get(url, function (htmlData) {
                 $("#word-edit-container").html(htmlData);
                 InitWordDetails(data);
-                $("#word-edit-modal").modal("show");
+                ShowModalWithScrolling("#word-edit-modal");
             });
         }
 
@@ -269,7 +270,12 @@
                 dt: null,
 
                 init: function () {
-                    this.dt = $('#clues-data-table').DataTable({
+                    this.dt = $('#clues-data-table').on('processing.dt', function (e, settings, processing) {
+                        if (processing)
+                            ShowProgress();
+                        else
+                            HideProgress();
+                    }).DataTable({
                         "serverSide": true,
                         "processing": true,
                         "searching": true,
@@ -277,6 +283,17 @@
                             "url": "@Url.Action("GetClues","Admin")",
                             "data": function (d) {
                                 d.WordId = word.Id;
+                                d.ShowRejected = 0;
+                                if ($("#word-detail-showRejectedClues-check"))
+                                    d.ShowRejected = $("#word-detail-showRejectedClues-check").prop("checked");
+                            },
+                            "dataSrc": function (json) {
+                                if (json.IsRedirect) {
+                                    alert(json.Message);
+                                    window.location.href = json.RedirectUrl;
+                                    return "";
+                                }
+                                return json.data;
                             }
                         },
                         "columns": [
@@ -291,9 +308,12 @@
                                 "searchable": false
                             },
                             {
-                                "title": "Complexity",
+                                "title": "Compl",
                                 "data": "Complexity",
-                                "searchable": true
+                                "searchable": true,
+                                "render": function (data) {
+                                    return wordComplexities[data];
+                                }
                             },
                             {
                                 "title": "In",
@@ -306,19 +326,35 @@
                                 "searchable": true
                             },
                             {
+                                "title": "State",
+                                "data": "State",
+                                "searchable": true,
+                                "render": function (data) {
+                                    return "<div class=\"panel panel-default clue-state-" + data + "\" style=\"text-align:center\">" + clueStates[data] + "</div>";
+                                }
+                            },
+                            {
                                 "title": "Modified",
                                 "data": "LastModified",
-                                "searchable": false
+                                "searchable": false,
+                                "type": "date",
+                                "render": function (data) {
+                                    return moment(data).format("YYYY/MM/DD HH:mm:ss")
+                                }
                             },
                             {
                                 "title": "By",
                                 "data": "ModifiedBy",
-                                "searchable": true
+                                "searchable": true,
+                                "render": function (data) {
+                                    return "<span class=\"avatar-sm\" style=\"background-color:" +
+                                        GetAvatarColor(data) + "\">" + data + "</span>";
+                                }
                             }
                         ],
                         //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
                         //"dom": "frtip"
-                        "dom":"<'row'<'col-sm-12'frt>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                        "dom": "<'row'<'col-sm-12'frt>><'row'<'col-sm-5'i><'col-sm-7'p>>",
                     });
                 }
             }
@@ -326,6 +362,17 @@
             cluesList.init();
 
             $("#clues-data-table_filter").appendTo("#cluesTableToolsSearch");
+
+            $('#clues-data-table tbody').on('dblclick', 'tr', function () {
+                var data = cluesList.dt.row(this).data(); // use data.Id further
+                var url = "@Url.Action("ClueDetails","Admin")" + "/" + data.Id;
+                ShowProgress();
+                $.get(url, function (htmlData) {
+                    $("#clue-edit-container").html(htmlData);
+                    ShowModalWithScrolling("#clue-edit-modal");
+                    HideProgress();
+                });
+            });
         }
 
         function OnWordDetailsChanged() {
@@ -450,6 +497,10 @@
 
             $.getJSON("@Url.Action("GetWordStates", "Admin")", function (resp) {
                 wordStates = resp;
+            })
+
+            $.getJSON("@Url.Action("GetClueStates", "Admin")", function (resp) {
+                clueStates = resp;
             })
 
             wordListVM = {
@@ -650,7 +701,7 @@
                 $.get(url, function (htmlData) {
                     $("#word-edit-container").html(htmlData);
                     InitWordDetails(data);
-                    $("#word-edit-modal").modal("show");
+                    ShowModalWithScrolling("#word-edit-modal");
                     HideProgress();
                 });
             });
@@ -663,6 +714,10 @@
                         return false;
                     }
                 }
+            });
+
+            $("#clue-edit-modal").on("hide.bs.modal", function (e) {
+                $("#word-edit-modal").addClass("modal-open");
             });
         });
 

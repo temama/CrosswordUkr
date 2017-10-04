@@ -5,7 +5,7 @@
     <h3 class="modal-title" style="display:inline-block">Clue details</h3>
     @if (Model.Id > 0)
     {
-        <label id="clue-details-changed" value="0" style="color:orange; font-weight:100">[edited]</label>
+        <label id="clue-details-changed" value="0" style="color:orange; font-weight:100; display:none">[edited]</label>
     }
     else
     {
@@ -59,7 +59,7 @@
             <p class="pull-right" style="vertical-align:central"><b>ID:</b></p>
         </div>
         <div class="col-md-1 col-xs-2">
-            <label id="word-details-id" value="@Model.Id">@Model.Id</label>
+            <label id="clue-details-id" value="@Model.Id">@Model.Id</label>
         </div>
     </div>
 
@@ -103,7 +103,8 @@
                                 <div class="form-check">
                                     <label class="form-check-label">
                                         <input class="form-check-input" type="checkbox" id="clue-details-gametype-@((int)e)" 
-                                        @( Model.GameType.HasFlag(e) ?   "checked='checked'" : string.Empty) value="@((int)e)"/>
+                                        @( Model.GameType.HasFlag(e) ?   "checked='checked'" : string.Empty) value="@((int)e)"
+                                        onclick="OnClueDetailsChanged();"/>
                                         @e.ToString()
                                     </label>
                                 </div>
@@ -185,6 +186,16 @@
         OnWordDetailsChanged();
     }
 
+    function ValidateClueBeforeSave(clueData) {
+        if (clueData.WordId <= 0)
+            return "Word is not selected";
+
+        if (!clueData.TheClue)
+            return "Please enter the clue";
+
+        return "";
+    }
+
     function OnClueDetailsSaveClick() {
         var gameTypes = 0;
         var gTypes = document.getElementById("clue-details-gametypes-list").getElementsByTagName("input");
@@ -193,45 +204,49 @@
                 gameTypes |= parseInt(gTypes[i].value);
         }
 
-         var clueData = {
-                Id: $("#clue-details-id").text(),
-                WordId: $("#clue-details-wordId").text(),
-                GameType: gameTypes,
-                TheClue: $("#clue-details-clue").val(),,
-                State: $("#clue-details-state-btn").val(),
-                Complexity: $("#clue-details-complex-btn").val(),
-                IncludedFromVer: $("#clue-details-includeFrom").val(),
-                ExcludedFromVer: $("#clue-details-excludeFrom").val()
-            };
+        var clueData = {
+            Id: $("#clue-details-id").val(),
+            WordId: $("#clue-details-wordId").val(),
+            GameType: gameTypes,
+            TheClue: $("#clue-details-clue").val(),
+            State: $("#clue-details-state-btn").val(),
+            Complexity: $("#clue-details-complex-btn").val(),
+            IncludedFromVer: $("#clue-details-includeFrom").val(),
+            ExcludedFromVer: $("#clue-details-excludeFrom").val()
+        };
 
-            ShowProgress();
+        var validationMsg = ValidateClueBeforeSave(clueData);
+        if (validationMsg != "") {
+            alert("Validation error:\n" + validationMsg);
+            return false;
+        }
 
-            $.ajax({
-                data: JSON.stringify(wordData),
-                type: "POST",
-                contentType: "application/json; charset=utf-8",
-                url: "@Url.Action("SaveClue", "Admin")",
-                dataType: "json",
-                success: function (sData) {
-                    if (typeof sData === "string" && sData.startsWith("ERROR: "))
-                    {
-                        alert("Save failed:\n" + sData);
-                        return false;
-                    }
+        ShowProgress();
 
-                    $("#clue-details-changed").val("0");
-                    $("#clue-details-changed").hide();
-                    
-                    
-                    $("#clue-edit-modal").modal("hide");
-                    HideProgress();
-
-                    cluesList.dt.ajax.reload();                    
-                },
-                error: function (fData) {
-                    alert("Save failed:\n" + fData);
-                    HideProgress();
+        $.ajax({
+            data: JSON.stringify(clueData),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "@Url.Action("SaveClue", "Admin")",
+            dataType: "json",
+            success: function (sData) {
+                if (typeof sData === "string" && sData.startsWith("ERROR: ")) {
+                    alert("Save failed:\n" + sData);
+                    return false;
                 }
-            });
+
+                $("#clue-details-changed").val("0");
+                $("#clue-details-changed").hide();
+
+                $("#clue-edit-modal").modal("hide");
+                HideProgress();
+
+                cluesList.dt.ajax.reload();
+            },
+            error: function (fData) {
+                alert("Save failed:\n" + fData);
+                HideProgress();
+            }
+        });
     }
 </script>
