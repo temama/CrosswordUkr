@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
@@ -115,7 +117,7 @@ namespace XWordsUrkAdminConsole.Controllers
             if (reqUser == null)
                 return RedirectToAction("Login", "Home");
 
-            if ((model!=null && model.Id == reqUser.Id) || reqUser.HasRole(UserRoles.UsersAdmin.ToString()))
+            if ((model != null && model.Id == reqUser.Id) || reqUser.HasRole(UserRoles.UsersAdmin.ToString()))
             {
                 try
                 {
@@ -203,9 +205,26 @@ namespace XWordsUrkAdminConsole.Controllers
         //    var res = new Chart();
         //}
 
+        [HttpPost]
         public ActionResult GetEventsFeed(int count, int? skipFirstN)
         {
-            return PartialView("EventsFeed", DashboardHelper.GetEventsFeed(count, skipFirstN));
+            return PartialView("EventsFeed", DashboardHelper.GetEventsFeed(Url, count, skipFirstN));
+        }
+
+        public JsonResult GetWeeklyActivity()
+        {
+            var aLabels = new List<string>();
+            var aData = new List<int>();
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                for (int i = 6; i >= 0; i--)
+                {
+                    var date = DateTime.Now.AddDays(-i);
+                    aLabels.Add(DashboardHelper.GetVeryShortDayRepr(date.DayOfWeek));
+                    aData.Add(dbContext.Events.Where(e => DbFunctions.TruncateTime(e.TimeStamp) == date.Date).Count());
+                }
+            }
+            return Json(new { labels = aLabels, data = aData }, JsonRequestBehavior.AllowGet);
         }
     }
 }

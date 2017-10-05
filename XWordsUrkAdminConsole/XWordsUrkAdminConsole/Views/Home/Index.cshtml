@@ -5,7 +5,7 @@
 }
 
 <div class="row">
-    <div class="col-md-9" style="height:100%; overflow-y:scroll">
+    <div class="col-md-9" style="height:90vh; overflow-y:scroll">
         <div class="row">
             <h1>CrosswordsUkr Admin Console</h1>
         </div>
@@ -43,12 +43,17 @@
         </div>
     </div>
 
-    <div class="col-md-3" style="height:90vh; position:fixed; overflow-y:scroll">
-        <h3>Recent events:</h3>
-        <ul id="recent-events-list">
+    <div class="col-md-3" >
+        <div style="height:100px; margin-top:2px">
+            <canvas id="activity-chart" class="chartjs-render-monitor"></canvas>
+        </div>
+        <div style="height:90vh; overflow-y:scroll">
+            <h3>Recent events:</h3>
+            <div id="recent-events-list" class="list-group">
 
-        </ul>
-        <button>Load more...</button>
+            </div>
+            <button class="btn btn-default center-block" style="position:center" onclick="OnLoadMoreFeedClick();">Load more...</button>
+        </div>
     </div>
 </div>
 
@@ -56,19 +61,93 @@
     @Scripts.Render("~/scripts/chart.js")
 
     <script type="text/javascript">
-        $(function () {
+        var feedEventsLoaded = 0;
+        var feedsEventsToLoad = 20;
+
+        function OnLoadMoreFeedClick() {
+            var feed = { count: feedsEventsToLoad, skipFirstN: feedEventsLoaded };
+
             $.ajax({
-            dataType: "html",
-            type: "GET",
-            contentType: "application/json; charset=utf-8",
-            url: "@Url.Action("GetEventsFeed", "Home")" + "/20",
-            success: function (htmlData) {
-                $("#recent-events-list").append(htmlData);
-            },
-            error: function (fData) {
-                $("#recent-events-list").append("<li><b>Failed to load feed</b></li>")
-            }
-        });
+                data: JSON.stringify(feed),
+                dataType: "html",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "@Url.Action("GetEventsFeed", "Home")",
+                success: function (htmlData) {
+                    $("#recent-events-list").append(htmlData);
+                    feedEventsLoaded += feedsEventsToLoad;
+                },
+                error: function (fData) {
+                    $("#recent-events-list").append("<div class=\"panel\"><b>Failed to load feed</b></div>")
+                }
+            });
+        }
+
+        function DrawActivityChart() {
+            var options = {
+                maintainAspectRatio: false,
+                spanGaps: false,
+                elements: {
+                    line: {
+                        tension: 0.4
+                    }
+                },
+                plugins: {
+                    filler: {
+                        propagate: false
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 0
+                        }
+                    }]
+                },
+                legend: {
+                    display: false
+                }
+            };
+
+            var ctx = document.getElementById("activity-chart").getContext('2d');
+            var activityChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: ["M", "T", "W", "Th", "F", "Sa", "Su"],
+                    datasets: [
+                        {
+                            backgroundColor: "rgba(54, 162, 235, 0.5)",
+                            borderColor: "rgb(54, 162, 235)",
+                            data: [0, 0, 0, 0, 0, 0, 0],
+                            fill: "start"
+                        }]
+                },
+                options: options
+            });
+
+            $.getJSON("@Url.Action("GetWeeklyActivity", "Home")", function (activityData) {
+                activityChart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: activityData.labels,
+                        datasets: [
+                            {
+                                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                                borderColor: "rgb(54, 162, 235)",
+                                data: activityData.data,
+                                fill: "start"
+                            }]
+                    },
+                    options: options
+                });
+            });
+        }
+
+        $(function () {
+            OnLoadMoreFeedClick();
+
+            DrawActivityChart();
 
             @*//doughnut
             var ctxD = document.getElementById("dash-words-states").getContext('2d');
@@ -93,6 +172,6 @@
                     responsive: true
                 }
             });*@
-    });
+        });
     </script>
     }

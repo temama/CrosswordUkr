@@ -2,11 +2,15 @@
 
 @foreach (var e in Model)
 {
-    <li>
-        <span class="avatar" style="display:inline-block; background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(e.User.Initials)">@e.User.Initials</span>
-        <div>
-            <label style="color:gray">@e.User.Login - @e.TimeAgoRepresentation</label>
-            @e.EventRepresentation
+    <div class="panel">
+        <div class="row">
+            <div class="col-md-1">
+                <span class="avatar" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(e.User.Initials)">@e.User.Initials</span>
+            </div>    
+            <div class="col-md-10">
+                <p style="color:darkgray">@e.User.Login - @e.TimeAgoRepresentation</p>
+                <span class="@e.IconClass"></span> @Html.Raw(@e.EventRepresentation)
+            </div>
         </div>
-    </li>
+    </div>
 }

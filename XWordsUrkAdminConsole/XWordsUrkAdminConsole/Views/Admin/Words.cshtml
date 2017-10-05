@@ -427,7 +427,7 @@
         }
 
         function SaveWordDetails(reload, close) {
-            if ($("#wordDetaisHasChanges").val() == "0") {
+            if ($("#wordDetaisHasChanges").val() != "1") {
                 if (close) {
                     $("#word-edit-modal").modal("hide");
                 }
