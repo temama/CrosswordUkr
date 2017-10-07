@@ -9,7 +9,7 @@ namespace XWordsUrkAdminConsole.Models
     {
         public User User { get; set; }
         public string TimeAgoRepresentation { get; set; }
-        public string IconClass { get; set; }
+        public string IconTagDetails { get; set; }
         public string EventRepresentation { get; set; }
     }
 }

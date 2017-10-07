@@ -8,8 +8,8 @@
                 <span class="avatar" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(e.User.Initials)">@e.User.Initials</span>
             </div>    
             <div class="col-md-10">
-                <p style="color:darkgray">@e.User.Login - @e.TimeAgoRepresentation</p>
-                <span class="@e.IconClass"></span> @Html.Raw(@e.EventRepresentation)
+                <p style="color:darkgray;">@e.User.Login - @e.TimeAgoRepresentation</p>
+                <span @Html.Raw(e.IconTagDetails)></span> @Html.Raw(@e.EventRepresentation)
             </div>
         </div>
     </div>

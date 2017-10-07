@@ -5,7 +5,7 @@
 }
 
 <div class="row">
-    <div class="col-md-9" style="height:90vh; overflow-y:scroll">
+    <div class="col-md-9">
         <div class="row">
             <h1>CrosswordsUkr Admin Console</h1>
         </div>
@@ -16,7 +16,7 @@
                         <h4>Words: @Model.TotalWords</h4>
                     </div>
                     <div class="card-block">
-                        <canvas id="dash-words-states"></canvas>
+                        <canvas id="dash-words-states" style="width:100%;"></canvas>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                         <h4>Clues: @Model.TotalClues</h4>
                     </div>
                     <div class="card-block">
-                        <canvas id="dash-clues-states"></canvas>
+                        <canvas id="dash-clues-states" style="width:100%;"></canvas>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                         <h4>Games: @Model.TotalGames</h4>
                     </div>
                     <div class="card-block">
-                        <canvas id="dash-games-states"></canvas>
+                        <canvas id="dash-games-states" style="width:100%;"></canvas>
                     </div>
                 </div>
             </div>
@@ -114,12 +114,12 @@
             var activityChart = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: ["M", "T", "W", "Th", "F", "Sa", "Su"],
+                    labels: [],
                     datasets: [
                         {
                             backgroundColor: "rgba(54, 162, 235, 0.5)",
                             borderColor: "rgb(54, 162, 235)",
-                            data: [0, 0, 0, 0, 0, 0, 0],
+                            data: [],
                             fill: "start"
                         }]
                 },
@@ -127,29 +127,14 @@
             });
 
             $.getJSON("@Url.Action("GetWeeklyActivity", "Home")", function (activityData) {
-                activityChart = new Chart(ctx, {
-                    type: "line",
-                    data: {
-                        labels: activityData.labels,
-                        datasets: [
-                            {
-                                backgroundColor: "rgba(54, 162, 235, 0.5)",
-                                borderColor: "rgb(54, 162, 235)",
-                                data: activityData.data,
-                                fill: "start"
-                            }]
-                    },
-                    options: options
-                });
+                activityChart.data.labels = activityData.labels;
+                activityChart.data.datasets[0].data = activityData.data;
+                activityChart.update();
             });
         }
 
-        $(function () {
-            OnLoadMoreFeedClick();
+        function DrawWordsStatusesChart() {
 
-            DrawActivityChart();
-
-            @*//doughnut
             var ctxD = document.getElementById("dash-words-states").getContext('2d');
             var myLineChart = new Chart(ctxD, {
                 type: 'doughnut',
@@ -171,7 +156,70 @@
                 options: {
                     responsive: true
                 }
-            });*@
+            });
+        }
+
+        function DrawCluesStatusesChart() {
+
+            var ctxD = document.getElementById("dash-clues-states").getContext('2d');
+            var myLineChart = new Chart(ctxD, {
+                type: 'doughnut',
+                data: {
+                    labels: ["New", "Verified", "Rejected"],
+                    datasets: [
+                        {
+                            data: [
+                                @Model.CluesStates[XWordsUrkAdminConsole.Models.ClueState.New],
+                                @Model.CluesStates[XWordsUrkAdminConsole.Models.ClueState.Verifed],
+                                @Model.CluesStates[XWordsUrkAdminConsole.Models.ClueState.Rejected]
+                            ],
+                            backgroundColor: ["#949FB1", "#00EE76", "#F7464A"],
+                            hoverBackgroundColor: ["#A8B3C5", "#00CD66", "#FF5A5E"]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        function DrawGamesStatusesChart() {
+
+            var ctxD = document.getElementById("dash-games-states").getContext('2d');
+            var myLineChart = new Chart(ctxD, {
+                type: 'doughnut',
+                data: {
+                    labels: ["New", "Testing", "Rejected", "To Verify", "Live"],
+                    datasets: [
+                        {
+                            data: [
+                                @Model.GamesStates[XWordsUrkAdminConsole.Models.GameState.New],
+                                @Model.GamesStates[XWordsUrkAdminConsole.Models.GameState.Testing],
+                                @Model.GamesStates[XWordsUrkAdminConsole.Models.GameState.Rejected],
+                                @Model.GamesStates[XWordsUrkAdminConsole.Models.GameState.ToVerify],
+                                @Model.GamesStates[XWordsUrkAdminConsole.Models.GameState.Live]],
+                            backgroundColor: ["#949FB1", "#FDB45C", "#F7464A", "#46BFBD", "#00EE76"],
+                            hoverBackgroundColor: ["#A8B3C5", "#FFC870", "#FF5A5E", "#5AD3D1", "#00CD66"]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        $(function () {
+            OnLoadMoreFeedClick();
+
+            DrawActivityChart();
+
+            DrawWordsStatusesChart();
+
+            DrawCluesStatusesChart();
+
+            DrawGamesStatusesChart();
         });
     </script>
     }

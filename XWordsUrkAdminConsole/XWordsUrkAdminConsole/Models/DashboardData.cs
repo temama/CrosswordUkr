@@ -12,6 +12,7 @@ namespace XWordsUrkAdminConsole.Models
         public int TotalGames { get; set; }
         public int WordsProcessed { get; set; }
         public Dictionary<WordState, int> WordsStates { get; set; }
-        public Dictionary<Clue, int> CluesStates { get; set; }
+        public Dictionary<ClueState, int> CluesStates { get; set; }
+        public Dictionary<GameState, int> GamesStates { get; set; }
     }
 }

@@ -36,6 +36,18 @@ namespace XWordsUrkAdminConsole.Controllers
                     model.WordsStates[e] = dbContext.Words.Count(w => w.State == e);
                 }
 
+                model.CluesStates = new Dictionary<ClueState, int>();
+                foreach (ClueState e in Enum.GetValues(typeof(ClueState)))
+                {
+                    model.CluesStates[e] = dbContext.Clues.Count(c => c.State == e);
+                }
+
+                model.GamesStates = new Dictionary<GameState, int>();
+                foreach (GameState e in Enum.GetValues(typeof(GameState)))
+                {
+                    model.GamesStates[e] = dbContext.Games.Count(c => c.State == e);
+                }
+
                 return View(model);
             }
         }

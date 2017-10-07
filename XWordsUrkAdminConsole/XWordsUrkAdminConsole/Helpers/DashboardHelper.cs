@@ -13,9 +13,9 @@ namespace XWordsUrkAdminConsole.Helpers
     {
         private static List<string> _modelTables = new List<string> { "Words", "Clues", "Games", "Media",
             "Versions", "Users", "Settings"};
-        private static string _iconAdd = "glyphicon glyphicon-plus-sign";
-        private static string _iconEdit = "glyphicon glyphicon-edit";
-        private static string _iconCalendar = "glyphicon glyphicon-calendar";
+        private static string _iconAdd = "class=\"glyphicon glyphicon-plus-sign\" style=\"color:green\"";
+        private static string _iconEdit = "class=\"glyphicon glyphicon-edit\" style=\"color:orange\"";
+        private static string _iconCalendar = "class=\"glyphicon glyphicon-calendar\" style=\"color:blue\"";
 
         public static string GetTimeAgoRepresentation(DateTime when)
         {
@@ -92,13 +92,13 @@ namespace XWordsUrkAdminConsole.Helpers
             if (_modelTables.Contains(e.Table))
             {
                 if (e.Comment.ToLower().StartsWith("added new"))
-                    res.IconClass = _iconAdd;
+                    res.IconTagDetails = _iconAdd;
                 else
-                    res.IconClass = _iconEdit;
+                    res.IconTagDetails = _iconEdit;
             }
             else
             {
-                res.IconClass = _iconCalendar;
+                res.IconTagDetails = _iconCalendar;
             }
 
             res.EventRepresentation = GenerateEventRepresentation(Url, e, dbContext);
