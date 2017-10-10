@@ -116,7 +116,7 @@ namespace XWordsUrkAdminConsole.Helpers
                 res.Append(" word ");
 
                 var word = dbContext.Words.First(w => w.Id == e.RecordId);
-                res.Append(string.Format("<a href=\"{0}\">{1}</a>", Url.Action("GoToWordDetails", "Admin") + "/" + word.Id, word.TheWord));
+                res.Append(string.Format("<a href=\"{0}\">{1}</a>", Url.Action("GoToWord", "Admin") + "/" + word.Id, word.TheWord));
             }
             else if (e.Table == "Clues")
             {
@@ -124,9 +124,9 @@ namespace XWordsUrkAdminConsole.Helpers
                 res.Append(" clue ");
 
                 var clue = dbContext.Clues.First(c => c.Id == e.RecordId);
-                res.Append(string.Format("<a href=\"{0}\">{1}</a>", Url.Action("GoToClueDetails", "Admin") + "/" + clue.Id, CutText(clue.TheClue, 10)));
+                res.Append(string.Format("<a href=\"{0}\">{1}</a>", Url.Action("GoToClue", "Admin") + "/" + clue.Id, CutText(clue.TheClue, 10)));
                 res.Append(" for word ");
-                res.Append(string.Format("<a href=\"{0}\">{1}</a>", Url.Action("GoToWordDetails", "Admin") + "/" + clue.Word.Id, clue.Word.TheWord));
+                res.Append(string.Format("<a href=\"{0}\">{1}</a>", Url.Action("GoToWord", "Admin") + "/" + clue.Word.Id, clue.Word.TheWord));
             }
 
             return res.ToString();

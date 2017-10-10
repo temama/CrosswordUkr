@@ -164,7 +164,16 @@ namespace XWordsUrkAdminConsole.Controllers
             if (reqUser == null)
                 return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
 
-            return View();
+            return View("Words");
+        }
+
+        public ActionResult GoToWord(int? id)
+        {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
+
+            return View("Words", id);
         }
 
         public ActionResult WordDetails(int? id)
@@ -270,6 +279,24 @@ namespace XWordsUrkAdminConsole.Controllers
             {
                 return Json("ERROR: " + ex.Message, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public ActionResult Clues()
+        {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
+
+            return View("Clues");
+        }
+
+        public ActionResult GoToClue(int? id)
+        {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
+
+            return View("Clues", id);
         }
 
         public ActionResult GetClues([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, CluesAdvancedSearch advSearch)

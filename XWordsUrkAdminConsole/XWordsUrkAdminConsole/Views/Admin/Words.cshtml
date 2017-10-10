@@ -1,4 +1,4 @@
-﻿@model IEnumerable<XWordsUrkAdminConsole.Models.Word>
+﻿@model int?
 
 @{
     ViewBag.Title = "Words";
@@ -153,10 +153,9 @@
 
         function OnAddWordClick() {
             var url = "@Url.Action("WordDetails","Admin")" + "/";
-            var data = { Id: -1};
             $.get(url, function (htmlData) {
                 $("#word-edit-container").html(htmlData);
-                InitWordDetails(data);
+                InitWordDetails(-1);
                 ShowModalWithScrolling("#word-edit-modal");
             });
         }
@@ -262,8 +261,8 @@
             wordListVM.dt.ajax.reload();
         };
 
-        function InitWordDetails(word) {
-            if (word.Id > 0)
+        function InitWordDetails(id) {
+            if (id > 0)
                 $("#wordDetaisHasChanges").hide();
 
             cluesList = {
@@ -282,7 +281,7 @@
                         "ajax": {
                             "url": "@Url.Action("GetClues","Admin")",
                             "data": function (d) {
-                                d.WordId = word.Id;
+                                d.WordId = id;
                                 d.ShowRejected = 0;
                                 if ($("#word-detail-showRejectedClues-check"))
                                     d.ShowRejected = $("#word-detail-showRejectedClues-check").prop("checked");
@@ -465,7 +464,7 @@
                         var url = "@Url.Action("WordDetails","Admin")" + "/" + sData.Id;
                         $.get(url, function (htmlData) {
                             $("#word-edit-container").html(htmlData);
-                            InitWordDetails(sData);
+                            InitWordDetails(sData.Id);
                         });
                     }
 
@@ -482,7 +481,17 @@
                     HideProgress();
                 }
             });
+        }
 
+        function OpenWordDetails(id) {
+            var url = "@Url.Action("WordDetails","Admin")" + "/" + id;
+            ShowProgress();
+            $.get(url, function (htmlData) {
+                $("#word-edit-container").html(htmlData);
+                InitWordDetails(id);
+                ShowModalWithScrolling("#word-edit-modal");
+                HideProgress();
+            });
         }
 
         $(function () {
@@ -696,14 +705,7 @@
 
             $('#words-data-table tbody').on('dblclick', 'tr', function () {
                 var data = wordListVM.dt.row(this).data(); // use data.Id further
-                var url = "@Url.Action("WordDetails","Admin")" + "/" + data.Id;
-                ShowProgress();
-                $.get(url, function (htmlData) {
-                    $("#word-edit-container").html(htmlData);
-                    InitWordDetails(data);
-                    ShowModalWithScrolling("#word-edit-modal");
-                    HideProgress();
-                });
+                OpenWordDetails(data.Id);
             });
 
             $("#word-edit-modal").on("hide.bs.modal", function (e) {
@@ -716,9 +718,14 @@
                 }
             });
 
-            $("#clue-edit-modal").on("hide.bs.modal", function (e) {
-                $("#word-edit-modal").addClass("modal-open");
-            });
+            //$("#clue-edit-modal").on("hide.bs.modal", function (e) {
+            //    $("#word-edit-modal").addClass("modal-open");
+            //});
+
+            var wordToOpen = @((Model != null && Model.HasValue) ? Model : -1);
+            if (wordToOpen > 0) {
+                OpenWordDetails(wordToOpen);
+            }
         });
 
     </script>
