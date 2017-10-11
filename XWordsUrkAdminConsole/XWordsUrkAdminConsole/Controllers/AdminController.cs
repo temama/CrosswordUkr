@@ -315,7 +315,7 @@ namespace XWordsUrkAdminConsole.Controllers
                 IQueryable<Clue> query = dbContext.Clues;
                 var totalCount = query.Count();
 
-                if (advSearch.WordId >= 0)
+                if (advSearch.WordId > 0)
                 {
                     query = query.Where(c => c.WordId == advSearch.WordId);
                 }

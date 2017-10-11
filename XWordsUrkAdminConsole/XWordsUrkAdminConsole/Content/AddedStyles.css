@@ -1,4 +1,9 @@
-﻿div.modal-body div.row {
+﻿
+.highlightFilter {
+    background-color: lightyellow;
+}
+
+div.modal-body div.row {
     line-height: 30px
 }
 

@@ -5,8 +5,231 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Clues</h2>
+<h3>Clues</h3>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary list-panel" id="list-panel">
+            <div class="panel-body">
+                <div id="cluesTableTools">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-1 col-xs-2">
+                                <a id="filtersBtn" href="#quickFilters" class="btn btn-default" data-toggle="collapse">Filters</a>
+                            </div>
+                            <div class="col-md-1 col-xs-2">
+                                <button class="btn btn-info btn-md" onclick="OnAddClueClick();">
+                                    <span class="glyphicon glyphicon-plus"></span> Add clue
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-inline">
+                                    <div id="cluesTableToolsSearch" class="form-group pull-right"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="quickFilters" class="collapse">
+                            <div>
+                                <div class="col-md-2 col-xs-4 panel panel-default" id="showDeletedCheckPanel" style="margin-top:0px; padding:3px; padding-bottom:5px">
+                                    Show rejected
+                                    <div class="material-switch pull-right">
+                                        <input id="clues-showDeletedCheck" name="showDeletedCheck" type="checkbox" />
+                                        <label for="clues-showDeletedCheck" class="label-primary" title="Show rejected clues"></label>
+                                    </div>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfComplexBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Complexity <span class="caret"></span></button>
+                                    <ul id="qfComplexList" class="dropdown-menu noclose">
+                                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordComplexity)))
+                                        {
+                                            <li><label><input type="checkbox" id="qfComplex_@((int)e).ToString()" name="@e.ToString()" value="@((int)e)">@e.ToString()</label></li>
+                                        }
+                                        <li><a id="qfComplexClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfStatesBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">States <span class="caret"></span></button>
+                                    <ul id="qfStatesList" class="dropdown-menu noclose">
+                                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.ClueState)))
+                                        {
+                                            <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e)">@e.ToString()</label></li>
+                                        }
+                                        <li><a id="qfStatesClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfModifiedByBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">ModifiedBy <span class="caret"></span></button>
+                                    <ul id="qfModifiedByList" class="dropdown-menu noclose">
+                                        @foreach (var u in XWordsUrkAdminConsole.Accounting.AuthModule.GetAllUsers())
+                                        {
+                                            <li>
+                                                <label>
+                                                    <input type="checkbox" id="qfModifiedBy_@u.Id"
+                                                           name="@u.Login" value="@u.Id">@u.Login
+                                                    </label>
+                                                    <span class="avatar-sm" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(u.Initials)">@u.Initials</span>
+                                                </li>
+                                        }
+                                        <li><a id="qfModifiedByClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="clues-data-table" class="table table-bordered table-hover table-striped"
+                               style="width:100%;"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="clue-edit-modal" class="modal fade in hidden-print modal-dialog-clue" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div id="clue-edit-container" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+<script type="text/javascript">
+    var wordComplexities = [];
+    var clueStates = [];
+    var handleFilterChange = true;
+    var cluesListInited = false;
+    var cluesList;
+
+    function OpenClueDetails(id) {
+        var url = "@Url.Action("ClueDetails","Admin")" + "/" + id;
+                ShowProgress();
+                $.get(url, function (htmlData) {
+                    $("#clue-edit-container").html(htmlData);
+                    ShowModalWithScrolling("#clue-edit-modal");
+                    HideProgress();
+                });
+    }
+
+    $(function () {
+
+        $.getJSON("@Url.Action("GetWordComplexities", "Admin")", function (resp) {
+            wordComplexities = resp;
+        })
+
+        $.getJSON("@Url.Action("GetClueStates", "Admin")", function (resp) {
+            clueStates = resp;
+        })
+
+        cluesList = {
+            dt: null,
+
+            init: function () {
+                this.dt = $('#clues-data-table').on('processing.dt', function (e, settings, processing) {
+                    if (processing)
+                        ShowProgress();
+                    else
+                        HideProgress();
+                }).DataTable({
+                    "serverSide": true,
+                    "processing": true,
+                    "searching": true,
+                    "ajax": {
+                        "url": "@Url.Action("GetClues","Admin")",
+                        "data": function (d) {
+                            //d.WordId = id;
+                            d.ShowRejected = 0;
+                            if ($("#clues-showDeletedCheck"))
+                                d.ShowRejected = $("#clues-showDeletedCheck").prop("checked");
+                        },
+                        "dataSrc": function (json) {
+                            if (json.IsRedirect) {
+                                alert(json.Message);
+                                window.location.href = json.RedirectUrl;
+                                return "";
+                            }
+                            return json.data;
+                        }
+                    },
+                    "columns": [
+                        {
+                            "title": "Id",
+                            "data": "Id",
+                            "searchable": false
+                        },
+                        {
+                            "title": "Clue",
+                            "data": "TheClue",
+                            "searchable": false
+                        },
+                        {
+                            "title": "Compl",
+                            "data": "Complexity",
+                            "searchable": true,
+                            "render": function (data) {
+                                return wordComplexities[data];
+                            }
+                        },
+                        {
+                            "title": "In",
+                            "data": "IncludedFromVer",
+                            "searchable": false
+                        },
+                        {
+                            "title": "Ex",
+                            "data": "ExcludedFromVer",
+                            "searchable": true
+                        },
+                        {
+                            "title": "State",
+                            "data": "State",
+                            "searchable": true,
+                            "render": function (data) {
+                                return "<div class=\"panel panel-default clue-state-" + data + "\" style=\"text-align:center\">" + clueStates[data] + "</div>";
+                            }
+                        },
+                        {
+                            "title": "Modified",
+                            "data": "LastModified",
+                            "searchable": false,
+                            "type": "date",
+                            "render": function (data) {
+                                return moment(data).format("YYYY/MM/DD HH:mm:ss")
+                            }
+                        },
+                        {
+                            "title": "By",
+                            "data": "ModifiedBy",
+                            "searchable": true,
+                            "render": function (data) {
+                                return "<span class=\"avatar-sm\" style=\"background-color:" +
+                                    GetAvatarColor(data) + "\">" + data + "</span>";
+                            }
+                        }
+                    ],
+                    //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    //"dom": "frtip"
+                    "dom": "<'row'<'col-sm-12'frt>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                });
+            }
+        }
+
+        cluesList.init();
+
+        $("#clues-data-table_filter").appendTo("#cluesTableToolsSearch");
+
+        $('#clues-data-table tbody').on('dblclick', 'tr', function () {
+            var data = cluesList.dt.row(this).data(); // use data.Id further
+            OpenClueDetails(data.Id);
+        });
+
+        var clueToOpen = @((Model != null && Model.HasValue) ? Model : -1);
+        if (clueToOpen > 0) {
+            OpenClueDetails(clueToOpen);
+        }
+    });
+</script>
+}

@@ -6,22 +6,9 @@
 }
 
 <style>
-    #words-data-table_processing {
-        background-color: orange;
-        font-weight: 600
-    }
-
-    .highlightFilter {
-        background-color: lightyellow;
-    }
-
-    /*html {
-        overflow: -moz-scrollbars-vertical;
-        overflow-y: scroll;
-    }*/
 </style>
 
-<h3 style="display:inline-block">Words</h3>
+<h3 @*style="display:inline-block"*@>Words</h3>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-primary list-panel" id="list-panel">
@@ -143,13 +130,13 @@
 
         var cluesList;
 
-        function ShowProgress() {
-            $("#global-progress-bar").show();
-        }
+        //function ShowProgress() {
+        //    $("#global-progress-bar").show();
+        //}
 
-        function HideProgress() {
-            $("#global-progress-bar").hide();
-        }
+        //function HideProgress() {
+        //    $("#global-progress-bar").hide();
+        //}
 
         function OnAddWordClick() {
             var url = "@Url.Action("WordDetails","Admin")" + "/";
