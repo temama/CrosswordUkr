@@ -33,7 +33,7 @@
                         </div>
                         <div id="quickFilters" class="collapse">
                             <div>
-                                <div class="col-md-2 col-xs-4 panel panel-default" id="showDeletedCheckPanel" style="margin-top:0px; padding:3px; padding-bottom:5px">
+                                <div class="col-md-2 col-xs-4 panel panel-default" id="clues-showDeletedCheckPanel" style="margin-top:0px; padding:3px; padding-bottom:5px">
                                     Show rejected
                                     <div class="material-switch pull-right">
                                         <input id="clues-showDeletedCheck" name="showDeletedCheck" type="checkbox" />
@@ -104,6 +104,97 @@
     var cluesListInited = false;
     var cluesList;
 
+    function DecorateFilters() {
+        var fSet = false;
+
+        if ($("#clues-showDeletedCheck").prop("checked")) {
+            fSet = true;
+            $("#clues-showDeletedCheckPanel").addClass("highlightFilter");
+        }
+        else {
+            $("#clues-showDeletedCheckPanel").removeClass("highlightFilter");
+        }
+
+        // Complexity
+        var fComplex = document.getElementById("qfComplexList").getElementsByTagName("input");
+        var fComplexSelected = false;
+        for (var i = 0; i < fComplex.length; i++) {
+            if (fComplex[i].checked) {
+                fComplexSelected = true;
+                fSet = true;
+            }
+        }
+
+        if (fComplexSelected) {
+            fSet = true;
+            $("#qfComplexBtn").addClass("highlightFilter");
+        }
+        else {
+            $("#qfComplexBtn").removeClass("highlightFilter");
+        }
+
+        // States
+        var fStates = document.getElementById("qfStatesList").getElementsByTagName("input");
+        var fStatesSelected = false;
+        for (var i = 0; i < fStates.length; i++) {
+            if (fStates[i].checked) {
+                fStatesSelected = true;
+                fSet = true;
+            }
+        }
+
+        if (fStatesSelected) {
+            fSet = true;
+            $("#qfStatesBtn").addClass("highlightFilter");
+        }
+        else {
+            $("#qfStatesBtn").removeClass("highlightFilter");
+        }
+
+        // ModifiedBy
+        var fModifiedBy = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+        var fModifiedBySelected = false;
+        for (var i = 0; i < fModifiedBy.length; i++) {
+            if (fModifiedBy[i].checked) {
+                fModifiedBySelected = true;
+                fSet = true;
+            }
+        }
+
+        if (fModifiedBySelected) {
+            fSet = true;
+            $("#qfModifiedByBtn").addClass("highlightFilter");
+        }
+        else {
+            $("#qfModifiedByBtn").removeClass("highlightFilter");
+        }
+
+
+        // If at least one filter set
+        if (fSet) {
+            $("#filtersBtn").removeClass("btn-default");
+            $("#filtersBtn").addClass("btn-warning");
+        } else {
+            $("#filtersBtn").removeClass("btn-warning");
+            $("#filtersBtn").addClass("btn-default");
+        }
+    };
+
+    function OnFilterUpdate() {
+        DecorateFilters();
+        cluesList.dt.ajax.reload();
+    };
+
+    function OnAddClueClick() {
+        ShowProgress();
+        var url = "@Url.Action("ClueDetails", "Admin")";
+        $.get(url, function (htmlData) {
+            $("#clue-edit-container").html(htmlData);
+            ShowModalWithScrolling("#clue-edit-modal");
+            HideProgress();
+        });
+    }
+
     function OpenClueDetails(id) {
         var url = "@Url.Action("ClueDetails","Admin")" + "/" + id;
                 ShowProgress();
@@ -140,10 +231,28 @@
                     "ajax": {
                         "url": "@Url.Action("GetClues","Admin")",
                         "data": function (d) {
-                            //d.WordId = id;
-                            d.ShowRejected = 0;
-                            if ($("#clues-showDeletedCheck"))
-                                d.ShowRejected = $("#clues-showDeletedCheck").prop("checked");
+                            d.ShowRejected = $("#clues-showDeletedCheck").prop("checked");
+                            d.WordId = -1;
+                            d.ComplexityFilter = "";
+                            var compls = document.getElementById("qfComplexList").getElementsByTagName("input");
+                            for (var i = 0; i < compls.length; i++) {
+                                if (compls[i].checked)
+                                    d.ComplexityFilter = d.ComplexityFilter + compls[i].value + ",";
+                            }
+                            d.StatesFilter = "";
+                            var states = document.getElementById("qfStatesList").getElementsByTagName("input");
+                            for (var i = 0; i < states.length; i++) {
+                                if (states[i].checked)
+                                    d.StatesFilter = d.StatesFilter + states[i].value + ",";
+                            }
+                            d.ModifiedByFilter = "";
+                            var modifiedBy = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+                            for (var i = 0; i < modifiedBy.length; i++) {
+                                if (modifiedBy[i].checked)
+                                    d.ModifiedByFilter = d.ModifiedByFilter + modifiedBy[i].value + ",";
+                            }
+                            d.ModifiedFrom = "";
+                            d.ModifiedTo = "";
                         },
                         "dataSrc": function (json) {
                             if (json.IsRedirect) {
@@ -153,11 +262,19 @@
                             }
                             return json.data;
                         }
+                        //, "error": function (err) {
+                        //    alert(err.responseText);
+                        //}
                     },
                     "columns": [
                         {
                             "title": "Id",
                             "data": "Id",
+                            "searchable": false
+                        },
+                        {
+                            "title": "Word",
+                            "data": "Word",
                             "searchable": false
                         },
                         {
@@ -212,7 +329,8 @@
                     ],
                     //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
                     //"dom": "frtip"
-                    "dom": "<'row'<'col-sm-12'frt>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    //"dom": "<'row'<'col-sm-12'frt>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    "dom": "ftilp"
                 });
             }
         }
@@ -222,9 +340,59 @@
         $("#clues-data-table_filter").appendTo("#cluesTableToolsSearch");
 
         $('#clues-data-table tbody').on('dblclick', 'tr', function () {
-            var data = cluesList.dt.row(this).data(); // use data.Id further
+            var data = cluesList.dt.row(this).data();
             OpenClueDetails(data.Id);
         });
+
+        $("#clues-showDeletedCheck").change(function () {
+            OnFilterUpdate();
+        });
+
+        $("#qfComplexClear").click(function () {
+            handleFilterChange = false;
+            var opts = document.getElementById("qfComplexList").getElementsByTagName("input");
+            for (var i = 0; i < opts.length; i++) {
+                opts[i].checked = false;
+            }
+            handleFilterChange = true;
+            OnFilterUpdate();
+        });
+
+        $("#qfStatesClear").click(function () {
+            handleFilterChange = false;
+            var opts = document.getElementById("qfStatesList").getElementsByTagName("input");
+            for (var i = 0; i < opts.length; i++) {
+                opts[i].checked = false;
+            }
+            handleFilterChange = true;
+            OnFilterUpdate();
+        });
+
+        $("#qfModifiedByClear").click(function () {
+            handleFilterChange = false;
+            var opts = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+            for (var i = 0; i < opts.length; i++) {
+                opts[i].checked = false;
+            }
+            handleFilterChange = true;
+            OnFilterUpdate();
+        });
+
+        $("input[id^='qfComplex_']").change(function () {
+            if (handleFilterChange)
+                OnFilterUpdate();
+        });
+
+        $("input[id^='qfStates_']").change(function () {
+            if (handleFilterChange)
+                OnFilterUpdate();
+        });
+
+        $("input[id^='qfModifiedBy_']").change(function () {
+            if (handleFilterChange)
+                OnFilterUpdate();
+        });
+
 
         var clueToOpen = @((Model != null && Model.HasValue) ? Model : -1);
         if (clueToOpen > 0) {

@@ -320,11 +320,33 @@ namespace XWordsUrkAdminConsole.Controllers
                     query = query.Where(c => c.WordId == advSearch.WordId);
                 }
 
-                if (!advSearch.ShowRejected)
+                if (!string.IsNullOrEmpty(advSearch.ComplexityFilter))
                 {
-                    query = query.Where(c => c.State != ClueState.Rejected);
+                    var opts = advSearch.ComplexityFilter.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    var optsEnum = opts.Select(o => (WordComplexity)Convert.ToUInt32(o)).ToList();
+                    query = query.Where(c => optsEnum.Contains(c.Complexity));
                 }
 
+                if (!string.IsNullOrEmpty(advSearch.StatesFilter))
+                {
+                    if (advSearch.ShowRejected && !advSearch.StatesFilter.Contains(string.Format("{0},", (int)ClueState.Rejected)))
+                        advSearch.StatesFilter += (int)ClueState.Rejected;
+                    var opts = advSearch.StatesFilter.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    var optsEnum = opts.Select(o => (ClueState)Convert.ToUInt32(o)).ToList();
+                    query = query.Where(c => optsEnum.Contains(c.State));
+                }
+                else if (!advSearch.ShowRejected)
+                {
+                    query = query.Where(w => w.State != ClueState.Rejected);
+                }
+
+                if (!string.IsNullOrEmpty(advSearch.ModifiedByFilter))
+                {
+                    var opts = advSearch.ModifiedByFilter.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => Convert.ToInt32(s)).ToList();
+                    query = query.Where(w => opts.Contains(w.UserId));
+                }
+                
                 // Apply filters for searching
                 if (requestModel.Search.Value != string.Empty)
                 {
