@@ -48,7 +48,7 @@
                         <h4>Events</h4>
                     </div>
                     <div class="card-block">
-
+                        <div id="calendar" style="width:100%"></div> 
                     </div>
                 </div>
             </div>
@@ -71,6 +71,8 @@
 
 @section scripts{
     @Scripts.Render("~/scripts/chart.js")
+    @Scripts.Render("~/scripts/fullcalendar.min.js")
+    @Styles.Render("~/scripts/fullcalendar.css")
 
     <script type="text/javascript">
         var feedEventsLoaded = 0;
@@ -222,6 +224,17 @@
             });
         }
 
+        function InitCalendar() {
+            $("#calendar").fullCalendar({
+                header: {
+                    left: "prev,next today",
+                    center: "title"
+                },
+                defaultView: "month",
+                selectable: true
+            });
+        }
+
         $(function () {
             OnLoadMoreFeedClick();
 
@@ -232,6 +245,8 @@
             DrawCluesStatusesChart();
 
             DrawGamesStatusesChart();
+
+            InitCalendar();
         });
     </script>
     }
