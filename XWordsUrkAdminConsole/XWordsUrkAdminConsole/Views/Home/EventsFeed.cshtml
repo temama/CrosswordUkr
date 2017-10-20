@@ -5,9 +5,9 @@
     <div class="panel" style="width:90%">
         <div class="row">
             <div class="col-md-1">
-                <span class="avatar" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(e.User.Initials)">@e.User.Initials</span>
+                <span class="avatar marg-top-s" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(e.User.Initials)">@e.User.Initials</span>
             </div>    
-            <div class="col-md-10">
+            <div class="col-md-10" style="margin-left:3px">
                 <p style="color:darkgray;">@e.User.Login - @e.TimeAgoRepresentation</p>
                 <span @Html.Raw(e.IconTagDetails)></span> @Html.Raw(@e.EventRepresentation)
             </div>

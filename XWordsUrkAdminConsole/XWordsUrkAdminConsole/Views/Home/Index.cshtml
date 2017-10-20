@@ -72,7 +72,7 @@
 @section scripts{
     @Scripts.Render("~/scripts/chart.js")
     @Scripts.Render("~/scripts/fullcalendar.min.js")
-    @Styles.Render("~/scripts/fullcalendar.css")
+    @Styles.Render("~/content/fullcalendar.css")
 
     <script type="text/javascript">
         var feedEventsLoaded = 0;
@@ -231,7 +231,10 @@
                     center: "title"
                 },
                 defaultView: "month",
-                selectable: true
+                selectable: true,
+                editable: true,
+                eventLimit: true,
+                events: "@Url.Action("GetEvents", "Home")"
             });
         }
 

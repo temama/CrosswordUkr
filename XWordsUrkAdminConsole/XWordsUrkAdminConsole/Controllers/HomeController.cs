@@ -238,5 +238,33 @@ namespace XWordsUrkAdminConsole.Controllers
             }
             return Json(new { labels = aLabels, data = aData }, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult GetEvents(DateTime start, DateTime end)
+        {
+            //var startDate = CoreHelper.UnixTimeStampToDateTime(start);
+            //var endDate = CoreHelper.UnixTimeStampToDateTime(end);
+            var startDate = start;
+            var endDate = end;
+
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                var evs = dbContext.Events.Where(e => e.Table == "Events"
+                    && e.TimeStamp >= startDate
+                    && e.TimeStamp < endDate).ToList();
+
+                var evsFormated = evs.Select(e => new
+                    {
+                        //id = e.Id,
+                        title = e.Comment,
+                        start = e.TimeStamp.Date.ToString("yyyy-MM-dd"),
+                        //end = CoreHelper.ToUnixTime(e.TimeStamp + TimeSpan.FromMinutes(15)),//(e.TimeStamp + TimeSpan.FromMinutes(15)).ToString("s"),
+                        //className = "btn btn-primary", // add different classes depends on RecordId
+                        ////someKey = 0,
+                        //allDay = true
+                    });
+
+                return Json(evsFormated.ToArray(), JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

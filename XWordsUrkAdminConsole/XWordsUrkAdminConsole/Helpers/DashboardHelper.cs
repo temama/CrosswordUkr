@@ -128,6 +128,10 @@ namespace XWordsUrkAdminConsole.Helpers
                 res.Append(" for word ");
                 res.Append(string.Format("<a href=\"{0}\">{1}</a>", Url.Action("GoToWord", "Admin") + "/" + clue.Word.Id, clue.Word.TheWord));
             }
+            else if (e.Table == "Events")
+            {
+                res.Append(CutText(e.Comment, 200));
+            }
 
             return res.ToString();
         }
