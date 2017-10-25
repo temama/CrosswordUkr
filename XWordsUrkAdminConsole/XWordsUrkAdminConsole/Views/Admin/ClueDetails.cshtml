@@ -24,19 +24,31 @@
             <p class="pull-right" style="vertical-align:central"><b>Word:</b></p>
         </div>
         <div class="col-md-4 col-xs-8">
-            @if (Model.Word == null)
-            {
-                //TODO: Add autocomplete
-                <input id="clue-details-word" class="form-control input-sm" style="text-transform:uppercase"
-                       type="text" value="" required onkeypress="OnClueDetailsWordChanged(event);" />
-                <input id="clue-details-wordId" type="hidden" value="-1" />
-            }
-            else
-            {
-                <input id="clue-details-word" class="form-control input-sm" style="text-transform:uppercase"
-                       type="text" value="@Model.Word.TheWord" required onkeypress="OnClueDetailsWordChanged(event);" disabled />
-                <input id="clue-details-wordId" type="hidden" value="@Model.Word.Id" />
-            }
+            <div class="input-group">
+                @if (Model.Word == null)
+                {
+                    //TODO: Add autocomplete
+                    <input id="clue-details-word" class="form-control input-sm" style="text-transform:uppercase"
+                           type="text" value="" placeholder="Start input a word" autocomplete="off"
+                           required onkeypress="OnClueDetailsWordChanged(event);" onfocusout="OnWordFocusOut();" />
+                        <span id="clue-details-wordDescription" class="input-group-addon" data-container="body"
+                              data-toggle="tooltip" data-placement="right" data-html="true" title="Word description will be here">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                        </span>
+                    <input id="clue-details-wordId" type="hidden" value="-1" />
+                }
+                else
+                {
+                    <input id="clue-details-word" class="form-control input-sm" style="text-transform:uppercase"
+                           type="text" value="@Model.Word.TheWord" autocomplete="off"
+                           required onkeypress="OnClueDetailsWordChanged(event);" disabled />
+                    <span id="clue-details-wordDescription" class="input-group-addon" data-container="body"
+                          data-toggle="tooltip" data-placement="right" data-html="true" title="@Model.Word.Definition">
+                        <i class="glyphicon glyphicon-question-sign"></i>
+                    </span>
+                    <input id="clue-details-wordId" type="hidden" value="@Model.Word.Id" />
+                }
+            </div>
         </div>
 
         <div class="col-md-1 col-xs-2">
@@ -153,6 +165,8 @@
 </div>
 
 
+@Scripts.Render("~/Scripts/bootstrap3-typeahead.js")
+
 <script type="text/javascript">
 
     function OnClueDetailsChanged() {
@@ -250,25 +264,59 @@
         });
     }
 
-    $(function () {
-        $("#clue-details-word").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "@Url.Action("SearchWord", "Admin")",
-                    type: "POST",
-                    dataType: "json",
-                    data: { Prefix: request.term },
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            return { label: item.Name, value: item.Name };
-                        }))
+    function OnWordFocusOut() {
+        $("#clue-details-wordDescription").tooltip("hide");
+    }
 
-                    }
-                })
-            },
-            messages: {
-                noResults: "", results: ""
-            }
-        });
+    function InitWordTypeahead() {
+        var enableAutocomplete = @Json.Encode(Model.Word == null ? true : false);
+        if (enableAutocomplete) {
+            $("#clue-details-word").typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1,
+                    
+                source: function (request, response) {
+                    $.ajax({
+                        url: "@Url.Action("WordLookup", "Admin")",
+                        data: "{ 'searchQuery': '" + request + "'}",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            items = [];
+                            map = {};
+                            $.each(data, function (i, item) {
+                                var id = item.Id;
+                                var name = item.Word;
+                                var desc = item.Description;
+                                map[name] = { id: id, name: name, desc: desc };
+                                items.push(name);
+                            });
+                            response(items);
+                            $(".dropdown-menu").css("height", "auto");
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                updater: function (item) {
+                    $("#clue-details-wordId").val(map[item].id);
+                    $("#clue-details-wordDescription").attr("title", map[item].desc)
+                        .tooltip("fixTitle").tooltip("show");
+                    return item;
+                }
+            });
+        }
+    }
+
+    $(function () {
+        InitWordTypeahead();
+
+        $("#clue-details-wordDescription").tooltip();
     });
 </script>

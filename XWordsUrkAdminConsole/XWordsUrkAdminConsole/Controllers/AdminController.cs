@@ -281,6 +281,22 @@ namespace XWordsUrkAdminConsole.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult WordLookup(string searchQuery)
+        {
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                var query = dbContext.Words.Where(w => w.TheWord.Contains(searchQuery.ToUpper()));
+                var res = query.Take(10).Select(w => new
+                {
+                    Id = w.Id,
+                    Word = w.TheWord,
+                    Description = w.Definition
+                }).ToList();
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public ActionResult Clues()
         {
             var reqUser = AuthModule.GetCurrentUser(Request, true, Response);

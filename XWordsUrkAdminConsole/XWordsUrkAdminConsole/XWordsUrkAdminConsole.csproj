@@ -593,8 +593,8 @@
       <DependentUpon>XWordsAdminModel.edmx</DependentUpon>
     </Content>
     <Content Include="Scripts\App\CommonActions.js" />
-    <Content Include="Scripts\bloodhound.js" />
-    <Content Include="Scripts\bloodhound.min.js" />
+    <Content Include="Scripts\bootstrap3-typeahead.js" />
+    <Content Include="Scripts\bootstrap3-typeahead.min.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.js" />
@@ -761,10 +761,6 @@
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
-    <Content Include="Scripts\typeahead.bundle.js" />
-    <Content Include="Scripts\typeahead.bundle.min.js" />
-    <Content Include="Scripts\typeahead.jquery.js" />
-    <Content Include="Scripts\typeahead.jquery.min.js" />
     <Content Include="Views\Admin\Words.cshtml" />
     <EntityDeploy Include="Models\XWordsAdminModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
