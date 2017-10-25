@@ -197,7 +197,7 @@
         el.html(repr + " <span class=\"caret\" />");
         el.val(id);
         el.attr("class", el.get(0).className.replace(/\bword-complex-\S+/g, "word-complex-" + id));
-        OnWordDetailsChanged();
+        OnClueDetailsChanged();
     }
 
     function ValidateClueBeforeSave(clueData) {
@@ -290,7 +290,8 @@
                                 var id = item.Id;
                                 var name = item.Word;
                                 var desc = item.Description;
-                                map[name] = { id: id, name: name, desc: desc };
+                                var compl = item.Compl;
+                                map[name] = { id: id, name: name, desc: desc, compl: compl };
                                 items.push(name);
                             });
                             response(items);
@@ -308,6 +309,7 @@
                     $("#clue-details-wordId").val(map[item].id);
                     $("#clue-details-wordDescription").attr("title", map[item].desc)
                         .tooltip("fixTitle").tooltip("show");
+                    $("#clue-details-complex-" + map[item].compl).click();
                     return item;
                 }
             });

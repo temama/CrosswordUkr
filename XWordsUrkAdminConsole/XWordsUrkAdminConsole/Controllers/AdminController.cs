@@ -291,7 +291,8 @@ namespace XWordsUrkAdminConsole.Controllers
                 {
                     Id = w.Id,
                     Word = w.TheWord,
-                    Description = w.Definition
+                    Description = w.Definition,
+                    Compl = (int)w.Complexity
                 }).ToList();
                 return Json(res, JsonRequestBehavior.AllowGet);
             }
