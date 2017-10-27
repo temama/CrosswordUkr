@@ -151,6 +151,20 @@ div.modal-body div.row {
 }
 
 
+/* ---------- Event Types decorations --------------*/
+/* Normal */
+.event-type-0 {
+    background-color: #5cb85c;
+    color: white;
+}
+
+/* ToDo */
+.event-type-1 {
+    background-color: #ffff66;
+    color: black;
+}
+
+
 /*------------------ Avatars --------------------------*/
 .avatar {
     display: inline-block;

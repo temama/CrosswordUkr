@@ -1,0 +1,52 @@
+﻿@model XWordsUrkAdminConsole.Models.Event
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h3 class="modal-title" style="display:inline-block">Event details</h3>
+    <input id="event-details-id" type="hidden" value="@Model.Id" />
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-1">
+            <label class="control-label pull-right">Date:</label>
+        </div>
+        <div class="col-md-4">
+            
+        </div>
+
+        <div class="col-md-1">
+            <label class="control-label pull-right">Type:</label>
+        </div>
+        <div class="col-md-3">
+            <button id="event-details-type-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle event-type-@((int)Model.RecordId)"
+                    style="width:100%;" value="@((int)Model.RecordId)">
+                @(((XWordsUrkAdminConsole.Models.EventType)Model.RecordId).ToString()) <span class="caret" />
+            </button>
+            <ul id="event-details-type-list" class="dropdown-menu">
+                @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.EventType)))
+                {
+                    <li id="event-details-type-@((int)e)" value="@((int)e)" onclick="OnEventDetailsTypeItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a href="#">@e.ToString()</a></li>
+                }
+            </ul>
+        </div>
+
+        <div class="col-md-1">
+            <label class="control-label pull-right">By:</label>
+        </div>
+        <div class="col-md-1">
+            <span class="avatar pull-left" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(Model.User.Initials)">@Model.User.Initials</span>
+        </div>
+    </div>
+
+    <div class="row" style="height:auto">
+        <div class="col-md-12">
+            <textarea id="wordDefEdit" class="form-control" rows="3" style="min-width:100%" placeholder="Type event details here">@Model.Comment</textarea>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-warning" data-dismiss="modal">Close</button>
+    <button id="user-details-save-btn" type="submit" class="btn btn-success" onclick="OnUserDetailsSaveClick();">Save</button>
+</div>

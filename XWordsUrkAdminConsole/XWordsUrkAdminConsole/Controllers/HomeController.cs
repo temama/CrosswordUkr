@@ -253,17 +253,39 @@ namespace XWordsUrkAdminConsole.Controllers
                     && e.TimeStamp < endDate).ToList();
 
                 var evsFormated = evs.Select(e => new
-                    {
-                        //id = e.Id,
-                        title = e.Comment,
-                        start = e.TimeStamp.Date.ToString("yyyy-MM-dd"),
-                        //end = CoreHelper.ToUnixTime(e.TimeStamp + TimeSpan.FromMinutes(15)),//(e.TimeStamp + TimeSpan.FromMinutes(15)).ToString("s"),
-                        //className = "btn btn-primary", // add different classes depends on RecordId
-                        ////someKey = 0,
-                        //allDay = true
-                    });
+                {
+                    id = e.Id,
+                    title = e.Comment,
+                    start = e.TimeStamp.Date.ToString("yyyy-MM-dd"),
+                    type = e.RecordId
+                    //end = CoreHelper.ToUnixTime(e.TimeStamp + TimeSpan.FromMinutes(15)),//(e.TimeStamp + TimeSpan.FromMinutes(15)).ToString("s"),
+                    //className = "btn btn-primary", // add different classes depends on RecordId
+                    ////someKey = 0,
+                    //allDay = true
+                });
 
                 return Json(evsFormated.ToArray(), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult EventDetails(int? id)
+        {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home");
+
+            if (id == null || !id.HasValue || id.Value <= 0)
+                return PartialView("EventDetails", new Event() {
+                    Table = "Events",
+                    User = reqUser,
+                    UserId = reqUser.Id,
+                    TimeStamp = DateTime.Now
+                });
+
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                var ev = dbContext.Events.Include(e => e.User).FirstOrDefault(e => e.Id == id.Value);
+                return PartialView("EventDetails", ev);
             }
         }
     }

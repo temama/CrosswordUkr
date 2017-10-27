@@ -192,6 +192,7 @@
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventsFeedModel.cs" />
+    <Compile Include="Models\EventType.cs" />
     <Compile Include="Models\Game.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
@@ -798,6 +799,7 @@
     <Content Include="Views\Home\EventsFeed.cshtml" />
     <Content Include="Views\Admin\Clues.cshtml" />
     <Content Include="Views\Games\Games.cshtml" />
+    <Content Include="Views\Home\EventDetails.cshtml" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceme40.dll" />
