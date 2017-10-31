@@ -12,7 +12,12 @@
             <label class="control-label pull-right">Date:</label>
         </div>
         <div class="col-md-4">
-            
+            <div id="event-details-date-group" class="input-group date">
+                <input id="event-details-date" type="text" class="form-control" value="@Model.TimeStamp.ToShortDateString()">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-1">
@@ -26,7 +31,7 @@
             <ul id="event-details-type-list" class="dropdown-menu">
                 @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.EventType)))
                 {
-                    <li id="event-details-type-@((int)e)" value="@((int)e)" onclick="OnEventDetailsTypeItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a href="#">@e.ToString()</a></li>
+                    <li id="event-details-type-@((int)e)" value="@((int)e)" onclick="OnEventDetailsTypeItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a @*href="#"*@>@e.ToString()</a></li>
                 }
             </ul>
         </div>
@@ -41,12 +46,64 @@
 
     <div class="row" style="height:auto">
         <div class="col-md-12">
-            <textarea id="wordDefEdit" class="form-control" rows="3" style="min-width:100%" placeholder="Type event details here">@Model.Comment</textarea>
+            <textarea id="event-details-details" class="form-control" rows="3" style="min-width:100%" placeholder="Type event details here">@Model.Comment</textarea>
         </div>
     </div>
 </div>
 
 <div class="modal-footer">
     <button class="btn btn-warning" data-dismiss="modal">Close</button>
-    <button id="user-details-save-btn" type="submit" class="btn btn-success" onclick="OnUserDetailsSaveClick();">Save</button>
+    <button id="user-details-save-btn" type="submit" class="btn btn-success" onclick="OnEventDetailsSaveClick();">Save</button>
 </div>
+
+@Scripts.Render("~/scripts/bootstrap-datepicker.js")
+@Scripts.Render("~/scripts/locales/bootstrap-datepicker.uk.min.js")
+@Styles.Render("~/Content/bootstrap-datepicker3.css")
+
+<script type="text/javascript">
+    function OnEventDetailsTypeItemClick(id, repr) {
+        var el = $("#event-details-type-btn");
+        el.html(repr + " <span class=\"caret\" />");
+        el.val(id);
+        el.attr("class", el.get(0).className.replace(/\bevent-type-\S+/g, "event-type-" + id));
+    }
+
+    function OnEventDetailsSaveClick() {
+        ShowProgress();
+
+         var sendData = {
+             Id: $("#event-details-id").val(),
+             TimeStamp: $("#event-details-date").val(),
+             RecordId: $("#event-details-type-btn").val(),
+             Comment: $("#event-details-details").val()
+         };
+
+        $.ajax({
+            data: JSON.stringify(sendData),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "@Url.Action("SaveEventDetails", "Home")",
+            dataType: "json",
+            success: function (sData) {
+                if (sData.startsWith("Error:")) {
+                    alert("Operation failed:\n" + sData);
+                } else {
+                    $("#layout-modal").modal("hide");
+                }
+                HideProgress();
+            },
+            error: function (fData) {
+                alert("Operation failed:\n" + fData);
+                HideProgress();
+            }
+        });
+    }
+
+    $(function () {
+        $("#event-details-date-group").datepicker({
+            language: "uk",
+            daysOfWeekHighlighted: "0,6",
+            autoclose: true,
+        });
+    });
+</script>
