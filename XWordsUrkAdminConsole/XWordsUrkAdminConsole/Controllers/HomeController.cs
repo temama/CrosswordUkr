@@ -248,18 +248,19 @@ namespace XWordsUrkAdminConsole.Controllers
 
             using (var dbContext = new XWordsAdminModelContext())
             {
-                var evs = dbContext.Events.Where(e => e.Table == "Events"
-                    && e.TimeStamp >= startDate
-                    && e.TimeStamp < endDate).ToList();
+                var evs = dbContext.Events.Include(e => e.User).Where(e => e.Table == "Events"
+                      && e.TimeStamp >= startDate
+                      && e.TimeStamp < endDate).ToList();
 
                 var evsFormated = evs.Select(e => new
                 {
                     id = e.Id,
                     title = e.Comment,
                     start = e.TimeStamp.Date.ToString("yyyy-MM-dd"),
-                    type = e.RecordId
+                    className = "event-type-" + e.RecordId, // add different classes depends on RecordId
+                    type = e.RecordId,
+                    userInitials = e.User.Initials
                     //end = CoreHelper.ToUnixTime(e.TimeStamp + TimeSpan.FromMinutes(15)),//(e.TimeStamp + TimeSpan.FromMinutes(15)).ToString("s"),
-                    //className = "btn btn-primary", // add different classes depends on RecordId
                     ////someKey = 0,
                     //allDay = true
                 });
@@ -276,6 +277,7 @@ namespace XWordsUrkAdminConsole.Controllers
 
             if (id == null || !id.HasValue || id.Value <= 0)
                 return PartialView("EventDetails", new Event() {
+                    Id = -1,
                     Table = "Events",
                     User = reqUser,
                     UserId = reqUser.Id,
@@ -286,6 +288,42 @@ namespace XWordsUrkAdminConsole.Controllers
             {
                 var ev = dbContext.Events.Include(e => e.User).FirstOrDefault(e => e.Id == id.Value);
                 return PartialView("EventDetails", ev);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SaveEventDetails(Event model)
+        {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return Json("Error: Please login to proceed");
+
+            try
+            {
+                using (var dbContext = new XWordsAdminModelContext())
+                {
+                    Event ev;
+                    if (model.Id > 0)
+                        ev = dbContext.Events.FirstOrDefault(e => e.Id == model.Id);
+                    else
+                    {
+                        ev = new Event();
+                        dbContext.Events.Add(ev);
+                    }
+
+                    ev.Table = "Events";
+                    ev.UserId = reqUser.Id;
+                    ev.TimeStamp = model.TimeStamp.Date.AddHours(8);
+                    ev.Comment = model.Comment;
+                    ev.RecordId = model.RecordId;
+
+                    dbContext.SaveChanges();
+                    return Json("Event details saved");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json("Error: " + ex.Message);
             }
         }
     }
