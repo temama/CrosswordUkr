@@ -199,6 +199,7 @@
     <Compile Include="Models\GameComplexity.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GamesAdvancedSearch.cs" />
     <Compile Include="Models\GameState.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>

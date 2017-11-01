@@ -150,6 +150,37 @@ div.modal-body div.row {
     color: white;
 }
 
+/* ---------- Game States decorations --------------*/
+
+/*New*/
+.clue-state-0 {
+    background-color: white;
+    color: black;
+}
+
+/*ToVerify*/
+.clue-state-1 {
+    background-color: greenyellow;
+    color: white;
+}
+
+/*Testing*/
+.clue-state-2 {
+    background-color: #ffff66;
+    color: black;
+}
+
+/*Live*/
+.word-state-3 {
+    background-color: forestgreen;
+    color: white;
+}
+
+/*Rejected*/
+.clue-state-4 {
+    background-color: red;
+    color: white;
+}
 
 /* ---------- Event Types decorations --------------*/
 /* Normal */

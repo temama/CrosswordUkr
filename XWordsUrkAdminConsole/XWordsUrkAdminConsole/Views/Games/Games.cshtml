@@ -1,9 +1,425 @@
-﻿@model int?
-
-@{
+﻿@{
     ViewBag.Title = "Games";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h3>Games</h3>
 
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary list-panel" id="list-panel">
+            <div class="panel-body">
+                <div id="gamesTableTools">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-1 col-xs-2">
+                                <a id="filtersBtn" href="#quickFilters" class="btn btn-default" data-toggle="collapse">Filters</a>
+                            </div>
+                            <div class="col-md-1 col-xs-2">
+                                <button class="btn btn-info btn-md" onclick="OnAddgameClick();">
+                                    <span class="glyphicon glyphicon-plus"></span> Add game
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-inline">
+                                    <div id="gamesTableToolsSearch" class="form-group pull-right"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="quickFilters" class="collapse">
+                            <div>
+                                <div class="col-md-2 col-xs-4 panel panel-default" id="games-showDeletedCheckPanel" style="margin-top:0px; padding:3px; padding-bottom:5px">
+                                    Show rejected
+                                    <div class="material-switch pull-right">
+                                        <input id="games-showDeletedCheck" name="showDeletedCheck" type="checkbox" />
+                                        <label for="games-showDeletedCheck" class="label-primary" title="Show rejected games"></label>
+                                    </div>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfGameTypeBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Game Type <span class="caret"></span></button>
+                                    <ul id="qfGameTypeList" class="dropdown-menu noclose">
+                                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.GameType)))
+                                        {
+                                            <li><label><input type="checkbox" id="qfGameType_@((int)e).ToString()" name="@e.ToString()" value="@((int)e)">@e.ToString()</label></li>
+                                        }
+                                        <li><a id="qfGameTypeClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfComplexBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">Complexity <span class="caret"></span></button>
+                                    <ul id="qfComplexList" class="dropdown-menu noclose">
+                                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.GameComplexity)))
+                                        {
+                                            <li><label><input type="checkbox" id="qfComplex_@((int)e).ToString()" name="@e.ToString()" value="@((int)e)">@e.ToString()</label></li>
+                                        }
+                                        <li><a id="qfComplexClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfStatesBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">States <span class="caret"></span></button>
+                                    <ul id="qfStatesList" class="dropdown-menu noclose">
+                                        @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.GameState)))
+                                        {
+                                            <li><label><input type="checkbox" id="qfStates_@((int)e).ToString()" name="@e.ToString()" value="@((int)e)">@e.ToString()</label></li>
+                                        }
+                                        <li><a id="qfStatesClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group col-md-2 col-xs-4">
+                                    <button id="qfModifiedByBtn" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" style="width:100%; height:100%">ModifiedBy <span class="caret"></span></button>
+                                    <ul id="qfModifiedByList" class="dropdown-menu noclose">
+                                        @foreach (var u in XWordsUrkAdminConsole.Accounting.AuthModule.GetAllUsers())
+                                        {
+                                            <li>
+                                                <label>
+                                                    <input type="checkbox" id="qfModifiedBy_@u.Id"
+                                                           name="@u.Login" value="@u.Id">@u.Login
+                                                    </label>
+                                                    <span class="avatar-sm" style="background-color:@XWordsUrkAdminConsole.Accounting.AuthModule.GetAvatarColor(u.Initials)">@u.Initials</span>
+                                                </li>
+                                        }
+                                        <li><a id="qfModifiedByClear" href="#">Uncheck all</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="games-data-table" class="table table-bordered table-hover table-striped"
+                               style="width:100%;"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="new-game-modal" class="modal fade in hidden-print modal-dialog-game" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div id="new-game-container" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var gameTypes = [];
+    var gameComplexities = [];
+    var gameStates = [];
+    var handleFilterChange = true;
+    var gamesListInited = false;
+    var gamesList;
+
+    function DecorateFilters() {
+        var fSet = false;
+
+        if ($("#clues-showDeletedCheck").prop("checked")) {
+            fSet = true;
+            $("#games-showDeletedCheckPanel").addClass("highlightFilter");
+        }
+        else {
+            $("#games-showDeletedCheckPanel").removeClass("highlightFilter");
+        }
+
+        // Complexity
+        var fComplex = document.getElementById("qfComplexList").getElementsByTagName("input");
+        var fComplexSelected = false;
+        for (var i = 0; i < fComplex.length; i++) {
+            if (fComplex[i].checked) {
+                fComplexSelected = true;
+                fSet = true;
+            }
+        }
+
+        if (fComplexSelected) {
+            fSet = true;
+            $("#qfComplexBtn").addClass("highlightFilter");
+        }
+        else {
+            $("#qfComplexBtn").removeClass("highlightFilter");
+        }
+
+        // States
+        var fStates = document.getElementById("qfStatesList").getElementsByTagName("input");
+        var fStatesSelected = false;
+        for (var i = 0; i < fStates.length; i++) {
+            if (fStates[i].checked) {
+                fStatesSelected = true;
+                fSet = true;
+            }
+        }
+
+        if (fStatesSelected) {
+            fSet = true;
+            $("#qfStatesBtn").addClass("highlightFilter");
+        }
+        else {
+            $("#qfStatesBtn").removeClass("highlightFilter");
+        }
+
+        // ModifiedBy
+        var fModifiedBy = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+        var fModifiedBySelected = false;
+        for (var i = 0; i < fModifiedBy.length; i++) {
+            if (fModifiedBy[i].checked) {
+                fModifiedBySelected = true;
+                fSet = true;
+            }
+        }
+
+        if (fModifiedBySelected) {
+            fSet = true;
+            $("#qfModifiedByBtn").addClass("highlightFilter");
+        }
+        else {
+            $("#qfModifiedByBtn").removeClass("highlightFilter");
+        }
+
+
+        // If at least one filter set
+        if (fSet) {
+            $("#filtersBtn").removeClass("btn-default");
+            $("#filtersBtn").addClass("btn-warning");
+        } else {
+            $("#filtersBtn").removeClass("btn-warning");
+            $("#filtersBtn").addClass("btn-default");
+        }
+    };
+
+    function OnFilterUpdate() {
+        DecorateFilters();
+        gamesList.dt.ajax.reload();
+    };
+
+    function OnAddGameClick() {
+        ShowProgress();
+        var url = "@Url.Action("NewGameMenu", "Games")";
+        $.get(url, function (htmlData) {
+            $("#new-game-container").html(htmlData);
+            ShowModalWithScrolling("#game-edit-modal");
+            HideProgress();
+        });
+    }
+
+    function OpenGameDetails(id) {
+        var url = "@Url.Action("GameDetails","Games")" + "/" + id;
+                ShowProgress();
+                $.get(url, function (htmlData) {
+                    $("#new-game-container").html(htmlData);
+                    ShowModalWithScrolling("#new-game-container");
+                    HideProgress();
+                });
+    }
+
+    $(function () {
+
+        $.getJSON("@Url.Action("GetGameTypes", "Games")", function (resp) {
+            gameTypes = resp;
+        })
+
+        $.getJSON("@Url.Action("GetGameComplexities", "Games")", function (resp) {
+            gameComplexities = resp;
+        })
+
+        $.getJSON("@Url.Action("GetGameStates", "Games")", function (resp) {
+            gameStates = resp;
+        })
+
+        gamesList = {
+            dt: null,
+
+            init: function () {
+                this.dt = $('#games-data-table').on('processing.dt', function (e, settings, processing) {
+                    if (processing)
+                        ShowProgress();
+                    else
+                        HideProgress();
+                }).DataTable({
+                    "serverSide": true,
+                    "processing": true,
+                    "searching": true,
+                    "ajax": {
+                        "url": "@Url.Action("GetGames","Games")",
+                        "data": function (d) {
+                            d.ShowRejected = $("#games-showDeletedCheck").prop("checked");
+                            d.GameTypesFilter = "";
+                            var gameTypes = document.getElementById("qfGameTypeList").getElementsByTagName("input");
+                            for (var i = 0; i < gameTypes.length; i++) {
+                                if (gameTypes[i].checked)
+                                    d.GameTypesFilter = d.GameTypesFilter + gameTypes[i].value + ",";
+                            }
+                            d.ComplexityFilter = "";
+                            var compls = document.getElementById("qfComplexList").getElementsByTagName("input");
+                            for (var i = 0; i < compls.length; i++) {
+                                if (compls[i].checked)
+                                    d.ComplexityFilter = d.ComplexityFilter + compls[i].value + ",";
+                            }
+                            d.StatesFilter = "";
+                            var states = document.getElementById("qfStatesList").getElementsByTagName("input");
+                            for (var i = 0; i < states.length; i++) {
+                                if (states[i].checked)
+                                    d.StatesFilter = d.StatesFilter + states[i].value + ",";
+                            }
+                            d.ModifiedByFilter = "";
+                            var modifiedBy = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+                            for (var i = 0; i < modifiedBy.length; i++) {
+                                if (modifiedBy[i].checked)
+                                    d.ModifiedByFilter = d.ModifiedByFilter + modifiedBy[i].value + ",";
+                            }
+                            d.ModifiedFrom = "";
+                            d.ModifiedTo = "";
+                        },
+                        "dataSrc": function (json) {
+                            if (json.IsRedirect) {
+                                alert(json.Message);
+                                window.location.href = json.RedirectUrl;
+                                return "";
+                            }
+                            return json.data;
+                        }
+                    },
+                    "columns": [
+                        {
+                            "title": "Id",
+                            "data": "Id",
+                            "searchable": false
+                        },
+                        {
+                            "title": "Type",
+                            "data": "GameType",
+                            "searchable": false
+                        },
+                        {
+                            "title": "Description",
+                            "data": "Description",
+                            "searchable": false
+                        },
+                        {
+                            "title": "Compl",
+                            "data": "Complexity",
+                            "searchable": true,
+                            "render": function (data) {
+                                return gameComplexities[data];
+                            }
+                        },
+                        {
+                            "title": "In",
+                            "data": "IncludedFromVer",
+                            "searchable": false
+                        },
+                        {
+                            "title": "Ex",
+                            "data": "ExcludedFromVer",
+                            "searchable": true
+                        },
+                        {
+                            "title": "State",
+                            "data": "State",
+                            "searchable": true,
+                            "render": function (data) {
+                                return "<div class=\"panel panel-default game-state-" + data + "\" style=\"text-align:center\">" + clueStates[data] + "</div>";
+                            }
+                        },
+                        {
+                            "title": "Modified",
+                            "data": "LastModified",
+                            "searchable": false,
+                            "type": "date",
+                            "render": function (data) {
+                                return moment(data).format("YYYY/MM/DD HH:mm:ss")
+                            }
+                        },
+                        {
+                            "title": "By",
+                            "data": "ModifiedBy",
+                            "searchable": true,
+                            "render": function (data) {
+                                return "<span class=\"avatar-sm\" style=\"background-color:" +
+                                    GetAvatarColor(data) + "\">" + data + "</span>";
+                            }
+                        }
+                    ],
+                    "dom": "ftilp"
+                });
+            }
+        }
+
+        gamesList.init();
+
+        $("#games-data-table_filter").appendTo("#gamesTableToolsSearch");
+
+        $('#games-data-table tbody').on('dblclick', 'tr', function () {
+            var data = gamesList.dt.row(this).data();
+            OpenGameDetails(data.Id);
+        });
+
+        $("#games-showDeletedCheck").change(function () {
+            OnFilterUpdate();
+        });
+
+        $("#qfGameTypeClear").click(function () {
+            handleFilterChange = false;
+            var opts = document.getElementById("qfGameTypeList").getElementsByTagName("input");
+            for (var i = 0; i < opts.length; i++) {
+                opts[i].checked = false;
+            }
+            handleFilterChange = true;
+            OnFilterUpdate();
+        });
+
+        $("#qfComplexClear").click(function () {
+            handleFilterChange = false;
+            var opts = document.getElementById("qfComplexList").getElementsByTagName("input");
+            for (var i = 0; i < opts.length; i++) {
+                opts[i].checked = false;
+            }
+            handleFilterChange = true;
+            OnFilterUpdate();
+        });
+
+        $("#qfStatesClear").click(function () {
+            handleFilterChange = false;
+            var opts = document.getElementById("qfStatesList").getElementsByTagName("input");
+            for (var i = 0; i < opts.length; i++) {
+                opts[i].checked = false;
+            }
+            handleFilterChange = true;
+            OnFilterUpdate();
+        });
+
+        $("#qfModifiedByClear").click(function () {
+            handleFilterChange = false;
+            var opts = document.getElementById("qfModifiedByList").getElementsByTagName("input");
+            for (var i = 0; i < opts.length; i++) {
+                opts[i].checked = false;
+            }
+            handleFilterChange = true;
+            OnFilterUpdate();
+        });
+
+        $("input[id^='qfGameType_']").change(function () {
+            if (handleFilterChange)
+                OnFilterUpdate();
+        });
+
+        $("input[id^='qfComplex_']").change(function () {
+            if (handleFilterChange)
+                OnFilterUpdate();
+        });
+
+        $("input[id^='qfStates_']").change(function () {
+            if (handleFilterChange)
+                OnFilterUpdate();
+        });
+
+        $("input[id^='qfModifiedBy_']").change(function () {
+            if (handleFilterChange)
+                OnFilterUpdate();
+        });
+    });
+    </script>
+}
