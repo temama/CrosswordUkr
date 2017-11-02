@@ -156,6 +156,11 @@ namespace XWordsUrkAdminConsole.Controllers
             }
         }
 
+        public ActionResult NewGameMenu()
+        {
+            return PartialView("NewGameMenu");
+        }
+
         private string GetGameSortColumnName(string dataName)
         {
             if (dataName == "ModifiedBy")
