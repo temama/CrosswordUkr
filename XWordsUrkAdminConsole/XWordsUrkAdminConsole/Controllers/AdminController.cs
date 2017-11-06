@@ -542,6 +542,14 @@ namespace XWordsUrkAdminConsole.Controllers
             }
         }
 
+        public ActionResult Settings()
+        {
+            using (var dbContext = new XWordsAdminModelContext())
+            {
+                return View(dbContext.Settings.Include(s => s.ModifiedBy).ToList());
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

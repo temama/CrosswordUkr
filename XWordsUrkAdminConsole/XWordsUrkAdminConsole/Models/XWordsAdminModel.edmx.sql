@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server Compact Edition
 -- --------------------------------------------------
--- Date Created: 09/19/2017 19:46:28
+-- Date Created: 11/06/2017 23:49:09
 -- Generated from EDMX file: D:\Work\CrosswordUkr\XWordsUrkAdminConsole\XWordsUrkAdminConsole\Models\XWordsAdminModel.edmx
 -- --------------------------------------------------
 
@@ -78,8 +78,8 @@ CREATE TABLE [Clues] (
     [TheClue] nvarchar(4000)  NOT NULL,
     [Complexity] int  NOT NULL,
     [State] int  NOT NULL,
-    [IncludedFromVer] nvarchar(4000)  NULL,
-    [ExcludedFromVer] nvarchar(4000)  NULL,
+    [IncludedFromVerId] int  NOT NULL,
+    [ExcludedFromVerId] int  NULL,
     [LastModified] datetime  NOT NULL,
     [UserId] int  NOT NULL
 );
@@ -93,9 +93,9 @@ CREATE TABLE [Medias] (
     [WordId] int  NULL,
     [Url] nvarchar(4000)  NULL,
     [State] int  NOT NULL,
+    [IncludedFromVerId] int  NOT NULL,
+    [ExcludedFromVerId] int  NULL,
     [LastModified] datetime  NOT NULL,
-    [ExcludedFromVer] datetime  NULL,
-    [IncludedFromVer] nvarchar(4000)  NULL,
     [UserId] int  NOT NULL
 );
 GO
@@ -107,9 +107,9 @@ CREATE TABLE [Games] (
     [TheGame] nvarchar(4000)  NOT NULL,
     [Complexity] int  NOT NULL,
     [Description] nvarchar(4000)  NULL,
-    [IncludedFromVer] nvarchar(4000)  NOT NULL,
-    [ExcludedFromVer] datetime  NULL,
     [State] int  NOT NULL,
+    [IncludedFromVerId] int  NOT NULL,
+    [ExcludedFromVerId] int  NULL,
     [LastModified] nvarchar(4000)  NOT NULL,
     [UserId] int  NOT NULL
 );
@@ -352,6 +352,96 @@ GO
 CREATE INDEX [IX_FK_VersionModifiedUser]
 ON [Versions]
     ([UserId]);
+GO
+
+-- Creating foreign key on [IncludedFromVerId] in table 'Games'
+ALTER TABLE [Games]
+ADD CONSTRAINT [FK_GameIncludedFromVer]
+    FOREIGN KEY ([IncludedFromVerId])
+    REFERENCES [Versions]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_GameIncludedFromVer'
+CREATE INDEX [IX_FK_GameIncludedFromVer]
+ON [Games]
+    ([IncludedFromVerId]);
+GO
+
+-- Creating foreign key on [ExcludedFromVerId] in table 'Games'
+ALTER TABLE [Games]
+ADD CONSTRAINT [FK_GameExcludedFromVer]
+    FOREIGN KEY ([ExcludedFromVerId])
+    REFERENCES [Versions]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_GameExcludedFromVer'
+CREATE INDEX [IX_FK_GameExcludedFromVer]
+ON [Games]
+    ([ExcludedFromVerId]);
+GO
+
+-- Creating foreign key on [IncludedFromVerId] in table 'Clues'
+ALTER TABLE [Clues]
+ADD CONSTRAINT [FK_ClueIncludedFromVer]
+    FOREIGN KEY ([IncludedFromVerId])
+    REFERENCES [Versions]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ClueIncludedFromVer'
+CREATE INDEX [IX_FK_ClueIncludedFromVer]
+ON [Clues]
+    ([IncludedFromVerId]);
+GO
+
+-- Creating foreign key on [ExcludedFromVerId] in table 'Clues'
+ALTER TABLE [Clues]
+ADD CONSTRAINT [FK_ClueExcludedFromVer]
+    FOREIGN KEY ([ExcludedFromVerId])
+    REFERENCES [Versions]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ClueExcludedFromVer'
+CREATE INDEX [IX_FK_ClueExcludedFromVer]
+ON [Clues]
+    ([ExcludedFromVerId]);
+GO
+
+-- Creating foreign key on [IncludedFromVerId] in table 'Medias'
+ALTER TABLE [Medias]
+ADD CONSTRAINT [FK_MediaIncludedFromVer]
+    FOREIGN KEY ([IncludedFromVerId])
+    REFERENCES [Versions]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MediaIncludedFromVer'
+CREATE INDEX [IX_FK_MediaIncludedFromVer]
+ON [Medias]
+    ([IncludedFromVerId]);
+GO
+
+-- Creating foreign key on [ExcludedFromVerId] in table 'Medias'
+ALTER TABLE [Medias]
+ADD CONSTRAINT [FK_MediaExcludedFromVer]
+    FOREIGN KEY ([ExcludedFromVerId])
+    REFERENCES [Versions]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_MediaExcludedFromVer'
+CREATE INDEX [IX_FK_MediaExcludedFromVer]
+ON [Medias]
+    ([ExcludedFromVerId]);
 GO
 
 -- --------------------------------------------------

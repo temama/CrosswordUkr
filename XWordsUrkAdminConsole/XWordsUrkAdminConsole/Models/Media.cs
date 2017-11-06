@@ -20,12 +20,14 @@ namespace XWordsUrkAdminConsole.Models
         public Nullable<int> WordId { get; set; }
         public string Url { get; set; }
         public int State { get; set; }
+        public int IncludedFromVerId { get; set; }
+        public Nullable<int> ExcludedFromVerId { get; set; }
         public System.DateTime LastModified { get; set; }
-        public Nullable<System.DateTime> ExcludedFromVer { get; set; }
-        public string IncludedFromVer { get; set; }
         public int UserId { get; set; }
     
         public virtual Word Word { get; set; }
         public virtual User ModifiedBy { get; set; }
+        public virtual Version IncludedFromVer { get; set; }
+        public virtual Version ExcludedFromVer { get; set; }
     }
 }

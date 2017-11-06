@@ -20,6 +20,27 @@ namespace XWordsUrkAdminConsole
             using (var dbContext = new XWordsAdminModelContext())
             {
                 LoadSystemUser(dbContext);
+
+                LoadSettings(dbContext);
+            }
+        }
+
+        private static void LoadSettings(XWordsAdminModelContext dbContext)
+        {
+            foreach (var setting in dbContext.Settings)
+            {
+                All[setting.Name] = setting.Value;
+
+                if (setting.Name == "CurrentTestingVersion")
+                {
+                    int id = Convert.ToInt32(setting.Value);
+                    CurrentTestingVersion = dbContext.Versions.FirstOrDefault(v => v.Id == id);
+                }
+                if (setting.Name == "CurrentLiveVersion")
+                {
+                    int id = Convert.ToInt32(setting.Value);
+                    CurrentLiveVersion = dbContext.Versions.FirstOrDefault(v => v.Id == id);
+                }
             }
         }
 

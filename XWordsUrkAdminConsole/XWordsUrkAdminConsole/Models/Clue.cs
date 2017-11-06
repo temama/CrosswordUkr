@@ -20,12 +20,14 @@ namespace XWordsUrkAdminConsole.Models
         public string TheClue { get; set; }
         public WordComplexity Complexity { get; set; }
         public ClueState State { get; set; }
-        public string IncludedFromVer { get; set; }
-        public string ExcludedFromVer { get; set; }
+        public int IncludedFromVerId { get; set; }
+        public Nullable<int> ExcludedFromVerId { get; set; }
         public System.DateTime LastModified { get; set; }
         public int UserId { get; set; }
     
         public virtual Word Word { get; set; }
         public virtual User ModifiedBy { get; set; }
+        public virtual Version IncludedFromVer { get; set; }
+        public virtual Version ExcludedFromVer { get; set; }
     }
 }

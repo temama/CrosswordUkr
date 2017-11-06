@@ -19,12 +19,14 @@ namespace XWordsUrkAdminConsole.Models
         public string TheGame { get; set; }
         public GameComplexity Complexity { get; set; }
         public string Description { get; set; }
-        public string IncludedFromVer { get; set; }
-        public Nullable<System.DateTime> ExcludedFromVer { get; set; }
         public GameState State { get; set; }
+        public int IncludedFromVerId { get; set; }
+        public Nullable<int> ExcludedFromVerId { get; set; }
         public string LastModified { get; set; }
         public int UserId { get; set; }
     
         public virtual User ModifiedBy { get; set; }
+        public virtual Version IncludedFromVer { get; set; }
+        public virtual Version ExcludedFromVer { get; set; }
     }
 }

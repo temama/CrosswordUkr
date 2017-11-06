@@ -19,6 +19,9 @@ namespace XWordsUrkAdminConsole.Helpers
 
         public static string GetTimeAgoRepresentation(DateTime when)
         {
+            if (when > DateTime.Now) // For future calendar events
+                return when.ToShortDateString();
+
             var ts = DateTime.Now - when;
             switch (ts.Days)
             {

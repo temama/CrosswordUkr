@@ -1,0 +1,77 @@
+﻿@model IEnumerable<XWordsUrkAdminConsole.Models.Setting>
+
+@{
+    ViewBag.Title = "Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Settings</h3>
+<h4>System</h4>
+<div class="row marg-top-s">
+    <div class="col-md-2 col-xs-4" style="height:100%">
+        <label class="control-label pull-right">System User:</label>
+    </div>
+    <div class="col-md-8 col-xs-12">
+        <input class="form-control text-box single-line" id="settings-system-user" value="@AppSettings.SystemUser.Login [@AppSettings.SystemUser.Initials]" disabled>
+    </div>
+</div>
+<div class="row marg-top-s">
+    <div class="col-md-2 col-xs-4" style="height:100%">
+        <label class="control-label pull-right">Testing version:</label>
+    </div>
+    <div class="col-md-8 col-xs-12">
+        <input class="form-control text-box single-line" id="settings-testing-version"
+               value="@(AppSettings.CurrentTestingVersion != null ? AppSettings.CurrentTestingVersion.Name : "")" disabled>
+    </div>
+</div>
+<div class="row marg-top-s">
+    <div class="col-md-2 col-xs-4" style="height:100%">
+        <label class="control-label pull-right">Live version:</label>
+    </div>
+    <div class="col-md-8 col-xs-12">
+        <input class="form-control text-box single-line" id="settings-live-version"
+               value="@(AppSettings.CurrentLiveVersion != null ? AppSettings.CurrentLiveVersion.Name : "")" disabled>
+    </div>
+</div>
+<br />
+<h4>Database</h4>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Value)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastModified)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ModifiedBy)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Value)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastModified)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ModifiedBy.Login)
+        </td>
+        @*<td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>*@
+    </tr>
+}
+
+</table>

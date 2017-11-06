@@ -50,6 +50,30 @@
       <End Role="Version" EntitySet="Versions" />
       <End Role="User" EntitySet="Users" />
     </AssociationSet>
+    <AssociationSet Name="IncludedFromVer" Association="XWordsAdminModel.Store.GameIncludedFromVer">
+      <End Role="Game" EntitySet="Games" />
+      <End Role="Version" EntitySet="Versions" />
+    </AssociationSet>
+    <AssociationSet Name="ExcludedFromVer" Association="XWordsAdminModel.Store.GameExcludedFromVer">
+      <End Role="Game" EntitySet="Games" />
+      <End Role="Version" EntitySet="Versions" />
+    </AssociationSet>
+    <AssociationSet Name="ClueIncludedFromVer" Association="XWordsAdminModel.Store.ClueIncludedFromVer">
+      <End Role="Clue" EntitySet="Clues" />
+      <End Role="Version" EntitySet="Versions" />
+    </AssociationSet>
+    <AssociationSet Name="ClueExcludedFromVer" Association="XWordsAdminModel.Store.ClueExcludedFromVer">
+      <End Role="Clue" EntitySet="Clues" />
+      <End Role="Version" EntitySet="Versions" />
+    </AssociationSet>
+    <AssociationSet Name="MediaIncludedFromVer" Association="XWordsAdminModel.Store.MediaIncludedFromVer">
+      <End Role="Media" EntitySet="Medias" />
+      <End Role="Version" EntitySet="Versions" />
+    </AssociationSet>
+    <AssociationSet Name="MediaExcludedFromVer" Association="XWordsAdminModel.Store.MediaExcludedFromVer">
+      <End Role="Media" EntitySet="Medias" />
+      <End Role="Version" EntitySet="Versions" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="Words">
     <Key>
@@ -74,8 +98,8 @@
     <Property Name="TheClue" Type="nvarchar" Nullable="false" />
     <Property Name="Complexity" Type="int" Nullable="false" />
     <Property Name="State" Type="int" Nullable="false" />
-    <Property Name="IncludedFromVer" Type="nvarchar" Nullable="true" />
-    <Property Name="ExcludedFromVer" Type="nvarchar" Nullable="true" />
+    <Property Name="IncludedFromVerId" Type="int" Nullable="false" />
+    <Property Name="ExcludedFromVerId" Type="int" Nullable="true" />
     <Property Name="LastModified" Type="datetime" Nullable="false" />
     <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
@@ -89,9 +113,9 @@
     <Property Name="WordId" Type="int" Nullable="true" />
     <Property Name="Url" Type="nvarchar" Nullable="true" />
     <Property Name="State" Type="int" Nullable="false" />
+    <Property Name="IncludedFromVerId" Type="int" Nullable="false" />
+    <Property Name="ExcludedFromVerId" Type="int" Nullable="true" />
     <Property Name="LastModified" Type="datetime" Nullable="false" />
-    <Property Name="ExcludedFromVer" Type="datetime" Nullable="true" />
-    <Property Name="IncludedFromVer" Type="nvarchar" Nullable="true" />
     <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Games">
@@ -103,9 +127,9 @@
     <Property Name="TheGame" Type="nvarchar" Nullable="false" />
     <Property Name="Complexity" Type="int" Nullable="false" />
     <Property Name="Description" Type="nvarchar" Nullable="true" />
-    <Property Name="IncludedFromVer" Type="nvarchar" Nullable="false" />
-    <Property Name="ExcludedFromVer" Type="datetime" Nullable="true" />
     <Property Name="State" Type="int" Nullable="false" />
+    <Property Name="IncludedFromVerId" Type="int" Nullable="false" />
+    <Property Name="ExcludedFromVerId" Type="int" Nullable="true" />
     <Property Name="LastModified" Type="nvarchar" Nullable="false" />
     <Property Name="UserId" Type="int" Nullable="false" />
   </EntityType>
@@ -265,6 +289,78 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="GameIncludedFromVer">
+    <End Role="Game" Type="XWordsAdminModel.Store.Games" Multiplicity="*" />
+    <End Role="Version" Type="XWordsAdminModel.Store.Versions" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Version">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Game">
+        <PropertyRef Name="IncludedFromVerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="GameExcludedFromVer">
+    <End Role="Game" Type="XWordsAdminModel.Store.Games" Multiplicity="*" />
+    <End Role="Version" Type="XWordsAdminModel.Store.Versions" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Version">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Game">
+        <PropertyRef Name="ExcludedFromVerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ClueIncludedFromVer">
+    <End Role="Clue" Type="XWordsAdminModel.Store.Clues" Multiplicity="*" />
+    <End Role="Version" Type="XWordsAdminModel.Store.Versions" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Version">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Clue">
+        <PropertyRef Name="IncludedFromVerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ClueExcludedFromVer">
+    <End Role="Clue" Type="XWordsAdminModel.Store.Clues" Multiplicity="*" />
+    <End Role="Version" Type="XWordsAdminModel.Store.Versions" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Version">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Clue">
+        <PropertyRef Name="ExcludedFromVerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="MediaIncludedFromVer">
+    <End Role="Media" Type="XWordsAdminModel.Store.Medias" Multiplicity="*" />
+    <End Role="Version" Type="XWordsAdminModel.Store.Versions" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Version">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Media">
+        <PropertyRef Name="IncludedFromVerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="MediaExcludedFromVer">
+    <End Role="Media" Type="XWordsAdminModel.Store.Medias" Multiplicity="*" />
+    <End Role="Version" Type="XWordsAdminModel.Store.Versions" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Version">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Media">
+        <PropertyRef Name="ExcludedFromVerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -314,6 +410,30 @@
             <End Role="Version" EntitySet="Versions" />
             <End Role="User" EntitySet="Users" />
           </AssociationSet>
+          <AssociationSet Name="IncludedFromVer" Association="XWordsAdminModel.GameIncludedFromVer">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="Version" EntitySet="Versions" />
+          </AssociationSet>
+          <AssociationSet Name="ExcludedFromVer" Association="XWordsAdminModel.GameExcludedFromVer">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="Version" EntitySet="Versions" />
+          </AssociationSet>
+          <AssociationSet Name="ClueIncludedFromVer" Association="XWordsAdminModel.ClueIncludedFromVer">
+            <End Role="Clue" EntitySet="Clues" />
+            <End Role="Version" EntitySet="Versions" />
+          </AssociationSet>
+          <AssociationSet Name="ClueExcludedFromVer" Association="XWordsAdminModel.ClueExcludedFromVer">
+            <End Role="Clue" EntitySet="Clues" />
+            <End Role="Version" EntitySet="Versions" />
+          </AssociationSet>
+          <AssociationSet Name="MediaIncludedFromVer" Association="XWordsAdminModel.MediaIncludedFromVer">
+            <End Role="Media" EntitySet="Medias" />
+            <End Role="Version" EntitySet="Versions" />
+          </AssociationSet>
+          <AssociationSet Name="MediaExcludedFromVer" Association="XWordsAdminModel.MediaExcludedFromVer">
+            <End Role="Media" EntitySet="Medias" />
+            <End Role="Version" EntitySet="Versions" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Word">
           <Key>
@@ -341,11 +461,13 @@
           <Property Name="Complexity" Type="XWordsAdminModel.WordComplexity" Nullable="false" />
           <Property Name="State" Type="XWordsAdminModel.ClueState" Nullable="false" />
           <NavigationProperty Name="Word" Relationship="XWordsAdminModel.ClueWord" FromRole="Clue" ToRole="Word" />
-          <Property Name="IncludedFromVer" Type="String" Nullable="true" />
-          <Property Name="ExcludedFromVer" Type="String" Nullable="true" />
+          <Property Name="IncludedFromVerId" Type="Int32" Nullable="false" />
+          <Property Name="ExcludedFromVerId" Type="Int32" Nullable="true" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.ClueUser" FromRole="Clue" ToRole="User" />
           <Property Name="UserId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="IncludedFromVer" Relationship="XWordsAdminModel.ClueIncludedFromVer" FromRole="Clue" ToRole="Version" />
+          <NavigationProperty Name="ExcludedFromVer" Relationship="XWordsAdminModel.ClueExcludedFromVer" FromRole="Clue" ToRole="Version" />
         </EntityType>
         <Association Name="ClueWord">
           <End Type="XWordsAdminModel.Clue" Role="Clue" Multiplicity="*" />
@@ -370,11 +492,13 @@
           <Property Name="WordId" Type="Int32" Nullable="true" />
           <Property Name="Url" Type="String" Nullable="true" />
           <Property Name="State" Type="Int32" Nullable="false" />
+          <Property Name="IncludedFromVerId" Type="Int32" Nullable="false" />
+          <Property Name="ExcludedFromVerId" Type="Int32" Nullable="true" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" />
-          <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
-          <Property Name="IncludedFromVer" Type="String" Nullable="true" />
           <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.MediaModifiedUser" FromRole="Media" ToRole="User" />
           <Property Name="UserId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="IncludedFromVer" Relationship="XWordsAdminModel.MediaIncludedFromVer" FromRole="Media" ToRole="Version" />
+          <NavigationProperty Name="ExcludedFromVer" Relationship="XWordsAdminModel.MediaExcludedFromVer" FromRole="Media" ToRole="Version" />
         </EntityType>
         <EntityType Name="Game">
           <Key>
@@ -385,12 +509,14 @@
           <Property Name="TheGame" Type="String" Nullable="false" />
           <Property Name="Complexity" Type="XWordsAdminModel.GameComplexity" Nullable="false" />
           <Property Name="Description" Type="String" Nullable="true" />
-          <Property Name="IncludedFromVer" Type="String" Nullable="false" />
-          <Property Name="ExcludedFromVer" Type="DateTime" Nullable="true" />
           <Property Name="State" Type="XWordsAdminModel.GameState" Nullable="false" />
+          <Property Name="IncludedFromVerId" Type="Int32" Nullable="false" />
+          <Property Name="ExcludedFromVerId" Type="Int32" Nullable="true" />
           <Property Name="LastModified" Type="String" Nullable="false" />
           <NavigationProperty Name="ModifiedBy" Relationship="XWordsAdminModel.GameModifiedUser" FromRole="Game" ToRole="User" />
           <Property Name="UserId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="IncludedFromVer" Relationship="XWordsAdminModel.GameIncludedFromVer" FromRole="Game" ToRole="Version" />
+          <NavigationProperty Name="ExcludedFromVer" Relationship="XWordsAdminModel.GameExcludedFromVer" FromRole="Game" ToRole="Version" />
         </EntityType>
         <EntityType Name="Setting">
           <Key>
@@ -593,6 +719,78 @@
           <Member Name="Crossword" Value="1" />
           <Member Name="CrosswordPuzzle" Value="2" />
         </EnumType>
+        <Association Name="GameIncludedFromVer">
+          <End Type="XWordsAdminModel.Game" Role="Game" Multiplicity="*" />
+          <End Type="XWordsAdminModel.Version" Role="Version" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="Version">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="IncludedFromVerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GameExcludedFromVer">
+          <End Type="XWordsAdminModel.Game" Role="Game" Multiplicity="*" />
+          <End Type="XWordsAdminModel.Version" Role="Version" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Version">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="ExcludedFromVerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ClueIncludedFromVer">
+          <End Type="XWordsAdminModel.Clue" Role="Clue" Multiplicity="*" />
+          <End Type="XWordsAdminModel.Version" Role="Version" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="Version">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Clue">
+              <PropertyRef Name="IncludedFromVerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ClueExcludedFromVer">
+          <End Type="XWordsAdminModel.Clue" Role="Clue" Multiplicity="*" />
+          <End Type="XWordsAdminModel.Version" Role="Version" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Version">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Clue">
+              <PropertyRef Name="ExcludedFromVerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="MediaIncludedFromVer">
+          <End Type="XWordsAdminModel.Media" Role="Media" Multiplicity="*" />
+          <End Type="XWordsAdminModel.Version" Role="Version" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="Version">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Media">
+              <PropertyRef Name="IncludedFromVerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="MediaExcludedFromVer">
+          <End Type="XWordsAdminModel.Media" Role="Media" Multiplicity="*" />
+          <End Type="XWordsAdminModel.Version" Role="Version" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Version">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Media">
+              <PropertyRef Name="ExcludedFromVerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -622,8 +820,8 @@
           <ScalarProperty Name="TheClue" ColumnName="TheClue" />
           <ScalarProperty Name="Complexity" ColumnName="Complexity" />
           <ScalarProperty Name="State" ColumnName="State" />
-          <ScalarProperty Name="IncludedFromVer" ColumnName="IncludedFromVer" />
-          <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
+          <ScalarProperty Name="IncludedFromVerId" ColumnName="IncludedFromVerId" />
+          <ScalarProperty Name="ExcludedFromVerId" ColumnName="ExcludedFromVerId" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
@@ -638,9 +836,9 @@
           <ScalarProperty Name="WordId" ColumnName="WordId" />
           <ScalarProperty Name="Url" ColumnName="Url" />
           <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="IncludedFromVerId" ColumnName="IncludedFromVerId" />
+          <ScalarProperty Name="ExcludedFromVerId" ColumnName="ExcludedFromVerId" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
-          <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
-          <ScalarProperty Name="IncludedFromVer" ColumnName="IncludedFromVer" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -653,9 +851,9 @@
           <ScalarProperty Name="TheGame" ColumnName="TheGame" />
           <ScalarProperty Name="Complexity" ColumnName="Complexity" />
           <ScalarProperty Name="Description" ColumnName="Description" />
-          <ScalarProperty Name="IncludedFromVer" ColumnName="IncludedFromVer" />
-          <ScalarProperty Name="ExcludedFromVer" ColumnName="ExcludedFromVer" />
           <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="IncludedFromVerId" ColumnName="IncludedFromVerId" />
+          <ScalarProperty Name="ExcludedFromVerId" ColumnName="ExcludedFromVerId" />
           <ScalarProperty Name="LastModified" ColumnName="LastModified" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
