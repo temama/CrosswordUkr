@@ -16,7 +16,7 @@
                                 <a id="filtersBtn" href="#quickFilters" class="btn btn-default" data-toggle="collapse">Filters</a>
                             </div>
                             <div class="col-md-1 col-xs-2">
-                                <button class="btn btn-info btn-md" onclick="OnAddgameClick();">
+                                <button class="btn btn-info btn-md" onclick="OnAddGameClick();">
                                     <span class="glyphicon glyphicon-plus"></span> Add game
                                 </button>
                             </div>
@@ -200,7 +200,7 @@
         var url = "@Url.Action("NewGameMenu", "Games")";
         $.get(url, function (htmlData) {
             $("#new-game-container").html(htmlData);
-            ShowModalWithScrolling("#game-edit-modal");
+            ShowModalWithScrolling("#new-game-modal");
             HideProgress();
         });
     }

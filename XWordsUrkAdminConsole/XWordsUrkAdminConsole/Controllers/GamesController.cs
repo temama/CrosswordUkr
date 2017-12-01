@@ -158,6 +158,10 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult NewGameMenu()
         {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
+
             return PartialView("NewGameMenu");
         }
 

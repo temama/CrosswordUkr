@@ -544,6 +544,10 @@ namespace XWordsUrkAdminConsole.Controllers
 
         public ActionResult Settings()
         {
+            var reqUser = AuthModule.GetCurrentUser(Request, true, Response);
+            if (reqUser == null)
+                return RedirectToAction("Login", "Home", new { ReturnUrl = Request.RawUrl });
+
             using (var dbContext = new XWordsAdminModelContext())
             {
                 return View(dbContext.Settings.Include(s => s.ModifiedBy).ToList());
