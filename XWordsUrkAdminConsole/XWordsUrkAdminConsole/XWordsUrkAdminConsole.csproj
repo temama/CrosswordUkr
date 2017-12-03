@@ -211,6 +211,7 @@
     <Compile Include="Models\Media.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\NewGameContentOptions.cs" />
     <Compile Include="Models\Setting.cs">
       <DependentUpon>XWordsAdminModel.tt</DependentUpon>
     </Compile>

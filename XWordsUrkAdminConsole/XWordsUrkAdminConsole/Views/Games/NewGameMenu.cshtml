@@ -1,13 +1,111 @@
-﻿<div class="modal-header">
+﻿
+<div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
     <h3 class="modal-title" style="display:inline-block">New Game</h3>
 </div>
 
 <div class="modal-body">
-    
-    
+    <div class="row">
+        <div class="col-md-2">
+            <h4 class="pull-right">Type: </h4>
+        </div>
+        <div class="col-md-10">
+            <form>
+                <label class="radio-inline">
+                    <input id="new-game-type-crossword" type="radio" name="optradio">Crossword
+                </label>
+                <label class="radio-inline">
+                    <input id="new-game-type-crossword-puzzle" type="radio" name="optradio">Crossword puzzle
+                </label>
+            </form>
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-2">
+            <h4 class="pull-right">Content: </h4>
+        </div>
+        <div class="col-md-10">
+            <form>
+                @foreach (var e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.NewGameContentOptions)))
+                {
+                    <label class="radio-inline">
+                        <input id="new-game-content-@((int)e)" type="radio" name="optradio">@e.ToString()
+                    </label>
+                }
+            </form>
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-2">
+            <h4 class="pull-right">Size: </h4>
+        </div>
+        <div class="col-md-10">
+            <form>
+                <label class="form-inline">
+                    <input id="new-game-size-horisontal" type="text" name="">Horisontal
+                </label>
+                <label class="form-inline">
+                    <input id="new-game-size-vertical" type="text" name="">Vertical
+                </label>
+            </form>
+        </div>
+    </div>
+    <hr />
+
+    @*<h4>Characteristics </h4>*@
+    <div class="row">
+        <div class="col-md-6">
+            <label>Areas</label>
+            <ul class="list-group panel panel-default" id="new-game-areas-list" style="max-height:300px; overflow:auto;">
+                @foreach (XWordsUrkAdminConsole.Models.WordArea e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordArea)))
+                {
+                    <li>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" id="new-game-area-@((int)e)"
+                                       @( e == XWordsUrkAdminConsole.Models.WordArea.General ? "checked='checked'" : string.Empty) value="@((int)e)" />
+                                @e.ToString()
+                            </label>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+
+
+        <div class="col-md-6">
+            <label>Other</label>
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Complexity</label>
+                </div>
+                <div class="col-md-8">
+                    <button id="word-details-complex-btn" data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle word-complex-@((int)XWordsUrkAdminConsole.Models.WordComplexity.Easy)"
+                            style="width:100%;" value="@((int)XWordsUrkAdminConsole.Models.WordComplexity.Easy)">
+                        @XWordsUrkAdminConsole.Models.WordComplexity.Easy.ToString() <span class="caret" />
+                    </button>
+                    <ul id="complexList" class="dropdown-menu">
+                        @foreach (XWordsUrkAdminConsole.Models.WordComplexity e in Enum.GetValues(typeof(XWordsUrkAdminConsole.Models.WordComplexity)))
+                        {
+                            <li id="word-details-complex-@((int)e)" value="@((int)e)" onclick="OnWordDetailsComplexItemClick(@((int)e), &quot;@e.ToString()&quot;);"><a href="#">@e.ToString()</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <hr />
+
+    <h4>Description:</h4>
+    <textarea id="new-game-description" class="form-control" style="min-width:100%" placeholder="Type description here"></textarea>
 
 </div>
+
 
 <div class="modal-footer">
     <button class="btn btn-warning" data-dismiss="modal">Close</button>
